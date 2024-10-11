@@ -1,0 +1,48 @@
+.container {
+    margin: 20px;
+}
+
+.container {
+    height: calc(100vh - 260px);
+    padding: 0 20px 20px 20px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.container::-webkit-scrollbar {
+    display: none;
+}
+
+.container {
+    scrollbar-width: none;
+}
+
+.container {
+    -ms-overflow-style: none;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.col {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.col:last-child {
+    margin-right: 0;
+}
+
+.empty-state-report {
+    text-align: center;
+    margin-top: 150px;
+    font-size: 40px;
+    font-style: italic;
+    color: #a3a3a3;
+}
+
+.e-date {
+    margin-left: 100px;
+}

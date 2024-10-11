@@ -1,0 +1,116 @@
+.trainer-container-info {
+    height: calc(100vh - 200px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  
+  .trainer-container-info::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .trainer-container-info {
+    scrollbar-width: none;
+  }
+  
+  .trainer-container-info {
+    -ms-overflow-style: none;
+  }
+  
+  .custom-collapse {
+    background: #F3F3F3;
+    margin-bottom: 20px;
+    box-shadow: 0px 8px 5px 0px #00000026;
+  }
+  
+  .custom-panel .ant-collapse-header {
+    background: #F3F3F3;
+  }
+  
+  .panel-header {
+    font-weight: bold;
+  }
+  
+  .general-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid #e8e8e8;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .general-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e8e8e8;
+    padding-right: 75px;
+    box-sizing: border-box;
+  }
+  
+  .general-info-row:last-of-type {
+    border-bottom: none;
+  }
+  
+  .general-info-row:not(:nth-child(3n)) {
+    border-right: 1px solid #e8e8e8;
+  }
+  
+  .general-info-label {
+    width: 40%;
+    background-color: #f0f0f0;
+    padding: 5px;
+    box-sizing: border-box;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .general-info-value {
+    width: 60%;
+    text-align: right;
+    border-left: 1px solid #e8e8e8;
+    padding-left: 10px;
+    box-sizing: border-box;
+    color: #666;
+  }
+  
+  .skills-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .skills-table th,
+  .skills-table td {
+    border: 1px solid #e8e8e8;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .skills-table th {
+    background-color: #f0f0f0;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .skills-input,
+  .general-input,
+  .general-select,
+  .skills-select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .edit-buttons {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+    justify-content: right;
+  }
+  
+  .edit-buttons button {
+    width: 117px;
+    border-radius: 50px;
+    background-color: #5750DF;
+  }

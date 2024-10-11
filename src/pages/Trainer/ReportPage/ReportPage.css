@@ -1,0 +1,17 @@
+.container-tracker {
+    height: calc(100vh - 260px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.container-tracker::-webkit-scrollbar {
+    display: none;
+}
+
+.container-tracker {
+    scrollbar-width: none;
+}
+
+.container-tracker {
+    -ms-overflow-style: none;
+}

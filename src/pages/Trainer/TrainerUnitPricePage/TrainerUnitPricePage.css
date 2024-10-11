@@ -1,0 +1,54 @@
+.trainer-container-unit {
+  height: calc(100vh - 200px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.trainer-container-unit::-webkit-scrollbar {
+  display: none;
+}
+
+.trainer-container-unit {
+  scrollbar-width: none;
+}
+
+.trainer-container-unit {
+  -ms-overflow-style: none;
+}
+
+.custom-scroll .ant-table-body {
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
+.custom-scroll .ant-table-body::-webkit-scrollbar {
+  display: none;
+}
+
+.trainer-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #e8e8e8;
+}
+
+.header-row {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  text-align: left;
+  margin-left: 30px;
+}
+
+.header-cell,
+.data-cell {
+  border: 1px solid #e8e8e8;
+  padding: 10px;
+}
+
+.header-cell.note,
+.data-cell.note {
+  width: 400px;
+}
+
+.data-row:hover {
+  background-color: #e6e6e6;
+}

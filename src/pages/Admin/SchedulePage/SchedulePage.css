@@ -1,0 +1,90 @@
+.fc-timegrid-slot {
+    box-sizing: border-box;
+}
+
+.calendar-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    height: calc(100vh - 280px);
+}
+
+.left-calendar {
+    flex: 1;
+    max-width: 300px;
+    border-right: 1px solid #e8e8e8;
+    padding-right: 20px;
+}
+
+.right-calendar {
+    flex: 1;
+    overflow-y: hidden;
+    height: calc(100vh - 170px);
+}
+
+.fc-scroller {
+    overflow-y: auto;
+    max-height: 500px;
+}
+
+.fc-timegrid {
+    overflow: hidden;
+}
+
+.custom-modal {
+    border-radius: 8px;
+}
+
+.custom-modal .ant-modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.fc-event-title {
+    height: 100%;
+    width: 100%;
+    background-color: #e8e8e8;
+    border-radius: 3px;
+    padding: 5px;
+    color: #fff;
+    text-align: center;
+}
+
+.fc-event {
+    background-color: #e8e8e8;
+    border: none;
+}
+
+.fc-scrollgrid-sync-inner a {
+    text-decoration: none;
+    color: black;
+}
+
+.event-fresher {
+    background-color: orange !important;
+}
+
+.event-intern {
+    background-color: green !important;
+}
+
+.event-free_time {
+    background-color: #509ADF75 !important;
+}
+
+.fc-timegrid-slot {
+    border: 1px solid #ddd !important;
+}
+
+.fc-timegrid-slot-lane {
+    border-right: 1px solid #ddd !important;
+}
+
+.fc-col-header-cell {
+    border-bottom: 1px solid #ddd !important;
+}
+
+.fc-daygrid-day {
+    border: 1px solid #ddd !important;
+}

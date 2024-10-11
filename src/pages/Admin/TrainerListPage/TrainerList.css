@@ -1,0 +1,180 @@
+.trainer-management-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow-x: hidden;
+    max-width: 100%;
+    min-height: 400px;
+}
+
+.trainer-management-container h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.filters-container {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.filters-container .filter-item {
+    flex: 1 1 150px;
+    max-width: 150px;
+    margin-bottom: 10px;
+}
+
+.filters-container .status-filter,
+.filters-container .site-filter {
+    margin-bottom: 15px;
+}
+
+.filters-container .MuiFormControl-root,
+.filters-container .MuiTextField-root {
+    width: 100%;
+}
+
+.MuiSelect-root,
+.MuiTextField-root input {
+    padding: 12px;
+    font-size: 22px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.MuiInputLabel-root {
+    color: #777;
+    z-index: 1;
+    background-color: white;
+    padding: 0 4px;
+}
+
+.MuiTableContainer-root {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.MuiTableHead-root th {
+    font-weight: bold;
+    background-color: #f0f0f0;
+    color: #333;
+    text-align: center;
+    padding: 10px;
+    border-right: 1px solid #ddd;
+}
+
+.MuiTableBody-root td {
+    padding: 12px;
+    border-right: 1px solid #ddd;
+}
+
+@media (max-width: 768px) {
+    .responsive-hide {
+        display: none;
+    }
+
+    .ant-table-cell.responsive-hide {
+        display: none;
+    }
+}
+
+.MuiTableRow-root:hover {
+    background-color: #f5f5f5;
+}
+
+.MuiTableCell-head {
+    font-weight: bold;
+    color: #444;
+    font-family: 'Roboto', sans-serif;
+    text-align: left;
+}
+
+.MuiTableCell-body {
+    font-family: 'Roboto', sans-serif;
+    color: #555;
+    text-align: left;
+}
+
+.MuiChip-root {
+    font-weight: bold;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.MuiChip-colorSuccess {
+    background-color: #4caf50;
+    color: white;
+}
+
+.MuiChip-colorDefault {
+    background-color: #f44336;
+    color: white;
+}
+
+.add-trainer-btn {
+    margin-top: 20px;
+    background-color: #3f51b5;
+    color: white;
+    text-transform: none;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.add-trainer-btn:hover {
+    background-color: #303f9f;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.ant-checkbox-wrapper {
+    font-size: 16px;
+}
+
+.ant-checkbox {
+    transform: scale(1.5);
+}
+
+.Header-list {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.add-trainer-btn {
+    margin-left: auto;
+}
+
+@media (max-width: 768px) {
+    .filters-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .filters-container .filter-item {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .add-trainer-btn {
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .Header-list {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+}

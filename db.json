@@ -1,0 +1,56 @@
+{
+    "generalInfo": [
+      { "label": "Full Name", "value": "Trần Thị Bành Bạch" },
+      { "label": "Account", "value": "BachTTB100" },
+      { "label": "Contact Email", "value": "helloconde@gmail.com" },
+      { "label": "Phone", "value": "0123456789" },
+      { "label": "Employee ID", "value": "BLa1200" },
+      { "label": "National ID", "value": "174552610" },
+      { "label": "Site", "value": "HN" },
+      { "label": "Trainer Type", "value": "Internal" },
+      { "label": "Contribution Type", "value": "Trainer" },
+      { "label": "Trainer Rank", "value": "1" },
+      { "label": "Professional Level", "value": "Advanced" },
+      { "label": "Train The Trainer Certificate", "value": "Advance" },
+      { "label": "Job Rank", "value": "Developer 3" },
+      { "label": "Professional Index", "value": "1" },
+      { "label": "Training Competency Index", "value": "1.2" },
+      { "label": "Status", "value": "Available" },
+      { "label": "Note", "value": "Note" }
+    ],
+    "skillsData": [
+      { "key": "1", "no": "1", "skills": "REACT", "level": "Advanced", "note": "Strong" },
+      { "key": "2", "no": "2", "skills": "JAVA", "level": "Intermediate", "note": "Good" },
+      { "key": "3", "no": "3", "skills": "DOT NET", "level": "Basic", "note": "Entry-level" }
+    ],
+    "skillsList": [
+      { "key": "1", "label": "REACT" },
+      { "key": "2", "label": "JAVA" },
+      { "key": "3", "label": "DOT NET" },
+      { "key": "4", "label": "JAVASCRIPT" },
+      { "key": "5", "label": "PYTHON" },
+      { "key": "6", "label": "C++" },
+      { "key": "7", "label": "HTML/CSS" }
+    ],
+    "statusList": [
+      { "key": "1", "label": "Available" },
+      { "key": "2", "label": "Unavailable" }
+    ],
+    "professionalLevelList": [
+      { "key": "1", "label": "Beginner" },
+      { "key": "2", "label": "Intermediate" },
+      { "key": "3", "label": "Advanced" },
+      { "key": "4", "label": "Expert" }
+    ],
+    "contributionTypeList": [
+      { "key": "1", "label": "Trainer" },
+      { "key": "2", "label": "Mentor" },
+      { "key": "3", "label": "Evaluator" }
+    ],
+    "trainTheTrainerCertificateList": [
+      { "key": "1", "label": "None" },
+      { "key": "2", "label": "Basic" },
+      { "key": "3", "label": "Advance" }
+    ]
+  }
+  

@@ -1,0 +1,246 @@
+.span {
+    text-decoration: underline;
+}
+
+.trainer {
+    display: flex;
+    padding-left: 10px;
+}
+
+.trainer-1 {
+    display: flex;
+    gap: 10px;
+}
+
+.trainername-1 {
+    width: 25%;
+}
+
+.trainername-2 {
+    width: 34%;
+}
+
+.trainername-3 {
+    width: 34%;
+}
+
+.module-2 {
+    gap: 20px;
+}
+
+.module-1 {
+    gap: 20px;
+    padding-bottom: 10px;
+}
+
+.tracker-by {
+    width: 50%;
+}
+
+.text {
+    font-weight: bold;
+}
+
+.filters {
+    gap: 5px;
+}
+
+
+.schedule-tracker-container {
+    padding: 20px;
+}
+
+.text {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+.classname {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    display: flex;
+    gap: 10px;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    gap: 15px;
+}
+
+.select {
+    width: 200px;
+}
+
+.d-flex {
+    display: flex;
+
+}
+
+.col-4 {
+    width: 32%;
+}
+
+.col-6 {
+    width: 48%;
+    display: flex;
+    gap: 15px;
+}
+
+.col-2 {
+    width: 100px;
+}
+
+.filter-button {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+    .classname {
+        flex-direction: column;
+    }
+
+    .filters {
+        flex-direction: column;
+    }
+
+    .d-flex {
+        flex-direction: column;
+    }
+
+    .col-4,
+    .col-6,
+    .col-2 {
+        width: 100%;
+    }
+}
+
+.choose-select {
+    width: 150px;
+
+    font-size: 14px;
+}
+
+.search1 {
+    gap: 5px;
+
+}
+
+.select-option {
+    max-width: 100%;
+    padding-right: 5px;
+    font-size: 14px;
+    font-weight: 400;
+
+}
+
+.button {
+    background: none;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button:hover {
+    background-color: red;
+    color: unset;
+}
+
+
+
+.search-icon {
+    font-size: 18px;
+    color: #888;
+    size: 35px;
+}
+
+.icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    width: 32px;
+    height: 32px;
+}
+
+.icon-filter {
+    width: 32px;
+    height: 32px;
+    font-size: 25px;
+    color: #333;
+
+}
+
+
+.search {
+    height: 32px;
+    width: 100%;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table thead th {
+    background-color: #f3f3f3;
+    color: #333;
+    font-weight: bold;
+    text-align: left;
+    padding: 10px;
+}
+
+table tbody td {
+    padding: 10px;
+    text-align: left;
+
+}
+
+table tbody tr:nth-child(odd) {
+    background-color: #fff;
+
+}
+
+table tr {
+    border-bottom: 1px solid #ddd;
+
+}
+
+table th,
+table td {
+    border-right: 1px solid #ddd;
+
+}
+
+table th:last-child,
+table td:last-child {
+    border-right: none;
+}
+
+table {
+    border: 1px solid #ddd;
+}
+
+.table-header {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 100px;
+}
+
+.table-body {
+    white-space: nowrap;
+    overflow: hidden;
+    min-width: 100px;
+    text-align: center;
+}
