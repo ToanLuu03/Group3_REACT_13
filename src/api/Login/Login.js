@@ -6,6 +6,7 @@ export const login = async (username, password) => {
             username,
             password
         });
+        localStorage.setItem('username', response.data.username);
         localStorage.setItem('token', response.data.accessToken);
         return response.data.roles;
     } catch (error) {

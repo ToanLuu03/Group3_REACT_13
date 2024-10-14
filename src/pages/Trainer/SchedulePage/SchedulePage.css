@@ -1,28 +1,32 @@
 .calendar-container-trainer {
     display: flex;
     justify-content: space-between;
-    padding: 5px;
     height: calc(100vh - 280px);
 }
 
-.left-calendar-trainer {
+.left-calendar-trainer .ant-picker-calendar {
     flex: 1;
-    max-width: 300px;
-    border-right: 1px solid #e8e8e8;
-    padding-right: 20px;
+    max-width: 250px;
+    padding: 20px;
+    background-color: #e8e8e8;
+}
+
+.left-calendar-trainer .ant-picker-panel {
+    background-color: #e8e8e8;
 }
 
 .right-calendar-trainer {
+    margin-left: 5px;
     flex: 1;
     overflow-y: hidden;
     height: calc(100vh - 200px);
 }
 
-.fc-scroller {
+.right-calendar-trainer .fc-scroller {
     overflow-y: auto;
 }
 
-.fc-timegrid {
+.right-calendar-trainer .fc-timegrid {
     overflow: hidden;
 }
 
@@ -36,7 +40,7 @@
     text-align: center;
 }
 
-.fc-event-title {
+.right-calendar-trainer .fc-event-title {
     height: 100%;
     width: 100%;
     background-color: #e8e8e8;
@@ -46,14 +50,18 @@
     text-align: center;
 }
 
-.fc-event {
+.right-calendar-trainer .fc-event {
     background-color: #e8e8e8;
     border: none;
 }
 
-.fc-scrollgrid-sync-inner a {
+.right-calendar-trainer .fc-scrollgrid-sync-inner a {
     text-decoration: none;
     color: black;
+}
+
+.right-calendar-trainer .fc-timegrid-slot-minor {
+    border-top-style: solid;
 }
 
 .event-fresher {

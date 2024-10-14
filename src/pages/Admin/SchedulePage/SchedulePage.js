@@ -1,164 +1,221 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import {
-    Button,
-    Popover,
-} from "antd";
+import { notification, Popover, Spin } from "antd";
 import dayjs from "dayjs";
 import "./SchedulePage.css";
 import LeftCalendar from "../../../components/Trainer/Schedule/LeftCalendar/LeftCalendar";
-import CreateNewEvent from "../../../components/Trainer/Schedule/EventModal/EventModal";
+import { useDispatch, useSelector } from "react-redux";
+import { getScheduleDetailRequest, getScheduleRequest } from "../../../features/schedule/actions";
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import { BankOutlined, DeleteOutlined, EditOutlined, FieldTimeOutlined, UserOutlined } from "@ant-design/icons";
+import EventModal from "../../../components/Admin/Schedule/EventModal/EventModal";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const SchedulePage = () => {
-
-    const [events, setEvents] = useState([]);
-
-    const [apiData, setApiData] = useState([
-        {
-            id: 1,
-            date: new Date("2024-10-09T08:00:00Z").toISOString(),
-            attendeeType: "Fresher",
-            startTime: new Date("2024-10-09T08:00:00Z").toISOString(),
-            endTime: new Date("2024-10-09T12:00:00Z").toISOString(),
-            isDeleted: false,
-            topic: { topicId: 1, topicName: "Redux-Saga" },
-            moduleId: 3
-        },
-        {
-            id: 2,
-            date: new Date("2024-10-10T12:30:00Z").toISOString(),
-            attendeeType: "Intern",
-            startTime: new Date("2024-10-10T08:30:00Z").toISOString(),
-            endTime: new Date("2024-10-10T13:00:00Z").toISOString(),
-            isDeleted: false,
-            topic: { topicId: 1, topicName: "Introduction" },
-            moduleId: 6
-        },
-        {
-            id: 3,
-            date: new Date("2024-10-11T08:00:00Z").toISOString(),
-            attendeeType: "free_time",
-            startTime: new Date("2024-10-11T08:00:00Z").toISOString(),
-            endTime: new Date("2024-10-11T12:00:00Z").toISOString(),
-            isDeleted: false,
-            topic: { topicId: 1, topicName: "Free time" },
-            moduleId: 0
-        },
-        {
-            id: 4,
-            date: new Date("2024-10-15T12:30:00Z").toISOString(),
-            attendeeType: "Intern",
-            startTime: new Date("2024-10-15T12:30:00Z").toISOString(),
-            endTime: new Date("2024-10-15T15:00:00Z").toISOString(),
-            isDeleted: false,
-            topic: { topicId: 1, topicName: "Introduction" },
-            moduleId: 6
-        },
-    ]);
-
-
-    const scheduleData = [
-        {
-            id: 6,
-            createdBy: "admin",
-            location: "FPT Building, HN",
-            admin: "John Doe"
-        },
-        {
-            id: 3,
-            createdBy: "admin",
-            location: "FPT Building, HN",
-            admin: "John Doe"
-        }
-
-    ];
+    const dispatch = useDispatch();
+    const schedule = useSelector(state => state.schedule.schedule);
+    const scheduleDetail = useSelector(state => state.scheduleDetail.scheduleDetail);
 
     const [visiblePopover, setVisiblePopover] = useState({});
     const calendarRef = useRef(null);
+    const [currentDate, setCurrentDate] = useState(dayjs());
+    const [loading, setLoading] = useState(true);
+    const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+    const [eventDates, setEventDates] = useState(null);
     const [isRecurring, setIsRecurring] = useState(false);
+    const [selectedLocation, setSelectedLocation] = useState("");
     const [recurrenceWeeks, setRecurrenceWeeks] = useState(1);
     const [selectedDays, setSelectedDays] = useState([]);
-    const [isFreeTimeModalVisible, setIsFreeTimeModalVisible] = useState(false);
-    const [newEventDates, setNewEventDates] = useState(null);
-    const [currentDate, setCurrentDate] = useState(dayjs());
-    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [editingEvent, setEditingEvent] = useState(null);
 
-    const handleTodayClick = () => {
-        setCurrentDate(dayjs());
-        calendarRef.current.getApi().today();
+    const dayOfWeekMap = {
+        'monday': 1, 'tuesday': 2, 'wednesday': 3,
+        'thursday': 4, 'friday': 5, 'saturday': 6, 'sunday': 0,
     };
 
     useEffect(() => {
-        const formattedEvents = apiData.map((event) => {
-            const scheduleInfo = scheduleData.find((item) => item.id === event.moduleId) || {};
-            return {
-                id: event.id.toString(),
-                title: event.topic.topicName,
-                start: event.startTime,
-                end: event.endTime,
-                room: scheduleInfo.location || "",
-                admin: scheduleInfo.admin || "",
-                type: event.attendeeType.toLowerCase(),
-            };
-        });
-        setEvents(formattedEvents);
-    }, [apiData, scheduleData]);
+        dispatch(getScheduleRequest('VinhNT37_test'));
+    }, [dispatch]);
 
-    const handlePopoverVisibleChange = (visible, eventId) => {
-        setVisiblePopover((prev) => ({ ...prev, [eventId]: visible }));
-    };
+    useEffect(() => {
+        if (schedule && Array.isArray(schedule)) {
+            const dayParamIds = schedule.reduce((ids, item) => {
+                item.dayParam.forEach(param => ids.push(param.id));
+                return ids;
+            }, []);
 
-    const handleNewEventSave = () => {
-        if (newEventDates && newEventDates[0] && newEventDates[1]) {
-            const newEvent = {
-                id: (apiData.length + 1).toString(),
-                date: newEventDates[0].toISOString(),
-                attendeeType: "free_time",
-                startTime: newEventDates[0].toISOString(),
-                endTime: newEventDates[1].toISOString(),
-                isDeleted: false,
-                topic: {
-                    topicId: apiData.length + 1,
-                    topicName: "Free time",
-                },
-                moduleId: 0
-            };
-
-            setApiData((prevApiData) => [...prevApiData, newEvent]);
-
-            setIsFreeTimeModalVisible(false);
-            setNewEventDates(null);
-            setSelectedEvent(null);
-            setIsRecurring(false);
-            setRecurrenceWeeks(1);
-            setSelectedDays([]);
-
-            const calendarApi = calendarRef.current.getApi();
-            calendarApi.gotoDate(dayjs(newEventDates[0]).format("YYYY-MM-DD")); // Navigate to the exact date
-        } else {
-            alert("Please select valid start and end dates for the event.");
+            if (dayParamIds.length > 0) {
+                dispatch(getScheduleDetailRequest(dayParamIds));
+            }
         }
-    };
+    }, [dispatch, schedule]);
 
-    const deleteEvent = (eventId) => {
-        const updatedApiData = apiData.filter(event => event.id !== parseInt(eventId, 10));
-        setApiData(updatedApiData);
-        setEvents(updatedApiData);
-        setVisiblePopover((prev) => ({ ...prev, [eventId]: false }));
-    };
+    useEffect(() => {
+        if (schedule && scheduleDetail) {
+            setTimeout(() => {
+                setLoading(false);
+            }, 2000);
+        }
+    }, [schedule, scheduleDetail]);
 
-    const handleSelect = (selectInfo) => {
-        setNewEventDates([dayjs(selectInfo.start), dayjs(selectInfo.end)]);
-        setIsFreeTimeModalVisible(true);
-        setSelectedEvent(null);
-    };
+    const detailMap = useMemo(() => {
+        const map = {};
+        if (Array.isArray(scheduleDetail)) {
+            scheduleDetail.flat().forEach(detail => {
+                map[detail.id] = detail;
+            });
+        }
+        return map;
+    }, [scheduleDetail]);
 
+    const formattedEvents = useMemo(() => {
+        const events = [];
+
+        if (!Array.isArray(schedule)) return events;
+
+        schedule.forEach(eventItem => {
+            if (eventItem.deleted) return;
+
+            const topicName = eventItem.topic.topicName;
+            const attendeeType = eventItem.attendeeType.toLowerCase();
+            const startOfCurrentWeek = dayjs(eventItem.startDate);
+            const startOfNextWeek = startOfCurrentWeek.add(1, 'week');
+
+            const capitalizeFirstLetter = (string) => {
+                return string.charAt(0).toUpperCase() + string.slice(1);
+            };
+
+            eventItem.dayParam.forEach(dayParam => {
+                const roomDetail = detailMap[dayParam.id];
+                const room = roomDetail && roomDetail.location ? roomDetail.location : 'Unknown Location';
+                const admin = roomDetail ? roomDetail.admin : '';
+
+                Object.keys(dayOfWeekMap).forEach(day => {
+                    const dayNumber = dayOfWeekMap[day.toLowerCase()];
+                    const currentWeekEventDate = startOfCurrentWeek.day(dayNumber);
+
+                    const startTime = dayParam[`start${capitalizeFirstLetter(day)}`];
+                    const endTime = dayParam[`end${capitalizeFirstLetter(day)}`];
+
+                    if (startTime && endTime) {
+                        const [startHour, startMinute] = startTime.split(':').map(Number);
+                        const [endHour, endMinute] = endTime.split(':').map(Number);
+
+                        const startDateTime = dayjs(currentWeekEventDate).hour(startHour).minute(startMinute).second(0).tz().format();
+                        const endDateTime = dayjs(currentWeekEventDate).hour(endHour).minute(endMinute).second(0).tz().format();
+
+                        events.push({
+                            id: `${eventItem.id}-${day}-${dayParam.id}-currenWeek`,
+                            title: topicName,
+                            start: startDateTime,
+                            end: endDateTime,
+                            room,
+                            admin,
+                            type: attendeeType
+                        });
+                    }
+                });
+
+                const selectedDays = dayParam.selectedDayOfWeek.split(',').map(day => day.trim().toLowerCase());
+                selectedDays.forEach(day => {
+                    const dayNumber = dayOfWeekMap[day.toLowerCase()];
+                    if (dayNumber !== undefined) {
+                        const nextWeekEventDate = startOfNextWeek.day(dayNumber);
+
+                        const startTime = dayParam[`start${capitalizeFirstLetter(day)}`];
+                        const endTime = dayParam[`end${capitalizeFirstLetter(day)}`];
+
+                        if (startTime && endTime) {
+                            const [startHour, startMinute] = startTime.split(':').map(Number);
+                            const [endHour, endMinute] = endTime.split(':').map(Number);
+
+                            const startDateTime = dayjs(nextWeekEventDate).hour(startHour).minute(startMinute).second(0).tz().format();
+                            const endDateTime = dayjs(nextWeekEventDate).hour(endHour).minute(endMinute).second(0).tz().format();
+
+                            events.push({
+                                id: `${eventItem.id}-${day}-${dayParam.id}-nextweek`,
+                                title: topicName,
+                                start: startDateTime,
+                                end: endDateTime,
+                                room,
+                                admin,
+                                type: attendeeType
+                            });
+                        }
+                    }
+                });
+            });
+        });
+
+        return events;
+    }, [schedule, detailMap]);
+
+    const openNotificationWithIcon = useCallback((type, message, description) => {
+        notification[type]({
+            message: message,
+            description: description,
+            placement: "topRight",
+        });
+    }, []);
+
+    const handleTodayClick = useCallback(() => {
+        setCurrentDate(dayjs());
+        calendarRef.current.getApi().today();
+    }, []);
+
+    const handlePopoverVisibleChange = useCallback((visible, eventId) => {
+        setVisiblePopover((prev) => ({ ...prev, [eventId]: visible }));
+    }, []);
+
+    const { postFreeTimeSuccess, error } = useSelector(state => state.schedule);
+
+    useEffect(() => {
+        if (postFreeTimeSuccess) {
+            openNotificationWithIcon("success", "Free Time Registered", "You have successfully registered free time!");
+        }
+        if (error) {
+            openNotificationWithIcon("error", "Registration Failed", "Failed to register free time. Please try again.");
+        }
+    }, [postFreeTimeSuccess, error, openNotificationWithIcon]);
+
+    const handleSelect = useCallback((selectInfo) => {
+        const selectedDay = dayjs(selectInfo.start).format('dddd').toLowerCase();
+
+        setIsRecurring(false);
+        setSelectedLocation('');
+        setSelectedDays([dayOfWeekMap[selectedDay]]);
+        setEventDates([dayjs(selectInfo.start), dayjs(selectInfo.end)]);
+        setIsCreateModalVisible(true);
+    }, []);
+
+
+    useEffect(() => {
+        if (editingEvent) {
+            setEventDates([dayjs(editingEvent.start), dayjs(editingEvent.end)]);
+            setSelectedLocation(editingEvent.extendedProps.room || '');
+
+            const dayOfWeekString = editingEvent.id || '';
+            const daysArray = dayOfWeekString.split('-')[1].toLowerCase();
+            setSelectedDays([dayOfWeekMap[daysArray]]);
+        }
+    }, [editingEvent]);
+
+    if (loading) {
+        return (
+            <div className="spinner-container">
+                <Spin size="large" />
+            </div>
+        );
+    }
     return (
-        <div className="calendar-container">
-            <div className="left-calendar">
+        <div className="calendar-container-admin">
+            <div className="left-calendar-admin">
                 <LeftCalendar
                     currentDate={currentDate}
                     setCurrentDate={setCurrentDate}
@@ -166,61 +223,58 @@ const SchedulePage = () => {
                 />
             </div>
 
-            <div className="right-calendar">
+            <div className="right-calendar-admin">
                 <FullCalendar
-                    key={events.length}
                     ref={calendarRef}
                     plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                     initialView="timeGridWeek"
-                    events={events}
+                    timeZone="local"
+                    events={formattedEvents}
                     eventContent={(arg) => {
-                        const { room, admin, type } = arg.event.extendedProps;
-                        const formattedTime = `${dayjs(arg.event.start).format("hh:mm A")} - ${dayjs(arg.event.end).format("hh:mm A")}`;
+                        const { type, room, admin } = arg.event.extendedProps;
+                        const eventClass = `fc-event-title event-${type}`;
 
                         return (
                             <Popover
-                                content={
-                                    <div>
-                                        <p><strong>Location:</strong> {room}</p>
-                                        <p><strong>Admin:</strong> {admin}</p>
-                                        <p><strong>Time:</strong> {formattedTime}</p>
-                                        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
-                                            <Button
-                                                type="text"
-                                                icon={<i className="fas fa-edit"></i>}
+                                content={() => (
+                                    <div className="popover-content">
+                                        <p className="popover-detail"><strong><BankOutlined /> Location:</strong> {room}</p>
+                                        <p className="popover-detail"><strong><UserOutlined /> Admin:</strong> {admin}</p>
+                                        <p className="popover-detail"><strong><FieldTimeOutlined /> Time:</strong> {dayjs(arg.event.start).format("hh:mm A")} - {dayjs(arg.event.end).format("hh:mm A")}</p>
+                                        <div className="popover-actions">
+                                            <button
+                                                className="popover-button edit-button"
                                                 onClick={() => {
+                                                    setEditingEvent(arg.event);
+                                                    setEventDates([dayjs(arg.event.start), dayjs(arg.event.end)]);
+                                                    setSelectedLocation(arg.event.extendedProps.room);
+                                                    setSelectedDays([dayjs(arg.event.start).format('dddd')]);
+                                                    setIsCreateModalVisible(true);
                                                     setVisiblePopover((prev) => ({ ...prev, [arg.event.id]: false }));
-                                                    setSelectedEvent(arg.event);
-                                                    setNewEventDates([dayjs(arg.event.start), dayjs(arg.event.end)]);
-                                                    setIsFreeTimeModalVisible(true);
+                                                    setIsRecurring(false);
                                                 }}
                                             >
-                                                Edit
-                                            </Button>
-                                            <Button
-                                                type="text"
-                                                danger
-                                                icon={<i className="fas fa-trash-alt"></i>}
-                                                onClick={() => deleteEvent(arg.event.id)}
-                                            >
-                                                Remove
-                                            </Button>
+                                                <EditOutlined className="button-icon" /> Edit
+                                            </button>
+                                            <button className="popover-button delete-button">
+                                                <DeleteOutlined className="button-icon" /> Remove
+                                            </button>
                                         </div>
                                     </div>
-                                }
-                                title={arg.event.title}
+                                )}
+                                title={<span className={`event-title event-title-${type}`}>{arg.event.title}</span>}
                                 trigger="click"
                                 open={visiblePopover[arg.event.id] || false}
                                 onOpenChange={(visible) => handlePopoverVisibleChange(visible, arg.event.id)}
-                                getPopupContainer={() => document.body}
+                                placement="top"
+                                overlayStyle={{ position: "fixed" }}
                             >
-                                <div className={`fc-event-title event-${type}`}>
+                                <div className={eventClass}>
                                     {arg.event.title}
                                 </div>
                             </Popover>
                         );
                     }}
-
                     headerToolbar={{
                         left: "today",
                         center: "title",
@@ -236,30 +290,34 @@ const SchedulePage = () => {
                     slotDuration="00:30:00"
                     slotMinTime="00:00:00"
                     slotMaxTime="24:00:00"
-                    contentHeight="500px"
+                    contentHeight="490px"
                     scrollTime="08:00:00"
                     slotEventOverlap={false}
                     selectable={true}
                     select={handleSelect}
                 />
-
             </div>
-
-            <CreateNewEvent
-                isModalVisible={isFreeTimeModalVisible}
-                onCancel={() => setIsFreeTimeModalVisible(false)}
-                onSave={handleNewEventSave}
-                newEventDates={newEventDates}
-                setNewEventDates={setNewEventDates}
+            <EventModal
+                isVisible={isCreateModalVisible}
+                onCancel={() => {
+                    setIsCreateModalVisible(false);
+                    setEditingEvent(null);
+                }}
+                onSave={() => {
+                    setIsCreateModalVisible(false);
+                }}
+                eventDates={eventDates}
+                setEventDates={setEventDates}
                 isRecurring={isRecurring}
                 setIsRecurring={setIsRecurring}
-                recurrenceWeeks={recurrenceWeeks}
-                setRecurrenceWeeks={setRecurrenceWeeks}
+                selectedLocation={selectedLocation}
+                setSelectedLocation={setSelectedLocation}
                 selectedDays={selectedDays}
                 setSelectedDays={setSelectedDays}
-                isEditing={!!selectedEvent}
+                recurrenceWeeks={recurrenceWeeks}
+                setRecurrenceWeeks={setRecurrenceWeeks}
+                isEditing={!!editingEvent}
             />
-
         </div>
     );
 };

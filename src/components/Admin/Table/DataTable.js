@@ -1,8 +1,10 @@
 import React from 'react';
 import moment from 'moment';
 
+import './DataTable';
+
+
 const DataTable = ({ data }) => {
-    // Define an array for the table header and the keys of the data
     const tableHeaders = [
         { label: 'Schedule', key: 'className' },
         { label: 'Topic', key: 'moduleName' },
@@ -18,7 +20,7 @@ const DataTable = ({ data }) => {
     ];
 
     return (
-        <table border="1" cellPadding="10" cellSpacing="0">
+        <table border="1" cellPadding="10" cellSpacing="0" style={{width:'130%'}} >
             <thead>
                 <tr>
                     {tableHeaders.map((header, index) => (

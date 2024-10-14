@@ -1,33 +1,33 @@
-.fc-timegrid-slot {
-    box-sizing: border-box;
-}
-
-.calendar-container {
+.calendar-container-admin {
     display: flex;
     justify-content: space-between;
-    padding: 5px;
-    height: calc(100vh - 280px);
+    /* padding: 5px; */
+    height: calc(100vh - 230px);
 }
 
-.left-calendar {
+.left-calendar-admin .ant-picker-calendar {
     flex: 1;
-    max-width: 300px;
-    border-right: 1px solid #e8e8e8;
-    padding-right: 20px;
+    max-width: 250px;
+    padding: 20px;
+    background-color: #e8e8e8;
 }
 
-.right-calendar {
+.left-calendar-admin .ant-picker-panel {
+    background-color: #e8e8e8;
+}
+
+.right-calendar-admin {
+    margin-left: 5px;
     flex: 1;
     overflow-y: hidden;
-    height: calc(100vh - 170px);
+    height: calc(100vh - 160px);
 }
 
-.fc-scroller {
+.right-calendar-admin .fc-scroller {
     overflow-y: auto;
-    max-height: 500px;
 }
 
-.fc-timegrid {
+.right-calendar-admin .fc-timegrid {
     overflow: hidden;
 }
 
@@ -41,7 +41,7 @@
     text-align: center;
 }
 
-.fc-event-title {
+.right-calendar-admin .fc-event-title {
     height: 100%;
     width: 100%;
     background-color: #e8e8e8;
@@ -51,14 +51,18 @@
     text-align: center;
 }
 
-.fc-event {
+.right-calendar-admin .fc-event {
     background-color: #e8e8e8;
     border: none;
 }
 
-.fc-scrollgrid-sync-inner a {
+.right-calendar-admin .fc-scrollgrid-sync-inner a {
     text-decoration: none;
     color: black;
+}
+
+.right-calendar-admin .fc-timegrid-slot-minor {
+    border-top-style: solid;
 }
 
 .event-fresher {
@@ -73,18 +77,53 @@
     background-color: #509ADF75 !important;
 }
 
-.fc-timegrid-slot {
-    border: 1px solid #ddd !important;
+.event-title {
+    font-weight: bold;
 }
 
-.fc-timegrid-slot-lane {
-    border-right: 1px solid #ddd !important;
+.event-title-fresher {
+    color: orange !important;
 }
 
-.fc-col-header-cell {
-    border-bottom: 1px solid #ddd !important;
+.event-title-intern {
+    color: green !important;
 }
 
-.fc-daygrid-day {
-    border: 1px solid #ddd !important;
+.event-title-free_time {
+    color: #509ADF75 !important;
+}
+
+.popover-content {
+    padding: 10px;
+}
+
+.popover-detail {
+    margin-bottom: 8px;
+}
+
+.popover-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    border-top: 1px solid #000;
+}
+
+.popover-button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 14px;
+}
+
+.edit-button {
+    color: #4caf50;
+}
+
+.delete-button {
+    color: #f44336;
+}
+
+.button-icon {
+    margin-right: 4px;
 }

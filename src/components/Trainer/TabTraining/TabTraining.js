@@ -3,7 +3,7 @@ import { Select, DatePicker, Table, Input } from 'antd';
 import './TabTraining.css';
 import { Modal, Button } from 'antd';
 import ReportModal from './ReportModal'; // Import the new ReportModal componeqsqs
-import { fetchClasses, createReport } from '../../../api/TrainerAPI/Report_api'; // Import createReport
+import { fetchClasses, createReport } from '../../../api/AdminAPI/Report_api'; // Import createReport
 
 const { Option } = Select;
 
@@ -224,8 +224,10 @@ const TabTraining = () => {
 
     const filteredDataSource = dataSource.filter(item =>
         item.topicName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.className.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.moduleName.toLowerCase().includes(searchTerm.toLowerCase())
+        // Ensure these fields exist in your dataSource
+        item.contentName.toLowerCase().includes(searchTerm.toLowerCase()) || // Changed from className to contentName
+        item.deliveryType.toLowerCase().includes(searchTerm.toLowerCase()) || // Added deliveryType for search
+        item.trainingFormat.toLowerCase().includes(searchTerm.toLowerCase()) // Added trainingFormat for search
     );
 
     const isClassSelected = !!selectedClass;

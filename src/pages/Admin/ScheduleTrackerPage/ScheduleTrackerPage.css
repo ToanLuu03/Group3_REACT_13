@@ -2,11 +2,6 @@
     text-decoration: underline;
 }
 
-.trainer {
-    display: flex;
-    padding-left: 10px;
-}
-
 .trainer-1 {
     display: flex;
     gap: 10px;
@@ -24,7 +19,9 @@
     width: 34%;
 }
 
+.module-1,
 .module-2 {
+    display: flex;
     gap: 20px;
 }
 
@@ -33,35 +30,16 @@
     padding-bottom: 10px;
 }
 
-.tracker-by {
+.tracker-body {
     width: 50%;
-}
-
-.text {
-    font-weight: bold;
-}
-
-.filters {
-    gap: 5px;
-}
-
-
-.schedule-tracker-container {
-    padding: 20px;
+    display: flex;
+    gap: 6px;
 }
 
 .text {
     font-weight: 600;
     font-size: 14px;
     color: #333;
-}
-
-.classname {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-    display: flex;
-    gap: 10px;
 }
 
 .filters {
@@ -71,13 +49,13 @@
     gap: 15px;
 }
 
-.select {
-    width: 200px;
+.schedule-tracker-container {
+    padding: 20px;
 }
+
 
 .d-flex {
     display: flex;
-
 }
 
 .col-4 {
@@ -100,35 +78,14 @@
     margin-top: 15px;
 }
 
-@media (max-width: 768px) {
-    .classname {
-        flex-direction: column;
-    }
-
-    .filters {
-        flex-direction: column;
-    }
-
-    .d-flex {
-        flex-direction: column;
-    }
-
-    .col-4,
-    .col-6,
-    .col-2 {
-        width: 100%;
-    }
-}
-
 .choose-select {
     width: 150px;
-
     font-size: 14px;
 }
 
 .search1 {
+    display: flex;
     gap: 5px;
-
 }
 
 .select-option {
@@ -136,7 +93,6 @@
     padding-right: 5px;
     font-size: 14px;
     font-weight: 400;
-
 }
 
 .button {
@@ -151,8 +107,6 @@
     background-color: red;
     color: unset;
 }
-
-
 
 .search-icon {
     font-size: 18px;
@@ -176,71 +130,11 @@
     height: 32px;
     font-size: 25px;
     color: #333;
-
 }
-
 
 .search {
     height: 32px;
     width: 100%;
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-table thead th {
-    background-color: #f3f3f3;
-    color: #333;
-    font-weight: bold;
-    text-align: left;
-    padding: 10px;
-}
-
-table tbody td {
-    padding: 10px;
-    text-align: left;
-
-}
-
-table tbody tr:nth-child(odd) {
-    background-color: #fff;
-
-}
-
-table tr {
-    border-bottom: 1px solid #ddd;
-
-}
-
-table th,
-table td {
-    border-right: 1px solid #ddd;
-
-}
-
-table th:last-child,
-table td:last-child {
-    border-right: none;
-}
-
-table {
-    border: 1px solid #ddd;
-}
-
-.table-header {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 100px;
-}
-
-.table-body {
-    white-space: nowrap;
-    overflow: hidden;
-    min-width: 100px;
-    text-align: center;
 }

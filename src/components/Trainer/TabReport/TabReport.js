@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Table, DatePicker, Select, message, Input } from 'antd';
 import axios from 'axios';
-import { fetchReport } from '../../../api/TrainerAPI/Report_api'; // Adjust the import based on your file structure
+import { fetchReport } from '../../../api/AdminAPI/Report_api'; // Adjust the import based on your file structure
 import './TabReport.css'
+
+
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
@@ -12,12 +14,12 @@ const TabReport = () => {
     const [dataSource, setDataSource] = useState([]); // State for storing fetched report data
     const [classOptions, setClassOptions] = useState([]); // State for class options
     const [moduleOptions, setModuleOptions] = useState([]); // State for module options
+    const [searchText, setSearchText] = useState(''); // State for search text
 
     // Fetch classes and modules from the reports API when the component mounts
     useEffect(() => {
         const fetchClassesAndModules = async () => {
             try {
-                // Fetching report history data
                 const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainers/reports-history', {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`, // Ensure your token is correctly set
@@ -32,7 +34,7 @@ const TabReport = () => {
                         classes.add(JSON.stringify({
                             id: item.classId,
                             name: item.className,
-                        }));
+                        })); 
 
                         modules.add(item.moduleName); // Add module names to Set
                     });
@@ -61,34 +63,45 @@ const TabReport = () => {
     };
 
     const handleDateChange = async (dates) => {
-
-
-        if (!selectedClass || !selectedModule || !dates) {
+        if (!selectedClass || !selectedModule || !dates) { 
             message.error('Please select a class, module, and date range.');
             return;
         }
-        const startDate = dates[0].toISOString(); // Ensure the date is in ISO format
-        const endDate = dates[1].toISOString();
-
+    
+        const startDate = dates[0].startOf('day').toISOString(); // Đảm bảo startDate là đầu ngày
+        const endDate = dates[1].endOf('day').toISOString(); // Đảm bảo endDate là cuối ngày
+    
         try {
-            const response = await fetchReport(selectedClass, selectedModule, startDate, endDate);
+            const response = await fetchReport(); // Gọi API để lấy toàn bộ dữ liệu
+    
             if (response.success) {
-                // Extract the reports from the response
-                const classData = response.data.find(item => item.className === selectedClass && item.moduleName === selectedModule);
-
-                if (classData && classData.reports) {
-                    const formattedData = classData.reports.map(report => ({
-                        key: report.date, // Use unique key for each report
-                        date: new Date(report.date).toLocaleDateString(), // Format date for display
-                        topic: report.topics.map(topic => topic.topicName).join(', '), // Join topics if multiple
-                        deliveryType: report.topics.map(topic => topic.deliveryType || 'N/A').join(', '), // Handle null
-                        trainingFormat: report.topics.map(topic => topic.trainingFormat || 'N/A').join(', '),
-                        duration: report.topics.reduce((total, topic) => total + (topic.duration || 0), 0), // Sum duration
-                        note: report.topics.map(topic => topic.note).join(', '), // Join notes if multiple
-                    }));
-                    setDataSource(formattedData);
+                // Lọc dữ liệu dựa vào class, module và khoảng thời gian
+                const filteredData = response.data.filter(item => {
+                    const isClassMatch = item.className === selectedClass;
+                    const isModuleMatch = item.moduleName === selectedModule;
+                    
+                    // So sánh startDate và endDate của item với ngày đã chọn
+                    const isDateInRange = new Date(item.startDate) <= new Date(endDate) && new Date(item.endDate) >= new Date(startDate);
+    
+                    return isClassMatch && isModuleMatch && isDateInRange;
+                });
+    
+                if (filteredData.length > 0) {
+                    // Xử lý và định dạng lại dữ liệu báo cáo
+                    const formattedData = filteredData.flatMap(item => 
+                        item.reports.map(report => ({
+                            key: report.date,
+                            date: new Date(report.date).toLocaleDateString(),
+                            topic: report.topics.map(topic => topic.topicName).join(', '),
+                            deliveryType: report.topics.map(topic => topic.deliveryType || 'N/A').join(', '),
+                            trainingFormat: report.topics.map(topic => topic.trainingFormat || 'N/A').join(', '),
+                            duration: report.topics.reduce((total, topic) => total + (topic.duration || 0), 0),
+                            note: report.topics.map(topic => topic.note).join(', '),
+                        }))
+                    );
+                    setDataSource(formattedData); // Cập nhật dữ liệu hiển thị
                 } else {
-                    message.error('No reports found for the selected class and module.');
+                    message.error('No reports found for the selected class, module, and date range.');
                 }
             } else {
                 message.error(response.message);
@@ -98,6 +111,15 @@ const TabReport = () => {
             message.error('Failed to fetch report');
         }
     };
+
+    const handleSearchChange = (event) => {
+        setSearchText(event.target.value); // Cập nhật giá trị tìm kiếm
+    };
+
+    // Lọc dữ liệu dựa trên searchText
+    const filteredDataSource = dataSource.filter(item => 
+        item.topic.toLowerCase().includes(searchText.toLowerCase()) // Lọc theo topic
+    );
 
     const columns = [
         {
@@ -176,16 +198,18 @@ const TabReport = () => {
                 <div className="search-input">
                     <strong>Search</strong>
                     <Input
-                        placeholder="Enter class code, class name"
+                        placeholder="Search by topic"
                         style={{ width: 200, marginTop: 4 }}
+                        value={searchText} // Bind giá trị tìm kiếm
+                        onChange={handleSearchChange} // Gọi hàm khi giá trị thay đổi
                     />
                 </div>
             </div>
-            {dataSource.length > 0 ? (
+            {filteredDataSource.length > 0 ? ( // Sử dụng filteredDataSource để hiển thị
                 <>
-                    <Table dataSource={dataSource} columns={columns} pagination={false} />
+                    <Table dataSource={filteredDataSource} columns={columns} pagination={false} />
                     <div style={{ marginTop: 16 }}>
-                        <strong>Duration Total: {dataSource.reduce((total, item) => total + item.duration, 0)} h</strong>
+                        <strong>Duration Total: {filteredDataSource.reduce((total, item) => total + item.duration, 0)} h</strong>
                     </div>
                 </>
             ) : (
@@ -193,7 +217,6 @@ const TabReport = () => {
                     <span style={{ fontSize: '24px', color: '#bfbfbf' }}>No Data</span>
                 </div>
             )}
-
         </div>
     );
 };

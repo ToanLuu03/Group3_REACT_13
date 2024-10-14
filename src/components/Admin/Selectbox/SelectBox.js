@@ -5,10 +5,21 @@ export const SelectBox = ({ options, onChange }) => {
     return (
         <div>
             <Select
+                mode="multiple"
                 options={options}
                 onChange={onChange}
                 className='select-option'
+                maxTagCount={1}
+                maxTagPlaceholder={() => '...'}
                 style={{ width: 400, height: 32 }}
+                tagRender={(props) => {
+                    const { label } = props;
+                    return (
+                        <span className='select-option1'>
+                            {label}
+                        </span>
+                    );
+                }}
             />
         </div>
     );
@@ -26,12 +37,12 @@ export const SelectOption = ({ options, value, onChange, placeholder }) => {
                 className='choose-select'
                 maxTagCount={3}
                 maxTagPlaceholder={() => '...'}
-                style={{ width: 470, height: 32 }}
+                style={{ width: 140, height: 32 }}
                 tagRender={(props) => {
                     const { label } = props;
                     return (
                         <span className='select-option'>
-                            {label} 
+                            {label}
                         </span>
                     );
                 }}

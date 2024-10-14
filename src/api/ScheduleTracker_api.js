@@ -28,25 +28,42 @@ export const fetchDataClass = async () => {
     const URLClass = 'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/admin/schedule-tracker?option=CLASS';
 
     try {
-        const Class = await axios.get(URLClass, {
+        if (!token) {
+            console.warn('Authorization token is not set.');
+            return [];
+        }
+
+        const Classdata = await axios.get(URLClass, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
-        // console.log('API Response:', response);
 
-        if (Class?.data?.data) {
-            const extractedData = extractClassData(Class.data.data);
-            return extractedData;
+        console.log('API Response:', Classdata); // Log the entire response
+
+        // Check if Classdata is structured as expected
+        if (Classdata && Classdata.data) {
+            console.log('Classdata structure:', Classdata.data); // Log the structure of Classdata.data
+            
+            // Check if Classdata.data.data exists and is an array
+            if (Array.isArray(Classdata.data.data)) {
+                const extractedData = extractClassData(Classdata.data.data); // Ensure you pass the correct path
+                return extractedData;
+            } else {
+                console.warn('No data array found in response:', Classdata.data);
+                return [];
+            }
         } else {
-            console.warn('No data found in response:', Class.data);
+            console.warn('No data found in response:', Classdata);
             return [];
         }
     } catch (error) {
-        console.error('Error fetching class data:', error.Class?.data || error.message);
+        // Log the error response if available
+        console.error('Error fetching class data:', error.response?.data || error.message);
         return [];
     }
 };
+
 
 const extractContents = (trainerData) => {
     return trainerData?.data?.flatMap(trainer => {
@@ -62,25 +79,24 @@ const extractContents = (trainerData) => {
                     endDate: moduleItem?.endDate,
                     topicName: content?.topicName,
                     contentName: content?.contentName,
-                    topicId:content?.topicId,
+                    topicId: content?.topicId,
+                    contentIsDone: content?.contentIsDone,
                     contentDeliveryType: content?.contentDeliveryType,
                     contentTrainingFormat: content?.contentTrainingFormat,
                     contentPlannedDate: content?.contentPlannedDate,
                     reportActualDate: content?.reportActualDate,
                     reportDuration: content?.reportDuration,
                     reportNote: content?.reportNote,
-                    reportReason: content?.reportReason
+                    reportReason: content?.reportReason,
                 }));
             }) || [];
         }) || [];
     }) || [];
 };
-
-
 const extractClassData = (classData) => {
     return classData?.flatMap(classItem => {
-        return classItem?.modulesList?.flatMap(moduleItem => {
-            return moduleItem?.contentList?.map(content => ({
+        return classItem?.modules?.flatMap(moduleItem => {
+            return moduleItem?.contents?.map(content => ({
                 trainerId: moduleItem.trainerId,
                 className: classItem.className,
                 classId: classItem.classId,
@@ -91,7 +107,7 @@ const extractClassData = (classData) => {
                 endDate: moduleItem.endDate,
                 topicName: content?.topicName,
                 contentName: content?.contentName,
-                topicId:content?.topicId,
+                topicId: content?.topicId,
                 contentDeliveryType: content?.contentDeliveryType,
                 contentTrainingFormat: content?.contentTrainingFormat,
                 contentPlannedDate: content?.contentPlannedDate,
@@ -104,7 +120,7 @@ const extractClassData = (classData) => {
     }) || [];
 };
 
-// fetchDataCLASS().then(trainerData => {
-//     const extractedContent = extractContents(trainerData);
-//     console.log(extractedContent);
-// });
+fetchDataClass().then(trainerData => {
+    const extractedContent = extractContents(trainerData);
+    console.log(extractedContent);
+});

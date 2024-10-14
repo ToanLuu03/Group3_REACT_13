@@ -1,35 +1,55 @@
-export const FETCH_EVENTS = 'FETCH_EVENTS';
-export const SET_EVENTS = 'SET_EVENTS';
-export const UPDATE_EVENT = 'UPDATE_EVENT'
-export const ADD_EVENT = 'ADD_EVENT';
-export const DELETE_EVENT = 'DELETE_EVENT';
+export const GET_SCHEDULE_REQUEST = "GET_SCHEDULE_REQUEST";
+export const GET_SCHEDULE_SUCCESS = "GET_SCHEDULE_SUCCESS";
+export const GET_SCHEDULE_FAILURE = "GET_SCHEDULE_FAILURE";
 
-export const fetchEvents = () => ({
-    type: FETCH_EVENTS
+export const GET_SCHEDULE_DETAIL_REQUEST = "GET_SCHEDULE_DETAIL_REQUEST";
+export const GET_SCHEDULE_DETAIL_SUCCESS = "GET_SCHEDULE_DETAIL_SUCCESS";
+export const GET_SCHEDULE_DETAIL_FAILURE = "GET_SCHEDULE_DETAIL_FAILURE";
+
+export const POST_FREE_TIME_REQUEST = "POST_FREE_TIME_REQUEST";
+export const POST_FREE_TIME_SUCCESS = "POST_FREE_TIME_SUCCESS";
+export const POST_FREE_TIME_FAILURE = "POST_FREE_TIME_FAILURE";
+
+export const getScheduleRequest = (account) => ({
+    type: GET_SCHEDULE_REQUEST,
+    payload: { account },
 });
 
-export const setEvents = (events) => ({
-    type: SET_EVENTS,
-    events
+export const getScheduleSuccess = (data) => ({
+    type: GET_SCHEDULE_SUCCESS,
+    payload: data,
 });
 
-export const updateEvent = (updatedEvent) => {
-    return {
-        type: UPDATE_EVENT,
-        payload: updatedEvent,
-    };
-};
+export const getScheduleFailure = (error) => ({
+    type: GET_SCHEDULE_FAILURE,
+    payload: error,
+});
 
-export const addEvent = (newEvent) => {
-    return {
-        type: ADD_EVENT,
-        payload: newEvent,
-    };
-};
+export const getScheduleDetailRequest = (slotTimeIds) => ({
+    type: GET_SCHEDULE_DETAIL_REQUEST,
+    payload: { slotTimeIds },
+});
 
-export const deleteEvent = (eventId) => {
-    return {
-        type: DELETE_EVENT,
-        payload: eventId,
-    };
-};
+export const getScheduleDetailSuccess = (data) => ({
+    type: GET_SCHEDULE_DETAIL_SUCCESS,
+    payload: data,
+});
+
+export const getScheduleDetailFailure = (error) => ({
+    type: GET_SCHEDULE_DETAIL_FAILURE,
+    payload: error,
+});
+
+export const postFreeTimeRequest = (data) => ({
+    type: POST_FREE_TIME_REQUEST,
+    payload: data,
+});
+
+export const postFreeTimeSuccess = () => ({
+    type: POST_FREE_TIME_SUCCESS,
+});
+
+export const postFreeTimeFailure = (error) => ({
+    type: POST_FREE_TIME_FAILURE,
+    payload: error,
+});

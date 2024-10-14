@@ -6,6 +6,7 @@ import TrainerUnitPricePage from '../../../pages/Admin/TrainerUnitPricePage/Trai
 import ClassListPages from '../../../pages/Admin/ClassListPages/ClassListPages';
 import SchedulePage from '../../../pages/Admin/SchedulePage/SchedulePage';
 import PortalPage from '../../../pages/Admin/PortalPage/PortalPage';
+import ReportPage from '../../../pages/Admin/ReportPage/ReportPage'
 const { TabPane } = Tabs;
 
 function TagMenu({ titleMenu }) {
@@ -35,7 +36,7 @@ function TagMenu({ titleMenu }) {
                         <SchedulePage />
                     </TabPane>
                     <TabPane tab="Schedule Tracker" key="5">
-                        chưa add
+                        <ReportPage/>
                     </TabPane>
                     <TabPane tab="Portal" key="6">
                         <PortalPage />

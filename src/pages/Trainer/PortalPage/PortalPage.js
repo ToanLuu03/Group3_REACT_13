@@ -52,7 +52,7 @@ const PortalPage = () => {
             label: 'GPA',
             children: (
                 <div className="container-portal">
-                    <div className="portal-page">
+                    <div className="portal-page">   
                         <div className="select-container">
                             <div>
                                 <h4>Select Topics</h4>

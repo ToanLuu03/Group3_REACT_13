@@ -1,12 +1,14 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import { roleReducer } from "../features/role/roleSlice"
 import { portalReducer } from "../features/portal/portalSlice";
-import eventReducer from '../features/schedule/reducers'
 import moduleReducer from '../features/classlist/moduleSlice';
+import scheduleReducer from "../features/schedule/reducer";
+import scheduleDetailReducer from "../features/schedule/scheduleDetailReducer";
 
 export const rootReducer = combineReducers({
   role: roleReducer,
   portal: portalReducer,
-  events: eventReducer,
   module: moduleReducer,
+  schedule: scheduleReducer,
+  scheduleDetail: scheduleDetailReducer,
 });

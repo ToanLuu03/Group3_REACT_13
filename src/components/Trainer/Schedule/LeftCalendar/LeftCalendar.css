@@ -3,16 +3,44 @@
     padding-bottom: 10px;
 }
 
+.calendar-select .ant-select-selector {
+    width: 100%;
+}
+
+.mr-8 {
+    margin-right: 8px;
+}
+
+.header-calendar-left {
+    float: right;
+    padding-bottom: 10px;
+}
+
 .calendar-legend {
     margin-top: 10px;
     font-size: 14px;
 }
 
-.legend-color {
+.legend-item-calendar {
+    display: block;
+}
+
+.legend-color-calendar {
     display: inline-block;
     width: 12px;
     height: 12px;
     margin-right: 8px;
-    vertical-align: middle;
     border-radius: 3px;
+}
+
+.legend-fresher-calendar {
+    background-color: orange;
+}
+
+.legend-intern-calendar {
+    background-color: green;
+}
+
+.legend-free-time-calendar {
+    background-color: #509ADF75;
 }

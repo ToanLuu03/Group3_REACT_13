@@ -8,7 +8,7 @@ function Date() {
     return (
         <div>
             <Space direction="vertical">
-                <DatePicker onChange={onChange} className='choose-select' style={{ width: 470, height: 32 }} />
+                <DatePicker onChange={onChange} className='choose-select' style={{ width: 140, height: 32 }} />
             </Space>
         </div>
     )

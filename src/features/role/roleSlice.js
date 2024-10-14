@@ -15,7 +15,6 @@ const roleSlice = createSlice({
         },
         clearRole: (state) => {
             state.selectedRole = null;
-            console.log("Clearing role"); // Log clearing role
         },
     },
 });

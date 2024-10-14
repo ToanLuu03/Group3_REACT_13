@@ -80,29 +80,29 @@ const GpaChart = ({ selectedTopics, selectedClasses, dateRange }) => {
     }));
 
     // Update pagination total when data changes
-    // useEffect(() => {
-    //     setPagination(p => ({
-    //         ...p,
-    //         total: tableData.length,
-    //     }));
-    // }, [tableData]);
+    useEffect(() => {
+        setPagination(p => ({
+            ...p,
+            total: tableData.length,
+        }));
+    }, [tableData]);
 
-    // // Handle pagination change
-    // const handleTableChange = (pagination) => {
-    //     setPagination(pagination); // update pagination state with current page and pageSize
-    // };
+    // Handle pagination change
+    const handleTableChange = (pagination) => {
+        setPagination(pagination); // update pagination state with current page and pageSize
+    };
 
-    // if (loading) {
-    //     return <div className="loading-state">Loading GPA data...</div>;
-    // }
+    if (loading) {
+        return <div className="loading-state">Loading GPA data...</div>;
+    }
 
-    // if (error) {
-    //     return <div className="error-state">{error}</div>;
-    // }
+    if (error) {
+        return <div className="error-state">{error}</div>;
+    }
 
-    // if (selectedTopics.length === 0 || selectedClasses.length === 0 || !dateRange[0] || !dateRange[1]) {
-    //     return <div className="empty-state-container">Please choose Topics, Classes and Date Range</div>;
-    // }
+    if (selectedTopics.length === 0 || selectedClasses.length === 0 || !dateRange[0] || !dateRange[1]) {
+        return <div className="empty-state-container">Please choose Topics, Classes and Date Range</div>;
+    }
 
     return (
         <div className="chart-container">
@@ -133,7 +133,7 @@ const GpaChart = ({ selectedTopics, selectedClasses, dateRange }) => {
                 <p>GPA Table</p>
             </div>
 
-            {/* <Table
+            <Table
                 columns={columns}
                 dataSource={tableData}
                 pagination={{
@@ -145,7 +145,7 @@ const GpaChart = ({ selectedTopics, selectedClasses, dateRange }) => {
                 }}
                 onChange={handleTableChange} // Handle page change event
                 className="gpa-data-table"
-            /> */}
+            />
         </div>
     );
 };

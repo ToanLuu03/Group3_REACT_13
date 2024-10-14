@@ -1,9 +1,10 @@
 import React from "react";
 import { Modal, Button, DatePicker, Switch, InputNumber, Checkbox } from "antd";
-
+import dayjs from "dayjs";
+import "./EventModal.css";
 const { RangePicker } = DatePicker;
 
-const CreateNewEvent = ({
+const EventModal = ({
     isModalVisible,
     onCancel,
     onSave,
@@ -27,65 +28,64 @@ const CreateNewEvent = ({
                 <Button key="cancel" onClick={onCancel}>
                     Cancel
                 </Button>,
-                <Button key="submit" type="primary" onClick={onSave} style={{ backgroundColor: "#6F4DE7", borderColor: "#6F4DE7" }}>
+                <Button key="submit" type="primary" onClick={onSave} className="save-button-trainer">
                     Save
                 </Button>,
             ]}
         >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className="date-time-picker-container-trainer">
                 <RangePicker
                     showTime
                     format="YYYY-MM-DD HH:mm"
                     value={newEventDates}
                     onChange={(value) => setNewEventDates(value)}
-                    style={{ width: "70%" }}
+                    className="date-picker-trainer"
                 />
-                <div>
-                    <Switch checked={isRecurring} onChange={setIsRecurring} />
-                    <span style={{ marginLeft: 8 }}>Repeat</span>
+                <div className="switch-container-trainer">
+                    <Switch
+                        checked={isRecurring}
+                        onChange={(checked) => {
+                            setIsRecurring(checked);
+                            if (checked) {
+                                if (newEventDates && newEventDates[0]) {
+                                    const startDay = dayjs(newEventDates[0]).day();
+                                    setSelectedDays([startDay]);
+                                }
+                            } else {
+                                setSelectedDays([]);
+                            }
+                        }}
+                    />
+                    <span className="switch-label-trainer">Repeat</span>
                 </div>
             </div>
 
             {isRecurring && (
                 <>
-                    <div style={{ marginTop: "20px" }}>
+                    <div className="recur-container-trainer">
                         <label>Recur every</label>
                         <InputNumber
                             min={1}
                             value={recurrenceWeeks}
                             onChange={setRecurrenceWeeks}
-                            style={{ width: "60px", marginLeft: "10px", marginRight: "10px" }}
+                            className="input-number-trainer"
                         />
                         <span>Week(s) on:</span>
                     </div>
 
                     <Checkbox.Group
                         value={selectedDays}
-                        onChange={setSelectedDays}
-                        style={{ marginTop: "20px" }}
+                        onChange={(checkedValues) => setSelectedDays(checkedValues)}
+                        className="checkbox-container-trainer"
                     >
-                        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between" }}>
-                            <div style={{ width: "45%", marginBottom: "10px" }}>
-                                <Checkbox value="0">Monday</Checkbox>
-                            </div>
-                            <div style={{ width: "45%", marginBottom: "10px" }}>
-                                <Checkbox value="1">Tuesday</Checkbox>
-                            </div>
-                            <div style={{ width: "45%", marginBottom: "10px" }}>
-                                <Checkbox value="2">Wednesday</Checkbox>
-                            </div>
-                            <div style={{ width: "45%", marginBottom: "10px" }}>
-                                <Checkbox value="3">Thursday</Checkbox>
-                            </div>
-                            <div style={{ width: "45%", marginBottom: "10px" }}>
-                                <Checkbox value="4">Friday</Checkbox>
-                            </div>
-                            <div style={{ width: "45%", marginBottom: "10px" }}>
-                                <Checkbox value="5">Saturday</Checkbox>
-                            </div>
-                            <div style={{ width: "45%", marginBottom: "10px" }}>
-                                <Checkbox value="6">Sunday</Checkbox>
-                            </div>
+                        <div className="checkbox-grid-trainer">
+                            <Checkbox value={1}>Monday</Checkbox>
+                            <Checkbox value={2}>Tuesday</Checkbox>
+                            <Checkbox value={3}>Wednesday</Checkbox>
+                            <Checkbox value={4}>Thursday</Checkbox>
+                            <Checkbox value={5}>Friday</Checkbox>
+                            <Checkbox value={6}>Saturday</Checkbox>
+                            <Checkbox value={0}>Sunday</Checkbox>
                         </div>
                     </Checkbox.Group>
                 </>
@@ -94,4 +94,4 @@ const CreateNewEvent = ({
     );
 };
 
-export default CreateNewEvent;
+export default EventModal;

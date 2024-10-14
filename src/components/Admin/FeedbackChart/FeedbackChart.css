@@ -1,0 +1,28 @@
+.chart-container {
+    margin-top: 20px;
+}
+
+.legend-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.legend-item {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.legend-color-box {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+}
+
+.empty-state-container {
+    text-align: center;
+    margin-top: 150px;
+    font-size: 40px;
+    font-style: italic;
+    color: #a3a3a3;
+}
