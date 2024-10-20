@@ -11,7 +11,7 @@ export const SelectBox = ({ options, onChange }) => {
                 className='select-option'
                 maxTagCount={1}
                 maxTagPlaceholder={() => '...'}
-                style={{ width: 400, height: 32 }}
+                style={{ width: 350, height: 32 }}
                 tagRender={(props) => {
                     const { label } = props;
                     return (
@@ -35,7 +35,7 @@ export const SelectOption = ({ options, value, onChange, placeholder }) => {
                 onChange={onChange}
                 placeholder={placeholder}
                 className='choose-select'
-                maxTagCount={3}
+                maxTagCount={1}
                 maxTagPlaceholder={() => '...'}
                 style={{ width: 140, height: 32 }}
                 tagRender={(props) => {

@@ -9,9 +9,10 @@ import RolePage from "../pages/RolePage/RolePage";
 import { useSelector } from "react-redux";
 import ScheduleTracker from "../pages/Admin/ScheduleTrackerPage/ScheduleTrackerPage";
 import ModuleDetailsPage from "../pages/Trainer/ClassListPage/ModuleDetailsPage";
+import ModuleDetailsPageAD from "../pages/Admin/ClassListPages/ModuleDetailsPage";
 import TrainerList from "../pages/Admin/TrainerListPage/TrainerList";
 import TrainerManagementAdmin from "../pages/Admin/TrainerManagementPage/TrainerManagementPage"
-import AddTrainerPage from "../pages/Admin/TrainerListPage/AddTrainerPage";
+import AddTrainerPage from "../pages/Admin/AddTrainerPage/AddTrainerPage";
 
 const PrivateRouteTrainer = ({ children }) => {
   const selectedRole = useSelector((state) => state.role.selectedRole);
@@ -57,7 +58,6 @@ export const router = createBrowserRouter([
         element: <ModuleDetailsPage />,
       },
 
-      
     ],
   },
   {
@@ -86,7 +86,12 @@ export const router = createBrowserRouter([
       {
         path: PATH_NAME.Add_Trainer,
         element: <AddTrainerPage />,
-      }, 
+      },
+      {
+        path: PATH_NAME.MODULE_DETAILS_AD,
+        element: <ModuleDetailsPageAD />,
+      },
+
     ],
   },
   {

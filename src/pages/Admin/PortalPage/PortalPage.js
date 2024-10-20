@@ -97,54 +97,7 @@ const PortalPage = () => {
                 </div>
             )
         },
-        {
-            key: '2',
-            label: 'Feedback',
-            children: (
-                <div className="container-portal">
-                    <div className="select-container">
-                        <div>
-                            <h4>Select Metrics</h4>
-                            <SelectWithCheckboxes
-                                inputStyle={{ width: 250 }}
-                                options={metricsDataStatic}
-                                selectedState={selectedMetrics}
-                                setState={setSelectedMetrics}
-                                placeholder={metricsDataStatic.join(', ')}
-                            />
-                        </div>
-                        <div>
-                            <h4>Select Classes</h4>
-                            <SelectWithCheckboxes
-                                inputStyle={{ width: 250 }}
-                                options={classesDataStatic}
-                                selectedState={selectedFeedbackClasses}
-                                setState={setSelectedFeedbackClasses}
-                                placeholder={classesDataStatic.join(', ')}
-                            />
-                        </div>
-                        <div>
-                            <h4>Select Date Range</h4>
-                            <RangePicker
-                                value={dateRange}
-                                onChange={handleDateRangeChange}
-                                format="YYYY"
-                                picker="year"
-                                placeholder={['Start Year', 'End Year']}
-                            />
-                        </div>
-                    </div>
-
-                    {selectedMetrics.length > 0 && selectedFeedbackClasses.length > 0 && dateRange[0] && dateRange[1] && (
-                        <div className="chart-title">
-                            <p>Feedback Bar Chart</p>
-                        </div>
-                    )}
-
-                    <FeedbackChart selectedMetrics={selectedMetrics} selectedClasses={selectedFeedbackClasses} dateRange={dateRange} />
-                </div>
-            )
-        }
+       
     ];
 
     return (

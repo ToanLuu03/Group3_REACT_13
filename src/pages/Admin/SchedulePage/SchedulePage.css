@@ -1,7 +1,6 @@
 .calendar-container-admin {
     display: flex;
     justify-content: space-between;
-    /* padding: 5px; */
     height: calc(100vh - 230px);
 }
 
@@ -126,4 +125,49 @@
 
 .button-icon {
     margin-right: 4px;
+}
+
+@media (Max-width: 768px) {
+    .left-calendar-admin .ant-picker-calendar {
+        max-width: 190px;
+    }
+
+    .right-calendar-admin {
+        max-width: calc(100vw - 196px);
+    }
+}
+
+@media (Max-width: 512px) {
+
+    .calendar-container-admin {
+        display: block;
+        justify-content: space-between;
+        align-items: center;
+        overflow-y: auto;
+    }
+
+    .calendar-container-admin::-webkit-scrollbar {
+        display: none;
+    }
+
+    .left-calendar-admin .ant-picker-calendar {
+        max-width: 100%;
+    }
+
+    .right-calendar-admin {
+        max-width: 100vh;
+    }
+
+    .right-calendar-admin .fc .fc-toolbar-title {
+        font-size: 0.6rem;
+    }
+
+    .right-calendar-admin .fc-scrollgrid-sync-inner a {
+        font-size: 10px;
+    }
+
+    .fc-direction-ltr .fc-timegrid-slot-label-frame {
+        text-align: center;
+        font-size: 0.6rem;
+    }
 }

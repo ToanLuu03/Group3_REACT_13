@@ -65,7 +65,7 @@ const EventModal = ({
                     <div className="recur-container-trainer">
                         <label>Recur every</label>
                         <InputNumber
-                            min={1}
+                            min={0}
                             value={recurrenceWeeks}
                             onChange={setRecurrenceWeeks}
                             className="input-number-trainer"

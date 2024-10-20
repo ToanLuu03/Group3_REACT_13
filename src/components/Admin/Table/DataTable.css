@@ -4,6 +4,7 @@
     text-align: center;
 
 }
+
 .table-header {
     max-width: auto;
     white-space: nowrap;
@@ -11,4 +12,12 @@
 
 }
 
+.day {
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+}
 
+.date{
+    font-weight: 400;
+}

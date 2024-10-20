@@ -1,39 +1,72 @@
-import React, { useState } from 'react';
-import { Collapse, Table, Typography, Tag, Input, Select, Col } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Collapse, Table, Typography, Tag, Input, Select, Col, Spin } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
-import './ClassListPages';
+import './ClassListPages.css';
+import { fetchModuleInfoStart } from '../../../features/classlist/moduleSlice';
+import { fetchModuleDetail } from '../../../api/AdminAPI/Classlist_api';
 
 const { Panel } = Collapse;
 const { Option } = Select;
 
-function ClassListPages() {
+function ClassList() {
   const [classSearch, setClassSearch] = useState('');
   const [moduleSearch, setModuleSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { moduleInfo, loading, error } = useSelector((state) => state.module);
+
+  useEffect(() => {
+    dispatch(fetchModuleInfoStart());
+  }, [dispatch]);
+
+  console.log(moduleInfo)
+
+  const classList = moduleInfo?.['trainerClassList'] || [];
+
+
+  // Filter data
+  const filteredData = classList
+    .map((classItem) => {
+      const filteredModules = classItem.modules.filter((module) =>
+        module.moduleName.toLowerCase().includes(moduleSearch.toLowerCase()) &&
+        (statusFilter === '' || (module.status && module.status.toLowerCase() === statusFilter.toLowerCase()))
+      );
+
+      return {
+        class: classItem.className,
+        modules: filteredModules,
+      };
+    })
+    .filter((classData) =>
+      classData.class.toLowerCase().includes(classSearch.toLowerCase()) &&
+      classData.modules.length > 0
+    );
 
   const columns = [
     {
-      title: 'No.',
-      dataIndex: 'no',
-      key: 'no',
-    },
-    {
-      title: 'Module',
-      dataIndex: 'name',
-      key: 'name',
+      title: 'Module Name',
+      dataIndex: 'moduleName',
+      key: 'moduleName',
       render: (text, record) => (
         <Link
-          onClick={(e) => {
-            e.preventDefault();
-            navigate(`/trainer/trainer_management/module/${record.id}`, {
-              state: { moduleData: record },
-              className: record.class 
+        onClick={async (e) => {
+          e.preventDefault();
+          try {
+            const moduleDetails = await fetchModuleDetail(record.id); // Fetch module details using the record ID
+            navigate(`/admin/trainer_management/module/info`, {
+             
+              state: { moduleData: moduleDetails.data }, // Pass the fetched module data to the next page
             });
-          }}
-        >
-          {text}
-        </Link>
+          } catch (error) {
+            console.error('Failed to fetch module details:', error);
+          }
+        }}
+      >
+        {text}
+      </Link>
       ),
     },
     {
@@ -51,8 +84,8 @@ function ClassListPages() {
       dataIndex: 'status',
       key: 'status',
       render: (status) => {
+        if (!status) return null; // Handle null status
         let className = '';
-        
         switch (status.toLowerCase()) {
           case 'in progress':
             className = 'status-in-progress';
@@ -74,130 +107,23 @@ function ClassListPages() {
     },
   ];
 
-  // Mock data for classes and modules
-  const data = [
-    {
-      class: "HCM24_React_JS",
-      modules: [
-        {
-          class: "HCM24_React_JS",
-          id: 1,
-          no: 1,
-          name: "React",
-          startDate: "2022-05-15",
-          endDate: "2022-06-20",
-          skill: "Redux, Redux Toolkit",
-          status: "In Progress",
-          contribution: "Lecture, Support",
-          role: "Trainer",
-          note: "",
-        },
-        {
-          
-          class: "HCM24_React_JS",
-          id: 2,
-          no: 2,
-          name: "Node.js",
-          startDate: "2022-06-21",
-          endDate: "2022-07-25",
-          skill: "Backend",
-          status: "Not Started",
-          contribution: "Support",
-          role: "Trainer",
-          note: "Help me",
-        },
-      ],
-    },
-    {
-      class: "HCM24_JAVA_JS",
-      modules: [
-        {
-          class: "HCM24_JAVA_JS",
-          id: 3,
-          no: 1,
-          name: "JavaScript",
-          startDate: "2021-09-01",
-          endDate: "2021-10-15",
-          skill: "Frontend",
-          status: "In Progress",
-          contribution: "Lecture",
-          role: "Trainer",
-          note: "Nice",
-        },
-        {
-          class: "HCM24_.NET",
-          id: 4,
-          no: 2,
-          name: "Java",
-          startDate: "2021-10-16",
-          endDate: "2022-04-18",
-          skill: "Backend",
-          status: "Not Started",
-          contribution: "Lecture, Support",
-          role: "Trainer",
-          note: "",
-        },
-      ],
-    },
-    {
-      class: "HCM24_.NET",
-      modules: [
-        {
-          class: "HCM24_.NET",
-          id: 5,
-          no: 1,
-          name: "C#",
-          startDate: "2023-02-10",
-          endDate: "2023-05-15",
-          skill: "Backend",
-          status: "Closed",
-          contribution: "Lecture",
-          role: "Trainer",
-          note: "",
-        },
-        {
-          id: 6,
-          no: 2,
-          name: "ASP.NET",
-          startDate: "2023-05-16",
-          endDate: "2023-08-22",
-          skill: "Full-stack",
-          status: "In Progress",
-          contribution: "Lecture, Support",
-          role: "Trainer",
-          note: "",
-        },
-      ],
-    },
-  ];
+  if (loading) {
+    return <Spin size="large" />;
+  }
 
-  // Filter the data based on search inputs
-  const filteredData = data
-    .map(classData => {
-      const filteredModules = classData.modules.filter(module =>
-        module.name.toLowerCase().includes(moduleSearch.toLowerCase()) &&
-        (statusFilter === '' || module.status === statusFilter)
-      );
-
-      return {
-        ...classData,
-        modules: filteredModules,
-      };
-    })
-    .filter(classData =>
-      classData.class.toLowerCase().includes(classSearch.toLowerCase()) &&
-      classData.modules.length > 0
-    );
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="layout-container">
-   
-      <div className="search-container">
+      <div className="search-space">
         <Col>
           <Typography.Title level={5}>Class</Typography.Title>
           <Input
             placeholder="Search class"
             onChange={(e) => setClassSearch(e.target.value)}
+            value={classSearch}
             style={{ width: 198, height: 32, marginRight: 16, boxShadow: 'none', border: '1px solid #d9d9d9' }}
           />
         </Col>
@@ -206,6 +132,7 @@ function ClassListPages() {
           <Input
             placeholder="Search module"
             onChange={(e) => setModuleSearch(e.target.value)}
+            value={moduleSearch}
             style={{ width: 198, height: 32, marginRight: 16, boxShadow: 'none', border: '1px solid #d9d9d9' }}
           />
         </Col>
@@ -214,7 +141,7 @@ function ClassListPages() {
           <Select
             placeholder="Select status"
             onChange={(value) => setStatusFilter(value)}
-            style={{ width: 148 }}
+            style={{ width: 200 }}
           >
             <Option value="In Progress">
               <div className="option-content">
@@ -240,23 +167,27 @@ function ClassListPages() {
         </Col>
       </div>
 
-      {filteredData.map((classData, index) => (
-        <Collapse
-          className="custom-collapse"
-          expandIconPosition="end"
-          key={index}
-        >
-          <Panel className="custom-panel" header={<span className="panel-header">{classData.class}</span>}>
-            <Table
-              columns={columns}
-              dataSource={classData.modules}
-              pagination={false}
-            />
-          </Panel>
-        </Collapse>
-      ))}
+      {filteredData.length > 0 ? (
+        filteredData.map((classData, index) => (
+          <Collapse
+            className="custom-collapse"
+            expandIconPosition="end"
+            key={index}
+          >
+            <Panel className="custom-panel" header={<span className="panel-header">{classData.class}</span>}>
+              <Table
+                columns={columns}
+                dataSource={classData.modules}
+                pagination={false}
+              />
+            </Panel>
+          </Collapse>
+        ))
+      ) : (
+        <div>No matching modules found.</div>
+      )}
     </div>
   );
 }
 
-export default ClassListPages;
+export default ClassList;

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Form, Button, Select, Input, Alert } from 'antd';
+import { Form, Button, Select, Input, Alert, Modal } from 'antd';
 import { useDispatch } from 'react-redux';
 import { setRole } from '../../features/role/roleSlice';
 import { useNavigate } from 'react-router-dom';
 import './RolePage.css';
 import logo from '../../assets/FSA-logo.png';
 import { PATH_NAME } from '../../constants/pathName';
-import { login } from '../../api/Login/Login'
+import { login } from '../../api/Login/Login';
 const { Option } = Select;
 
 const RolePage = () => {
@@ -14,6 +14,8 @@ const RolePage = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedRole, setSelectedRole] = useState('');
 
     const onFinish = async (values) => {
         setLoading(true);
@@ -21,31 +23,32 @@ const RolePage = () => {
 
         try {
             const role = await login(values.username, values.password);
-            console.log('Role API: ', role)
-            if (role === values.role || role === 'TRAINER,FAMS_ADMIN') {
-                dispatch(setRole(values.role));
-                if (values.role === 'CLASS_ADMIN') {
-                    if (role === 'CLASS_ADMIN' || role === 'TRAINER,FAMS_ADMIN') {
-                        navigate(PATH_NAME.ADMIN);
-                    }
-                } else {
-                    if (role === 'TRAINER' || role === 'TRAINER,FAMS_ADMIN') {
-                        navigate(PATH_NAME.TRAINER);
-                    }
-                }
-                console.log("Selected role:", values.role);
+            console.log('Role API: ', role);
+
+            if (role === 'CLASS_ADMIN' || role === 'TRAINER') {
+                dispatch(setRole(role));
+                navigate(role === 'CLASS_ADMIN' ? PATH_NAME.ADMIN : PATH_NAME.TRAINER);
             } else {
-                setErrorMessage('Username or Password is wrong!');
+                // If the role is neither CLASS_ADMIN nor TRAINER, show the modal
+                setIsModalVisible(true);
             }
-
-        }
-        catch (error) {
+        } catch (error) {
             setErrorMessage('Username or Password is wrong!');
-
         } finally {
             setLoading(false);
         }
+    };
 
+    const handleOk = () => {
+        if (selectedRole) {
+            dispatch(setRole(selectedRole));
+            navigate(selectedRole === 'CLASS_ADMIN' ? PATH_NAME.ADMIN : PATH_NAME.TRAINER);
+            setIsModalVisible(false);
+        }
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
     };
 
     return (
@@ -67,21 +70,30 @@ const RolePage = () => {
                 >
                     <Input.Password placeholder="Password" />
                 </Form.Item>
-                <Form.Item
-                    name="role"
-                    rules={[{ required: true, message: 'Please select a role!' }]}
-                >
-                    <Select placeholder="Select your role">
-                        <Option value="CLASS_ADMIN">Admin</Option>
-                        <Option value="TRAINER">Trainer</Option>
-                    </Select>
-                </Form.Item>
                 <Form.Item>
                     <Button type="primary" htmlType="submit" className="submit-button" loading={loading}>
                         Submit
                     </Button>
                 </Form.Item>
             </Form>
+
+            <Modal
+                title="Select Role"
+                visible={isModalVisible}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                okButtonProps={{ disabled: !selectedRole }}
+            >
+                <p>Please select your role:</p>
+                <Select
+                    placeholder="Select a role"
+                    style={{ width: '100%' }}
+                    onChange={(value) => setSelectedRole(value)}
+                >
+                    <Option value="CLASS_ADMIN">CLASS_ADMIN</Option>
+                    <Option value="TRAINER">TRAINER</Option>
+                </Select>
+            </Modal>
         </div>
     );
 };

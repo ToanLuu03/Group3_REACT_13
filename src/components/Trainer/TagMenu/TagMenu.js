@@ -13,6 +13,7 @@ function TagMenu({ titleMenu }) {
     const location = useLocation();
     const [activeKey, setActiveKey] = useState('1');
     const [currentTitle, setCurrentTitle] = useState('');
+    const [username, setUsername] = useState('');
 
     useEffect(() => {
         if (location.state?.defaultActiveKey) {
@@ -21,15 +22,17 @@ function TagMenu({ titleMenu }) {
     }, [location]);
 
     useEffect(() => {
+        const username = localStorage.getItem('username');
+        setUsername(username || '');
         switch (activeKey) {
             case '1':
                 setCurrentTitle("Trainer Profile");
                 break;
             case '2':
-                setCurrentTitle("Trainer Profile - Trần Thị Bành Bạch");
+                setCurrentTitle(`Trainer Profile - ${username}`);
                 break;
             case '3':
-                setCurrentTitle("Class List - Trần Thị Bành Bạch");
+                setCurrentTitle(`Class List - ${username}`);
                 break;
             case '4':
                 setCurrentTitle("Trainer Calendar");
@@ -38,9 +41,9 @@ function TagMenu({ titleMenu }) {
                 setCurrentTitle("Report");
                 break;
             default:
-                setCurrentTitle("Statistics - Trần Thị Bành Bạch");
+                setCurrentTitle(`Statistics - ${username}`);
         }
-    }, [activeKey]);
+    }, [activeKey], username);
     return (
         <div>
             <div className='titleMenu'>{currentTitle}</div>

@@ -13,3 +13,7 @@ export const fetchScheduleDetail = (slotTimeId) => {
 export const postFreeTime = (data) => {
     return axios.post(`${BASE_URL}/trainer-management/schedule/freetime`, data);
 };
+
+export const getFreeTime = (trainerAccount) => {
+    return axios.get(`${BASE_URL}/trainer/free-time?trainerAccount=${trainerAccount}`);
+};

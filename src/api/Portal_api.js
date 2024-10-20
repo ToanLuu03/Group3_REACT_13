@@ -1,13 +1,16 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://66d92d3e4ad2f6b8ed53a5e5.mockapi.io/api';
+const API_BASE_URL = 'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer-management/portal';
+
+const accountUsername = localStorage.getItem('username'); // Get username from local storage
 
 export const fetchDataGpa = () => {
-  return axios.get(`${API_BASE_URL}/gpaData`);
+
+  return axios.get(`${API_BASE_URL}/${accountUsername}`);
 };
 
 export const fetchDataFeedback = () => {
-    return axios.get(`${API_BASE_URL}/feedbackData`);
+    return axios.get('https://66d92d3e4ad2f6b8ed53a5e5.mockapi.io/api/feedbackData');
   };
 
 

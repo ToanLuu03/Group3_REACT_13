@@ -1,4 +1,4 @@
-function formatDate(timestamp) {
+function formatDate(timestamp, includeTime = true) {
   let date = new Date(timestamp);
 
   // Lấy giờ
@@ -24,8 +24,12 @@ function formatDate(timestamp) {
   day = day < 10 ? "0" + day : day;
   month = month < 10 ? "0" + month : month;
 
-  // Tạo chuỗi định dạng
-  return `${hours}:${minutes} ${ampm} | ${day}/${month}/${year}`;
+  // Return with or without time based on the includeTime parameter
+  if (includeTime) {
+    return `${hours}:${minutes} ${ampm} | ${day}/${month}/${year}`;
+  } else {
+    return `${day}/${month}/${year}`;
+  }
 }
 
 export default formatDate;

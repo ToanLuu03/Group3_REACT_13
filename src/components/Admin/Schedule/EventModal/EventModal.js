@@ -82,14 +82,15 @@ const EventModal = ({
                 <div className="recurrence-section-admin">
                     <label>Recur every</label>
                     <InputNumber
-                        min={1}
+                        min={0}
                         value={recurrenceWeeks}
                         onChange={setRecurrenceWeeks}
                         className="recurrence-weeks-admin"
                     />
                     <span>Week(s) on:</span>
                     <Checkbox.Group
-                        value={selectedDays} onChange={setSelectedDays}
+                        value={selectedDays}
+                        onChange={setSelectedDays}
                         className="checkbox-container-admin"
                     >
                         <div className="checkbox-grid-admin">

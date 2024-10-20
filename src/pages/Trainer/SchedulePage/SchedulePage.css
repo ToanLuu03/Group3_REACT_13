@@ -75,3 +75,50 @@
 .event-free_time {
     background-color: #509ADF75 !important;
 }
+
+@media (Max-width: 768px) {
+
+    .left-calendar-trainer .ant-picker-calendar {
+        max-width: 190px;
+    }
+
+    .right-calendar-trainer {
+        max-width: calc(100vw - 196px);
+    }
+}
+
+@media (Max-width: 678px) {
+
+    .calendar-container-trainer {
+        display: block;
+        justify-content: space-between;
+        align-items: center;
+        height: calc(100vh - 230px);
+        overflow-y: auto;
+    }
+
+    .calendar-container-trainer::-webkit-scrollbar {
+        display: none;
+    }
+
+    .left-calendar-trainer .ant-picker-calendar {
+        max-width: 100%;
+    }
+
+    .right-calendar-trainer {
+        max-width: 100vh;
+    }
+
+    .right-calendar-trainer .fc .fc-toolbar-title {
+        font-size: 0.75rem;
+    }
+
+    .right-calendar-trainer .fc-scrollgrid-sync-inner a {
+        font-size: 11px;
+    }
+
+    .fc-direction-ltr .fc-timegrid-slot-label-frame {
+        text-align: center;
+        font-size: 0.6rem;
+    }
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Layout, Typography, Button, Menu, Dropdown } from 'antd';
@@ -16,12 +16,17 @@ const { Sider, Header, Content } = Layout;
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState('1');
+  const [username, setUsername] = useState('');
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const selectMenuItem = (key) => {
     setSelectedKey(key);
   };
-
+  useEffect(() => {
+    const username = localStorage.getItem('username');
+    setUsername(username || '');
+  }, []);
   const wrapIcon = (icon) => React.cloneElement(icon, { style: { width: 24, height: 24, marginRight: '15px' } });
   const handleLogout = () => {
     // Clear the role in Redux store
@@ -29,7 +34,8 @@ const MainLayout = () => {
 
     // Clear the role from local storage
     localStorage.removeItem("selectedRole");
-
+    localStorage.removeItem('username');
+    localStorage.removeItem('token');
     // Navigate back to RolePage
     navigate(PATH_NAME.ROLE);
   };
@@ -114,7 +120,7 @@ const MainLayout = () => {
             onClick={() => setCollapsed(!collapsed)}
           />
           <div className="header-right">
-            <Typography.Text>Welcome to TrangMNQ</Typography.Text>
+            <Typography.Text>Welcome to {username}</Typography.Text>
             <Dropdown overlay={avatarMenu} trigger={['click']}>
               <Button shape="circle" className="avatar-button">
                 <RxAvatar className="styled-avatar" />

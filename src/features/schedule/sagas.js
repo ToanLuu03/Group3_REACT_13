@@ -1,5 +1,5 @@
 import { call, all, put, takeLatest } from "redux-saga/effects";
-import { fetchSchedule, fetchScheduleDetail, postFreeTime } from "../../api/scheduleApi";
+import { fetchSchedule, fetchScheduleDetail, getFreeTime, postFreeTime } from "../../api/scheduleApi";
 import {
     GET_SCHEDULE_REQUEST,
     getScheduleSuccess,
@@ -10,6 +10,9 @@ import {
     POST_FREE_TIME_REQUEST,
     postFreeTimeSuccess,
     postFreeTimeFailure,
+    getFreeTimeSuccess,
+    GET_FREE_TIME_REQUEST,
+    getFreeTimeFailure,
 } from "./actions";
 
 function* fetchScheduleSaga(action) {
@@ -45,6 +48,18 @@ function* postFreeTimeSaga(action) {
     }
 }
 
+function* getFreeTimeSaga(action) {
+    try {
+        const response = yield call(getFreeTime, action.payload.trainerAccount);
+        yield put(getFreeTimeSuccess(response.data.data));
+    } catch (error) {
+        yield put(getFreeTimeFailure(error.message));
+    }
+}
+
+export function* watchGetFreeTime() {
+    yield takeLatest(GET_FREE_TIME_REQUEST, getFreeTimeSaga);
+}
 export function* watchPostFreeTime() {
     yield takeLatest(POST_FREE_TIME_REQUEST, postFreeTimeSaga);
 }

@@ -2,7 +2,7 @@ import { all } from "redux-saga/effects";
 import { roleWatcher } from "../features/role/roleSaga";
 import { portalWatcher } from "../features/portal/portalSaga";
 import { moduleWatcher } from "../features/classlist/moduleSaga";
-import { watchFetchSchedule, watchFetchScheduleDetail, watchPostFreeTime } from "../features/schedule/sagas";
+import { watchFetchSchedule, watchFetchScheduleDetail, watchGetFreeTime, watchPostFreeTime } from "../features/schedule/sagas";
 
 export function* rootSaga() {
   yield all([
@@ -12,5 +12,6 @@ export function* rootSaga() {
     watchFetchSchedule(),
     watchFetchScheduleDetail(),
     watchPostFreeTime(),
+    watchGetFreeTime(),
   ]);
 }

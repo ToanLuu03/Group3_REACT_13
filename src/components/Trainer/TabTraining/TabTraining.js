@@ -3,7 +3,7 @@ import { Select, DatePicker, Table, Input } from 'antd';
 import './TabTraining.css';
 import { Modal, Button } from 'antd';
 import ReportModal from './ReportModal'; // Import the new ReportModal componeqsqs
-import { fetchClasses, createReport } from '../../../api/AdminAPI/Report_api'; // Import createReport
+import { fetchClasses, createReport } from '../../../api/TrainerAPI/Report_api'; // Import createReport
 
 const { Option } = Select;
 

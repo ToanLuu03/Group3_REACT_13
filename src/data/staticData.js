@@ -9,15 +9,13 @@ export const metricsDataStatic = [
 
 // Topics static data for filtering
 export const topicsDataStatic = [
-    'HTML CSS',
-    'JS',
-    'ReactJS',
+    '[FTF_JPLB] Java Programming Language (Basic) (1.0)',
+    '[FTF_ITB] IT Basic (1.0)',
+    '[FTF_ITW] First website application (1.1)',
 ];
 
 // Classes static data for filtering
 export const classesDataStatic = [
-    'React01',
-    'React02',
-    'Java01'
+    'HL24_FR_FJB_03',
 ];
 
