@@ -1,44 +1,31 @@
-.range-picker {
-  height: 32px;
-  width: 250px;
-  background-color: white;
-  border: 1px solid #ccc;
+.tab-report-container {
+  padding: 20px;
 }
 
 .search-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  width: 100%;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .filter-controls {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-wrap: wrap; 
+  gap: 16px;
 }
 
-.filter-controls strong {
-  display: block;
-}
-
-.filter-controls>*:not(:first-child) {
-  margin-left: 16px;
+.filter-item {
+  flex: 1; 
+  min-width: 150px; 
 }
 
 .search-input {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  font-weight: bold;
-  margin-bottom: 10px;
+  flex: 1; 
+  min-width: 150px; 
 }
 
-.search-input .ant-input {
-  height: 32px;
-  border: 1px solid #ccc;
-  box-shadow: none;
-  line-height: 32px;
-  font-size: 12px;
+.search-input input {
+  width: 100%; 
 }

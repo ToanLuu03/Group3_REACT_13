@@ -1,11 +1,10 @@
 import axios from 'axios';
-import useEffect from 'react';
 
 // Get the token from local storage
-const token = localStorage.getItem('token')
+
 
 // Fetch trainer information based on account
-export const fetchTrainerInfo = async (account) => {
+export const fetchTrainerInfo = async (account, token) => {
     try {
         const response = await axios.get(`https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/get-info/${account}`, {
             headers: {

@@ -1,10 +1,9 @@
 import axios from 'axios';
 
 
-const trainerAcc = localStorage.getItem('trainerAccount'); // Get username from local storage
 const token = localStorage.getItem('token');
 
-export const fetchClassList = async () => {
+export const fetchClassList = async (trainerAcc) => {
   try {
       const response = await axios.get(`https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/get-info/${trainerAcc}`, {
           headers: {
@@ -33,11 +32,11 @@ export const fetchModuleDetail = async (moduleId) => { // Accept moduleId as a p
 };
 
 
-export const fetchFeedBack = async (moduleId) => { 
+export const fetchFeedBack = async (moduleId, trainerAccount ) => { 
     try {
         const response = await axios.get(`https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/${moduleId}`, { 
             params: {
-                trainerAccount: trainerAcc // Use the trainerAcc from localStorage
+                trainerAccount
             },
             headers: {
                 Authorization: `Bearer ${token}` // Add authorization token

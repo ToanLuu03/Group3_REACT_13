@@ -15,6 +15,10 @@ export const GET_FREE_TIME_REQUEST = "GET_FREE_TIME_REQUEST";
 export const GET_FREE_TIME_SUCCESS = "GET_FREE_TIME_SUCCESS";
 export const GET_FREE_TIME_FAILURE = "GET_FREE_TIME_FAILURE";
 
+export const REMOVE_SLOT_TIME_REQUEST = "REMOVE_SLOT_TIME_REQUEST";
+export const REMOVE_SLOT_TIME_SUCCESS = "REMOVE_SLOT_TIME_SUCCESS";
+export const REMOVE_SLOT_TIME_FAILURE = "REMOVE_SLOT_TIME_FAILURE";
+
 export const getScheduleRequest = (account) => ({
     type: GET_SCHEDULE_REQUEST,
     payload: { account },
@@ -77,3 +81,18 @@ export const getFreeTimeFailure = (error) => ({
     type: GET_FREE_TIME_FAILURE,
     payload: error,
 });
+
+export const removeSlotTimeRequest = (slotTimeDayParamId) => ({
+    type: REMOVE_SLOT_TIME_REQUEST,
+    payload: { slotTimeDayParamId },
+});
+
+export const removeSlotTimeSuccess = () => ({
+    type: REMOVE_SLOT_TIME_SUCCESS,
+});
+
+export const removeSlotTimeFailure = (error) => ({
+    type: REMOVE_SLOT_TIME_FAILURE,
+    payload: error,
+});
+

@@ -1,6 +1,6 @@
 import { DatePicker, Space } from 'antd';
 import React from 'react';
-function Date({ onChange, dateKey }) {
+function Date({ onChange, dateKey, className }) {
     const handleChange = (date, dateString) => {
         onChange(dateKey, dateString);
     };
@@ -10,8 +10,8 @@ function Date({ onChange, dateKey }) {
             <Space direction="vertical">
                 <DatePicker
                     onChange={handleChange}
-                    className='choose-select'
-                    style={{ width: 140, height: 32 }}
+                    className={className}
+            //        style={{ width: 140, height: 32 }}
                     format="YYYY-MM-DD"
                 />
             </Space>

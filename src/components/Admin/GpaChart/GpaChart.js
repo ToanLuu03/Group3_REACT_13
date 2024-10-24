@@ -58,6 +58,7 @@ const filteredGpaData = useMemo(() => {
             title: 'Class',
             dataIndex: 'class',
             key: 'class',
+            
         },
         {
             title: 'Module',
@@ -105,7 +106,7 @@ const filteredGpaData = useMemo(() => {
                 ))}
             </div>
             <div style={{ overflowX: 'auto' }}>
-        <div style={{ width: `${groupedGpaData.length * 560}px` }}>
+        <div style={{ width: groupedGpaData.length === 1 ? "100%" : `${groupedGpaData.length * 560}px` }}>
             <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={groupedGpaData}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -113,7 +114,8 @@ const filteredGpaData = useMemo(() => {
                     <YAxis domain={[0, 10]} ticks={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} />
                     <Tooltip />
                     {Object.keys(colorMap).map((year) => (
-                        <Bar key={year} dataKey={year} fill={colorMap[year]} name={year} barSize={40}>
+                        <Bar key={year} dataKey={year} fill={colorMap[year]} name={year}  barSize={groupedGpaData.length === 1 ? 70 : 50} // Adjust bar size when 1 column
+                        >
                             <LabelList dataKey={year} position="top" />
                         </Bar>
                     ))}
@@ -126,12 +128,16 @@ const filteredGpaData = useMemo(() => {
                 <p>GPA Table</p>
             </div>
 
+<div className="table-con"> 
             <Table
+             bordered
             columns={columns}
             dataSource={tableData}
             pagination={pagination}
             onChange={newPagination => setPagination(newPagination)}
+            scroll={{ x: true }} 
         />
+        </div>
             
         </div>
     );

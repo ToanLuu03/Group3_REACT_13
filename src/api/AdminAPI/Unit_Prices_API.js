@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import axios from 'axios';
 
 const token = localStorage.getItem('token');
@@ -12,34 +13,65 @@ export const fetchTrainerUnitPrices = async (account) => {
                 }
             }
         );
-        console.log('Response from API:', response.data); // Log dữ liệu trả về để kiểm tra
-        return response.data; // Trả về dữ liệu từ API
+        return response.data;
     } catch (error) {
-        console.error('Error fetching trainer unit prices:', error.response ? error.response.data : error.message);
+        //    console.error('Error fetching trainer unit prices:', error.response ? error.response.data : error.message);
         throw new Error('Failed to fetch trainer unit prices');
     }
 };
 
-
-
-export const updateTrainerUnitPrices = async (trainerUnitPriceList) => {
+export const updateTrainerUnitPrices = async (trainerUnitPriceList, token) => {
+    //console.log('trainerUnitPriceList', trainerUnitPriceList);
     try {
         const response = await axios.post(
-            'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/unit-price/update',  // Endpoint mới
-            {
-                trainerUnitPriceList: trainerUnitPriceList,  // Dữ liệu truyền lên server
-            },
+            'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/unit-price/update',
+            trainerUnitPriceList,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
+                },
             }
         );
-        console.log('Response from API:', response.data); // Log phản hồi từ API để kiểm tra
         return response.data;
     } catch (error) {
         console.error('Error updating trainer unit prices:', error.response ? error.response.data : error.message);
         throw new Error('Failed to update trainer unit prices');
     }
 };
+// In your api/AdminAPI/Unit_Prices_API.js
+export const addTrainerUnitPrice = async (unitPrices, token) => {
+    const response = await fetch('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/unit-price/update', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(unitPrices), // Ensure this is an array
+    });
+  
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    
+    return await response.json();
+  };
+  
+
+  export const deleteTrainerUnitPrices = async (unitPriceIds, token) => {
+    try {
+      const response = await axios.post(
+        "https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/unit-price/delete-multi", // Replace with your actual delete API endpoint
+        unitPriceIds, // Pass the array directly as the request body
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include token for authentication
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting trainer unit prices:", error);
+      throw error; // Rethrow the error so it can be handled in the component
+    }
+  };
+  

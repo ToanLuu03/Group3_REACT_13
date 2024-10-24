@@ -31,6 +31,20 @@ export const fetchReport = async () => {
     }
 };
 
+export const fetchClassesAndModules = async () => {
+    try {
+        const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainers/reports-history', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data; // Trả về dữ liệu gốc từ API
+    } catch (error) {
+        console.error('Error fetching classes or modules:', error);
+        throw new Error('Failed to fetch classes or modules');
+    }
+};
+
 export const createReport = async (reportData) => {
     try {
         const response = await axios.post('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainers/reports', reportData, {

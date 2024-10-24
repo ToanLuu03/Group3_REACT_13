@@ -1,4 +1,4 @@
-# FE_Team_3
+# FE_Team_2
 
 
 
@@ -15,14 +15,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin http://git.fa.edu.vn/fu_fall_mock_project-fe-team/fe_team_3.git
+git remote add origin http://git.fa.edu.vn/fu_fall_mock_project-fe-team/fe_team_2.git
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](http://git.fa.edu.vn/fu_fall_mock_project-fe-team/fe_team_3/-/settings/integrations)
+- [ ] [Set up project integrations](http://git.fa.edu.vn/fu_fall_mock_project-fe-team/fe_team_2/-/settings/integrations)
 
 ## Collaborate with your team
 

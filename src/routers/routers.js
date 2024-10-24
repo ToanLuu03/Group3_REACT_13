@@ -1,109 +1,77 @@
-import { Navigate, createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
+//layout
+// import AdminLayout from "../pages/Admin/AdminLayout/AdminLayout";
 import HomePage from "../pages/HomePage/HomePage";
-import ErrorPage from "../pages/ErrorPage/ErrorPage";
-import { PATH_NAME } from "../constants/pathName";
-import MainLayoutTrainer from "../pages/Trainer/MainLayout/MainLayout";
-import MainLayoutAdmin from "../pages/Admin/MainLayout/MainLayout"
-import TrainerManagement from "../pages/Trainer/TrainerManagementPage/TrainerManagementPage";
-import RolePage from "../pages/RolePage/RolePage";
-import { useSelector } from "react-redux";
-import ScheduleTracker from "../pages/Admin/ScheduleTrackerPage/ScheduleTrackerPage";
-import ModuleDetailsPage from "../pages/Trainer/ClassListPage/ModuleDetailsPage";
-import ModuleDetailsPageAD from "../pages/Admin/ClassListPages/ModuleDetailsPage";
+import TrainerLayout from "../pages/Trainer/TrainerLayout/TrainerLayout";
+
+//admin
+// import TrainerConfirmation from "../pages/Admin/TrainerConfirmation/TrainerConfirmation";
+ // import TraineeManagement from "../pages/Admin/TraineeManagement/TraineeManagement";
+// import LogWork from "../pages/Admin/LogWork/LogWork";
+// import ContentManagement from "../pages/Admin/ContentManagement/ContentManagement";
+// import FAQ from "../pages/Admin/FAQ/FAQ";
+// import TrackerAdmin from "../pages/Admin/ScheduleTrackerAdmin/TrackerAdmin";
+import MainLayout from "../pages/Admin/MainLayout/MainLayout";
 import TrainerList from "../pages/Admin/TrainerListPage/TrainerList";
-import TrainerManagementAdmin from "../pages/Admin/TrainerManagementPage/TrainerManagementPage"
+import TrainerManagementPage from "../pages/Admin/TrainerManagementPage/TrainerManagementPage";
 import AddTrainerPage from "../pages/Admin/AddTrainerPage/AddTrainerPage";
 
-const PrivateRouteTrainer = ({ children }) => {
-  const selectedRole = useSelector((state) => state.role.selectedRole);
-  console.log("Selected Role:", selectedRole);
-  if (!selectedRole || selectedRole === 'CLASS_ADMIN') {
-    return <Navigate to={PATH_NAME.ROLE} replace />;
-  }
-  else if (selectedRole === 'TRAINER') {
-    return children;
-  }
-};
 
-const PrivateRouteAdmin = ({ children }) => {
-  const selectedRole = useSelector((state) => state.role.selectedRole);
-  console.log("Selected Role:", selectedRole);
-  if (!selectedRole || selectedRole === 'TRAINER') {
-    return <Navigate to={PATH_NAME.ROLE} replace />;
-  }
-  else if (selectedRole === 'CLASS_ADMIN') {
-    return children;
-  }
-};
+//trainer
+import TrainerConfirmationTrainer from "../pages/Trainer/TrainerConfirmation/TrainerConfirmationTrainer";
+import TrainerManagementT from "../pages/Trainer/TrainerManagement/TrainerManagementT";
+import TraineeManagementTrainer from "../pages/Trainer/TraineeManagement/TraineeManagementTrainer";
+import LogWorkTrainer from "../pages/Trainer/LogWork/LogWorkTrainer";
+import ContentManagementTrainer from "../pages/Trainer/ContentManagement/ContentManagementTrainer";
+import FAQTrainer from "../pages/Trainer/FAQ/FAQTrainer";
+import AddTrainerProfile from "../features/trainer/AddTrainer/AddTrainer";
+import ClassDetail from "../pages/Trainer/TrainerConfirmation/classDetail/ClassDetail";
+import ScheduleTracker from "../pages/Admin/ScheduleTrackerPage/ScheduleTrackerPage";
+import ModuleDetailsPageAD from "../pages/Admin/ClassListPages/ModuleDetailsPage";
+
+
+
+
 
 export const router = createBrowserRouter([
   {
-    path: PATH_NAME.TRAINER,
-    element: (
-      <PrivateRouteTrainer>
-        <MainLayoutTrainer />
-      </PrivateRouteTrainer>
-    ),
+    path: "/",
+    element: <HomePage />,
+  },
+  {
+    path: "/ADMIN",
+    element: <MainLayout />,
     children: [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: PATH_NAME.Trainer_Management,
-        element: <TrainerManagement />,
-      },
-      {
-        path: PATH_NAME.MODULE_DETAILS,
-        element: <ModuleDetailsPage />,
-      },
-
+      // { path: "", element: <TrainerManagement /> },
+      // { path: "trainer-confirmation", element: <TrainerConfirmation /> },
+      // { path: "trainee-management", element: <TrainerManagement /> },
+      { path: "trainer-management", element: <TrainerManagementPage /> },
+      { path: "trainer-list", element: <TrainerList /> },
+      { path: "tracker-admin", element: <ScheduleTracker /> },
+       { path: "trainer-management/module/info", element: <ModuleDetailsPageAD/> },
+      // { path: "logwork", element: <LogWork /> },
+      // { path: "content-management", element: <ContentManagement /> },
+      // { path: "faqs", element: <FAQ /> },
+      { path: "add-trainer", element: <AddTrainerPage /> },
+      
     ],
   },
   {
-    path: PATH_NAME.ADMIN,
-    element: (
-      <PrivateRouteAdmin>
-        <MainLayoutAdmin />
-      </PrivateRouteAdmin>
-    ),
+    path: "/TRAINER",
+    element: <TrainerLayout />,
     children: [
+      // { path: "", element: <TrainerManagement /> },
+      { path: "trainer-confirmation", element: <TrainerConfirmationTrainer /> },
+      { path: "trainee-management", element: <TraineeManagementTrainer /> },
+      { path: "trainer-management", element: <TrainerManagementT /> },
+      { path: "logwork", element: <LogWorkTrainer /> },
+      { path: "content-management", element: <ContentManagementTrainer /> },
+      { path: "faqs", element: <FAQTrainer /> },
       {
-        index: true,
-        element: <HomePage />,
+        path: "trainer-confirmation/:className", 
+        element: <ClassDetail />,
       },
-      {
-        path: PATH_NAME.SCHEDULE_TRACKER,
-        element: <ScheduleTracker />,
-      }, {
-        path: PATH_NAME.TRAINER_LIST,
-        element: <TrainerList />,
-      },
-      {
-        path: PATH_NAME.Trainer_Management_Admin,
-        element: <TrainerManagementAdmin />,
-      },
-      {
-        path: PATH_NAME.Add_Trainer,
-        element: <AddTrainerPage />,
-      },
-      {
-        path: PATH_NAME.MODULE_DETAILS_AD,
-        element: <ModuleDetailsPageAD />,
-      },
-
     ],
-  },
-  {
-    path: PATH_NAME.ROLE,
-    element: <RolePage />,
-  },
-  {
-    path: PATH_NAME.HOME,
-    element: <RolePage />,
-  },
-  {
-    path: PATH_NAME.ERROR_404,
-    element: <ErrorPage />,
   },
 ]);
+

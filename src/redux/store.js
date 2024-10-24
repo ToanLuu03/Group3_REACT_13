@@ -1,16 +1,9 @@
-// src/store.js
-import { configureStore } from "@reduxjs/toolkit";
-import createSagaMiddleware from "redux-saga";
-import { rootReducer } from "./rootReducer";
-import { rootSaga } from "./rootSaga";
+import { configureStore } from '@reduxjs/toolkit';
+import createSagaMiddleware from 'redux-saga';
+import rootReducer from './rootReducer';
+import { rootSaga } from './rootSaga'; // Import the rootSaga
 
 const sagaMiddleware = createSagaMiddleware();
-
-const preloadedState = {
-  role: {
-    selectedRole: localStorage.getItem("selectedRole") || null,
-  },
-};
 
 export const store = configureStore({
   reducer: rootReducer,
@@ -18,7 +11,6 @@ export const store = configureStore({
     ...getDefaultMiddleware({ serializableCheck: false }),
     sagaMiddleware,
   ],
-  preloadedState,
 });
 
-sagaMiddleware.run(rootSaga);
+sagaMiddleware.run(rootSaga); 

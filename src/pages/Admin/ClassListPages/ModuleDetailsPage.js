@@ -1,16 +1,17 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './ModuleDetailsPage.css';
-import { Divider, Col, Row, Tag, Descriptions, Tabs, Button } from 'antd'; // Import Button from Ant Design
+import { Divider, Col, Row, Tag, Descriptions, Tabs, Button, } from 'antd'; // Import Button from Ant Design
 import Feedback from './Feedback';
 import formatDate from '../../../utils/formatDate';
+
 
 
 export default function ModuleDetailsPageAD() {
   const location = useLocation();
   const navigate = useNavigate();
   const moduleData = location.state?.moduleData;
-  
+
   if (!moduleData) {
     return <div>No module data available</div>;
   }
@@ -52,36 +53,43 @@ export default function ModuleDetailsPageAD() {
 
   ];
 
- 
+
   const tabItems = [
     {
       key: '1',
       label: 'Module Info',
       children: (
         <>
-           <Descriptions bordered column={2} items={items} />
+          <Descriptions bordered column={{
+            xs: 1,
+            sm: 1,
+            md: 2,
+            lg: 2,
+            xl: 2,
+            xxl:2,
+          }} items={items} />
         </>
       )
     },
     {
       key: '2',
       label: 'Feedback',
-      children: <Feedback moduleId={moduleData.id} moduleName={moduleData.name} onBack={() => {}} /> // Pass moduleId here
+      children: <Feedback moduleId={moduleData.id} moduleName={moduleData.name} onBack={() => { }} /> // Pass moduleId here
     },
   ];
 
   const handleBackToClassList = () => {
-    navigate('/admin/trainer_management', { state: { defaultActiveKey: '3' } });
+    navigate('/ADMIN/trainer-management', { state: { defaultActiveKey: '3' } });
   };
 
 
   return (
     <div className="module-details-container">
-      <Row>
-        <Col span={10}>
+      <Row gutter={[16, 16]} style={{ marginTop:'80px', marginBottom:'16px' }}> {/* Change to column layout */}
+        <Col span={10}> {/* Use full width on mobile */}
           <div className='titleMenu'>Module Details: {moduleData.name}</div>
         </Col>
-        <Col style={{ marginLeft: '5px' }}>
+        <Col span={1} >
           <div className='titleMenu'>{renderStatus(moduleData.status)}</div>
         </Col>
       </Row>
@@ -95,8 +103,9 @@ export default function ModuleDetailsPageAD() {
       <div className="button-container">
         <div className="divider"></div> {/* Divider line */}
         <Button type="primary" onClick={handleBackToClassList}>
-        Back To Class List
-      </Button>      </div>
+          Back To Class List
+        </Button>
+      </div>
     </div>
   );
 }

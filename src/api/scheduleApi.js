@@ -17,3 +17,7 @@ export const postFreeTime = (data) => {
 export const getFreeTime = (trainerAccount) => {
     return axios.get(`${BASE_URL}/trainer/free-time?trainerAccount=${trainerAccount}`);
 };
+
+export const removeSlotTime = (slotTimeDayParamId) => {
+    return axios.post(`${BASE_URL}/trainer/schedule/remove-slot-time-day/${slotTimeDayParamId}`);
+};

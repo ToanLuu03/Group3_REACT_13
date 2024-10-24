@@ -1,15 +1,14 @@
-import React, { useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import TagMenu from '../../../components/Admin/TagMenu/TagMenu';
+import React from 'react';
+
+import Title from '../../../components/Header/Title/Title';
+import Category from '../../../components/Header/Category/Category';
 
 function TrainerManagementPage() {
-    const { selectMenuItem } = useOutletContext();
-    useEffect(() => {
-        selectMenuItem('3');
-    }, [selectMenuItem]);
+
     return (
-        <div>
-            <TagMenu/>
+        <div className='pt-16'>
+            <Title />
+            <Category />
         </div>
     )
 }

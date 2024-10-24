@@ -1,13 +1,12 @@
 import React from "react";
 import { Calendar, Select } from "antd";
 import dayjs from "dayjs";
-import './LeftCalendar.css';
 
 const { Option } = Select;
 
 const LeftCalendar = ({ currentDate, setCurrentDate, calendarRef }) => {
     return (
-        <div className="left-calendar-container">
+        <div className="flex flex-col">
             <Calendar
                 fullscreen={false}
                 mode="month"
@@ -33,14 +32,14 @@ const LeftCalendar = ({ currentDate, setCurrentDate, calendarRef }) => {
                     }
 
                     return (
-                        <div className="header-calendar-left">
+                        <div className="flex justify-end pt-2">
                             <Select
                                 value={month}
                                 onChange={(newMonth) => {
                                     const newDate = value.clone().month(newMonth);
                                     onChange(newDate);
                                 }}
-                                className="calendar-select mr-8"
+                                className="w-full mr-2"
                             >
                                 {monthOptions}
                             </Select>
@@ -50,7 +49,7 @@ const LeftCalendar = ({ currentDate, setCurrentDate, calendarRef }) => {
                                     const newDate = value.clone().year(newYear);
                                     onChange(newDate);
                                 }}
-                                className="calendar-select"
+                                className="w-full"
                             >
                                 {yearOptions}
                             </Select>
@@ -58,15 +57,15 @@ const LeftCalendar = ({ currentDate, setCurrentDate, calendarRef }) => {
                     );
                 }}
             />
-            <div className="calendar-legend">
-                <div className="legend-item-calendar">
-                    <span className="legend-color-calendar legend-fresher-calendar"></span> Fresher
+            <div className="mt-2 text-sm">
+                <div className="block">
+                    <span className="inline-block w-3 h-3 mr-2 rounded bg-orange-400"></span> Fresher
                 </div>
-                <div className="legend-item-calendar">
-                    <span className="legend-color-calendar legend-intern-calendar"></span> Intern
+                <div className="block">
+                    <span className="inline-block w-3 h-3 mr-2 rounded bg-green-700 bold"></span> Intern
                 </div>
-                <div className="legend-item-calendar">
-                    <span className="legend-color-calendar legend-free-time-calendar"></span> Free Time
+                <div className="block">
+                    <span className="inline-block w-3 h-3 mr-2 rounded bg-[#509ADF] bg-opacity-75"></span> Free Time
                 </div>
             </div>
         </div>

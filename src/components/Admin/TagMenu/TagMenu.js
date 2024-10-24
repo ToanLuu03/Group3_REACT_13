@@ -18,11 +18,11 @@ function TagMenu({ titleMenu }) {
         }
     }, [location]);
     return (
-        <div>
+        <div className='pt-20'>
             <div>
                 <div className='titleMenu'>{titleMenu}</div>
                 <Divider style={{ margin: '15px 0px 0px' }} />
-                <Tabs activeKey={activeKey} onChange={setActiveKey} size="large" style={{ margin: '0px 15px ' }}>
+                <Tabs  tabPosition={"top"} activeKey={activeKey} onChange={setActiveKey} size="large" style={{ margin: '0px 15px ' }}>
                     <TabPane tab="Trainer Information" key="1">
                         <TrainerProfile />
                     </TabPane>

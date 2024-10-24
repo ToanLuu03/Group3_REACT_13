@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  users: {},
+  users: {
+    userName: '', // Khởi tạo userName rỗng trong users object
+  },
   loading: false,
   errorMessage: null,
 };
@@ -10,22 +12,11 @@ const usersSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
-    handleGetListUsers(state, _action) {
-      state.loading = true;
-    },
-    handleGetListUsersSuccess(state, action) {
-      state.loading = false;
-      state.users = action.payload.users;
-    },
-    handleGetListUsersFailure(state) {
-      state.loading = false;
-      state.users = initialState.users;
-    },
-    resetErrorMessage(state) {
-      state.errorMessage = initialState.errorMessage;
+    setUserName: (state, action) => {
+      state.users.userName = action.payload; // Đúng với cấu trúc state
     },
   },
 });
 
-const { actions, reducer } = usersSlice;
-export { actions as usersActions, reducer as usersReducer };
+export const { setUserName } = usersSlice.actions;
+export default usersSlice.reducer;

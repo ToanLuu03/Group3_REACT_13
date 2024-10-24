@@ -1,17 +1,17 @@
 import { Select } from 'antd'
 import React from 'react'
 
-export const SelectBox = ({ options, onChange }) => {
+export const SelectBox = ({ options, onChange, className, placeholder }) => {
     return (
         <div>
             <Select
-                mode="multiple"
                 options={options}
                 onChange={onChange}
-                className='select-option'
+                className={className}
+                placeholder={placeholder}
                 maxTagCount={1}
                 maxTagPlaceholder={() => '...'}
-                style={{ width: 350, height: 32 }}
+                //        style={{ width: 350, height: 32 }}
                 tagRender={(props) => {
                     const { label } = props;
                     return (
@@ -26,18 +26,18 @@ export const SelectBox = ({ options, onChange }) => {
 }
 
 const { Option } = Select;
-export const SelectOption = ({ options, value, onChange, placeholder }) => {
+export const SelectOption = ({ options, value, onChange, placeholder, className }) => {
     return (
         <div>
             <Select
-                mode="multiple"
+                //        mode="multiple"
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className='choose-select'
+                className={className}
                 maxTagCount={1}
                 maxTagPlaceholder={() => '...'}
-                style={{ width: 140, height: 32 }}
+                //    style={{ width: 140, height: 32 }}
                 tagRender={(props) => {
                     const { label } = props;
                     return (

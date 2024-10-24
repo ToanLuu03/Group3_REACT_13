@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Collapse, Table, Typography, Tag, Input, Select, Col, Spin } from 'antd';
+import { Collapse, Table, Typography, Tag, Input, Select, Col, Spin, Row } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import './ClassListPages.css';
-import { fetchModuleInfoStart } from '../../../features/classlist/moduleSlice';
 import { fetchModuleDetail } from '../../../api/AdminAPI/Classlist_api';
+import { fetchModuleInfoStart } from '../../../features/classlist/moduleSlice';
 
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -22,10 +22,7 @@ function ClassList() {
     dispatch(fetchModuleInfoStart());
   }, [dispatch]);
 
-  console.log(moduleInfo)
-
   const classList = moduleInfo?.['trainerClassList'] || [];
-
 
   // Filter data
   const filteredData = classList
@@ -50,23 +47,23 @@ function ClassList() {
       title: 'Module Name',
       dataIndex: 'moduleName',
       key: 'moduleName',
+      fixed: 'left',
       render: (text, record) => (
         <Link
-        onClick={async (e) => {
-          e.preventDefault();
-          try {
-            const moduleDetails = await fetchModuleDetail(record.id); // Fetch module details using the record ID
-            navigate(`/admin/trainer_management/module/info`, {
-             
-              state: { moduleData: moduleDetails.data }, // Pass the fetched module data to the next page
-            });
-          } catch (error) {
-            console.error('Failed to fetch module details:', error);
-          }
-        }}
-      >
-        {text}
-      </Link>
+          onClick={async (e) => {
+            e.preventDefault();
+            try {
+              const moduleDetails = await fetchModuleDetail(record.id); // Fetch module details using the record ID
+              navigate(`/ADMIN/trainer-management/module/info`, {
+                state: { moduleData: moduleDetails.data }, // Pass the fetched module data to the next page
+              });
+            } catch (error) {
+              console.error('Failed to fetch module details:', error);
+            }
+          }}
+        >
+          {text}
+        </Link>
       ),
     },
     {
@@ -117,69 +114,61 @@ function ClassList() {
 
   return (
     <div className="layout-container">
-      <div className="search-space">
-        <Col>
+      <Row gutter={[16, 16]} className="search-space">
+        <Col xs={24} sm={12} md={6} xl={4}>
           <Typography.Title level={5}>Class</Typography.Title>
           <Input
             placeholder="Search class"
             onChange={(e) => setClassSearch(e.target.value)}
             value={classSearch}
-            style={{ width: 198, height: 32, marginRight: 16, boxShadow: 'none', border: '1px solid #d9d9d9' }}
+            style={{ width: '100%', height: 32, marginRight: 16 }}
           />
         </Col>
-        <Col>
+        <Col xs={24} sm={12} md={6} xl={4}>
           <Typography.Title level={5}>Module</Typography.Title>
           <Input
             placeholder="Search module"
             onChange={(e) => setModuleSearch(e.target.value)}
             value={moduleSearch}
-            style={{ width: 198, height: 32, marginRight: 16, boxShadow: 'none', border: '1px solid #d9d9d9' }}
+            style={{ width: '100%', height: 32, marginRight: 16 }}
           />
         </Col>
-        <Col>
+        <Col xs={24} sm={12} md={6} xl={4}>
           <Typography.Title level={5}>Status</Typography.Title>
           <Select
             placeholder="Select status"
             onChange={(value) => setStatusFilter(value)}
-            style={{ width: 200 }}
+            style={{ width: '100%' }}
           >
-            <Option value="In Progress">
-              <div className="option-content">
-                <Tag className="status-in-progress">In Progress</Tag>
-              </div>
+            <Option  value="In Progress">
+              <Tag className="status-in-progress">In Progress</Tag>
             </Option>
             <Option value="Not Started">
-              <div className="option-content">
-                <Tag className="status-not-started">Not Started</Tag>
-              </div>
+              <Tag className="status-not-started">Not Started</Tag>
             </Option>
             <Option value="Closed">
-              <div className="option-content">
-                <Tag className="status-closed">Closed</Tag>
-              </div>
+              <Tag className="status-closed">Closed</Tag>
             </Option>
             <Option value="Cancel">
-              <div className="option-content">
-                <Tag className="status-cancel">Cancel</Tag>
-              </div>
+              <Tag className="status-cancel">Cancel</Tag>
             </Option>
           </Select>
         </Col>
-      </div>
+      </Row>
 
       {filteredData.length > 0 ? (
         filteredData.map((classData, index) => (
-          <Collapse
-            className="custom-collapse"
-            expandIconPosition="end"
-            key={index}
-          >
+          <Collapse className="custom-collapse" expandIconPosition="end" key={index}>
             <Panel className="custom-panel" header={<span className="panel-header">{classData.class}</span>}>
-              <Table
-                columns={columns}
-                dataSource={classData.modules}
-                pagination={false}
-              />
+              <div className="table-container">
+                <Table
+                bordered
+                  columns={columns}
+                  dataSource={classData.modules}
+                  pagination={false}
+                  scroll={{ x: true }} 
+                />
+              </div>
             </Panel>
           </Collapse>
         ))

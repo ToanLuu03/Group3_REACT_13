@@ -1,84 +1,93 @@
 import React, { useEffect, useState } from 'react'; 
-import { Rate, Button, Progress, Divider, Card, Collapse, Typography} from 'antd';
+import { Rate, Button, Progress, Divider, Card, Collapse, Typography, Row, Col, Grid } from 'antd';
 import { fetchFeedBack } from '../../../api/AdminAPI/Classlist_api';
 
 const Feedback = ({ moduleId }) => {
-  const [ratingsData, setRatingsData] = useState([0, 0, 0, 0, 0]); // Initialize with default values
-  const [feedbackData, setFeedbackData] = useState([]); // State for feedback data
-  const [error, setError] = useState(false); // State for error
+  const [ratingsData, setRatingsData] = useState([0, 0, 0, 0, 0]); 
+  const [feedbackData, setFeedbackData] = useState([]); 
   const { Panel } = Collapse;
-
-  const { Text, Link } = Typography;
-  // ... existing code ...
+  const { useBreakpoint } = Grid;
+  const screens = useBreakpoint(); 
+  const { Text } = Typography;
+  const trainerAcc = localStorage.getItem('trainerAccount');
 
   useEffect(() => {
-    fetchFeedBack(moduleId) 
+    fetchFeedBack(moduleId, trainerAcc) 
       .then(data => {
-        // Update ratingsData with the fetched data
         setRatingsData([
           data.data.star_5,
           data.data.star_4,
           data.data.star_3,
           data.data.star_2,
           data.data.star_1
-          
         ]);
-        setFeedbackData(data.data.feedback); // Set feedback data
+        setFeedbackData(data.data.feedback); 
       })
       .catch(error => {
         console.error(error);
-        setError(true); // Set error state on failure
       });
   }, [moduleId]); 
 
-  
   const totalRatings = ratingsData.reduce((acc, val) => acc + val, 0);
   const averageRating = totalRatings > 0 
     ? (ratingsData.reduce((acc, val, idx) => acc + val * (5 - idx), 0) / totalRatings).toFixed(1) 
     : 0;
+      const progressSize = 
+    screens.xl ? [120,10] : screens.md ? [80,10] : screens.xs ? [40,10]: 0;
+    
 
-    const renderFeedbackPanels = () => {
-      return feedbackData.map(feedback => (
-        <Panel 
+
+  const renderFeedbackPanels = () => {
+    return feedbackData.map(feedback => (
+      <Panel 
         key={feedback.id}
         header={
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ margin:'0px 16px 0px 16px', textAlign:'center' }}>
-            <Typography.Title level={3}> {averageRating} <span style={{color:"#fadb14"}}> ★</span>  </Typography.Title>
+          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ margin: '0px 16px 0px 16px', textAlign: 'center', flex: '0 1 100px' }}>
+              <Typography.Title level={3}> {averageRating} <span style={{color:"#fadb14"}}> ★</span>  </Typography.Title>
             </div>
-            <div >
+            <div style={{ flex: '1 1 auto' }}>
               <Typography.Title level={5}> Module's feedback: {feedback.moduleFeedback} </Typography.Title> 
-              <Typography.Title level={5} style={{marginTop:"0px"}}>Trainer's feedback: {feedback.trainerFeedback} </Typography.Title> 
+              <Typography.Title level={5} style={{ marginTop: "0px" }}>Trainer's feedback: {feedback.trainerFeedback} </Typography.Title> 
             </div>
           </div>
         }
       >
+        
         {feedback.feedbackQuestion.map((question, index) => (
-          <div key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ flex: 1,  alignContent:"center" }}>
-            <Text strong > {question.feedbackResponse[0].question} </Text> 
-            </div>
-            <div style={{ flex: 1, textAlign: 'right' }}>
-              
-              <Progress 
-              steps= {5}
-              size={[120, 10]}
-                strokeLinecap="butt"
-                percent={(question.feedbackResponse[0].rating / 5) * 100} 
-                showInfo={false} 
-                strokeColor="#1890FF" 
-                style={{ width: '100%', borderRadius:'none' }}
-                
-              />
-            </div>
-            <div style={{  textAlign: 'right' }}>
-              <Button type="link">Details</Button>
-            </div>
-          </div>
+       <div 
+       key={index} 
+       style={{ 
+         display: 'flex', 
+         justifyContent: 'space-between', 
+         alignItems: 'center', 
+         flexWrap: 'wrap',
+         marginBottom: '10px',
+         flexDirection: screens.xs ? 'column' : 'row', // Stack vertically on mobile
+       }}
+     >
+       <div style={{ flex: 1, marginBottom: '10px' }}>
+         <Text strong> {question.feedbackResponse[0].question} </Text>
+       </div>
+       <div style={{ flex: 1, textAlign: 'right', marginBottom: '10px' }}>
+         <Progress 
+           steps={5}
+           size={progressSize}
+           strokeLinecap="butt"
+           percent={(question.feedbackResponse[0].rating / 5) * 100} 
+           showInfo={false} 
+           strokeColor="#1890FF" 
+           style={{ width: '100%' }}
+         />
+       </div>
+       <div style={{ textAlign: 'right', marginBottom: '10px' }}>
+         <Button type="link">Details</Button>
+       </div>
+     </div>
         ))} 
       </Panel>
-      ));
-    };
+    ));
+  };
 
   const renderRatingBars = () => {
     return ratingsData.map((count, idx) => {
@@ -98,43 +107,37 @@ const Feedback = ({ moduleId }) => {
     });
   };
 
-  if (error) {
-    return <Typography.Title style={{textAlign:'center', color:'#C7C7C7'}} level={2}> NO DATA AVAILABLE.</Typography.Title>;
-  }
-  
+
+
   return (
     <>
-    <Card style={{ backgroundColor: '#fff', boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', width:'570px'}}>
-    <div style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '700px'}}>
-      {/* Column for Average Rating */}
-      <div style={{ flex: 1, paddingRight: '20px', textAlign:'center', marginTop:'16px' }}>
-        <h2 > Average  </h2>
-        <h2> {averageRating} <span style={{color:"#fadb14"}}> ★</span> </h2>
-      </div>
-
-      {/* Column for Star Ratings and Progress Bars */}
-      <div style={{ flex: 4 }}>
-        {renderRatingBars()}
-      </div>
-
-      {/* Filter Buttons */}
-    </div>
-    <Divider/>
-          <div style={{ width: '100%', marginTop: '20px' }}>
+      <Card  style={{ backgroundColor: '#fff', boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', width: screens.xl ? '50%' : '100%' }}>
+        <Row gutter={[16, 16]} justify="center">
+          <Col xs={24} sm={12} md={6}  style={{ textAlign: 'center', marginTop:'24px' }}>
+            <Typography.Title level={3}>Average</Typography.Title>
+            <Typography.Title style={{margin:0}} level={2}>
+              {averageRating} <span style={{ color: "#fadb14" }}> ★</span>
+            </Typography.Title>
+          </Col>
+          <Col xs={24} sm={12} md={18} >
+            {renderRatingBars()}
+          </Col>
+        </Row>
+        <Divider />
+        <div style={{ width: '100%', marginTop: '20px', textAlign: 'center' }}>
           <span style={{ marginRight: '10px', fontWeight: 'bold' }}>Filter: </span>
-          <Button style={{  borderRadius:'20px' }} type="default">All</Button>
+          <Button style={{ borderRadius: '20px' }} type="default">All</Button>
           {[5, 4, 3, 2, 1].map(star => (
-            <Button key={star} type="default" style={{ marginLeft: '10px', borderRadius:'20px' }}>
+            <Button key={star} type="default" style={{ marginLeft: '10px', borderRadius: '20px' }}>
               {star} <span style={{color:"#fadb14"}}> ★</span> 
             </Button>
           ))}
         </div>
-        </Card>
-
-        <Collapse expandIconPosition="right" style={{ marginTop: '20px' }}>
+      </Card>
+      <Collapse expandIconPosition="right" style={{ marginTop: '20px' }}>
         {renderFeedbackPanels()}
       </Collapse>
-        </>
+    </>
   );
 };
 

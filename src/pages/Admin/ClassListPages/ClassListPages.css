@@ -61,27 +61,8 @@
   color: #CF1322;
 }
 
-.ant-table-thead>tr>th,
-.ant-table-tbody>tr>td {
-  border: 1px solid #e8e8e8;
-}
 
-.ant-table-thead>tr>th:not(:last-child),
-.ant-table-tbody>tr>td:not(:last-child) {
-  border-right: none;
-}
 
-.ant-table-tbody>tr:not(:last-child)>td {
-  border-bottom: none;
-}
 
-.ant-table-thead>tr>th,
-.ant-table-tbody>tr>td {
-  padding: 12px 16px;
-}
 
-.option-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+

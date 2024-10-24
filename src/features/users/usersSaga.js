@@ -1,22 +1,15 @@
 import { call, put, takeLatest } from "redux-saga/effects";
-import { usersActions } from "./usersSlice";
-import { _getUsers } from "../../utils/_DATA";
+import { setUserName } from "./usersSlice";
 
-export function* handleGetListUsers(action) {
+export function* handleSetUsersName(action) {
   try {
-    const response = yield call(_getUsers);
-
-    if (response) {
-      action?.payload?.onSuccess?.();
-      yield put(usersActions.handleGetListUsersSuccess({ users: response }));
-      return;
-    }
+    // Directly set the role in the Redux state
+    yield put(setUserName(action.payload));
   } catch (error) {
-    action?.payload?.onError?.(error);
-    yield put(usersActions.handleGetListUsersFailure());
+    console.error('Failed to set role', error);
   }
 }
 
-export const usersWatcher = [
-  takeLatest(usersActions.handleGetListUsers, handleGetListUsers),
-];
+export function* usersSaga() {
+  yield takeLatest('users/setUserNameSaga', handleSetUsersName); // Watch for the role action
+}

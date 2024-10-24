@@ -81,7 +81,7 @@ const AddTrainerPage = () => {
     try {
       await AddTrainer_api(payload, token);
       message.success('Trainer added successfully!');
-      navigate('/admin/trainer_list');
+      navigate('/ADMIN/trainer-list');
     } catch (error) {
       message.error('Failed to add trainer.');
       console.error(error);
@@ -111,10 +111,16 @@ const AddTrainerPage = () => {
       dataIndex: 'skillName',
       key: 'skillName',
       render: (_, record, index) => (
-        <Input
+        <Select
+          style={{ width: '100%' }}
           value={skills[index]?.skillName}
-          onChange={(e) => handleSkillChange(index, 'skillName', e.target.value)}
-        />
+          onChange={(value) => handleSkillChange(index, 'skillName', value)}
+        >
+          <Option value="JAVA">JAVA</Option>
+          <Option value="React">React</Option>
+          <Option value="DOT NET">DOT NET</Option>
+          <Option value="C#">C#</Option>
+        </Select>
       ),
     },
     {
@@ -163,7 +169,7 @@ const AddTrainerPage = () => {
   ];
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ paddingTop: '60px' }}>
       <h2>Add Trainer Profile</h2>
       <Collapse defaultActiveKey={['1', '2']}>
         <Panel header="General Info" key="1">
@@ -415,10 +421,10 @@ const AddTrainerPage = () => {
 
       <Space style={{ marginTop: '24px', justifyContent: 'space-between' }}>
         <div className="button-container">
-          <Button type="default" onClick={() => navigate('/admin/trainer_list')}>
+          <Button type="default" onClick={() => navigate('/ADMIN/trainer-list')}>
             Back to Trainers List
           </Button>
-          <Button type="default" onClick={() => navigate('/admin/trainer_list')} className="cancel-button">
+          <Button type="default" onClick={() => navigate('/ADMIN/trainer-list')} className="cancel-button">
             Cancel
           </Button>
           <Button type="primary" className="save-button" onClick={handleSave}>

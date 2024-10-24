@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { Table, Input, Dropdown, Menu, Button, Checkbox, Tag } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import './TrainerList.css';
+// import './TrainerList.css';
 import { fetchClasses } from '../../../api/AdminAPI/Trainer_list_api';
 import { PATH_NAME } from '../../../constants/pathName';
+import { useSelector } from 'react-redux';
 
 const { Search } = Input;
 
 function TrainerList() {
-  const { selectMenuItem } = useOutletContext();
   const [trainers, setTrainers] = useState([]);
   const [filteredTrainers, setFilteredTrainers] = useState([]);
   const [statusOptions, setStatusOptions] = useState([]);
@@ -21,18 +21,16 @@ function TrainerList() {
   const [statusSearchValue, setStatusSearchValue] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [siteDropdownVisible, setSiteDropdownVisible] = useState(false);
-
-
+  const role = useSelector((state) => state.role.selectedRole.role);
+  const token = useSelector((state) => state.users.users.userName.token)
 
   const navigate = useNavigate();
-  useEffect(() => {
-    selectMenuItem('3');
-  }, [selectMenuItem]);
+
   useEffect(() => {
 
     const getTrainers = async () => {
       try {
-        const data = await fetchClasses();
+        const data = await fetchClasses(token);
         setTrainers(data);
         setFilteredTrainers(data);
         const statuses = [...new Set(data.map(trainer => trainer.status).filter(Boolean))];
@@ -48,7 +46,7 @@ function TrainerList() {
   }, []);
 
   const handleAddTrainer = () => {
-    navigate(PATH_NAME.Add_Trainer);
+    navigate(`/${role}/add-trainer`);
   };
 
   const handleStatusChange = (checkedValues) => {
@@ -106,7 +104,7 @@ function TrainerList() {
 
   const handleTrainerClick = (trainerId, account) => {
     localStorage.setItem('trainerAccount', account);
-    navigate(PATH_NAME.Trainer_Management_Admin);
+    navigate(`/${role}/trainer-management`);
   };
 
   const columns = [
@@ -122,7 +120,7 @@ function TrainerList() {
       dataIndex: 'name',
       key: 'name',
       render: (text, record) => (
-        <span className='trainerList' onClick={() => handleTrainerClick(record.id, record.account)}>{text}</span>
+        <span className='trainerList text-blue-600 cursor-pointer' onClick={() => handleTrainerClick(record.id, record.account)}>{text}</span>
       ),
       align: 'center',
     },
@@ -208,14 +206,14 @@ function TrainerList() {
 
   return (
     <div>
-      <div className='Header-list'>
-        <h2>Trainers List ({filteredTrainers.length})</h2>
-        <Button type="primary" onClick={handleAddTrainer}>
+      <div className='mt-16 flex w-full justify-between'>
+        <h2 className=" font-semibold text-lg sm:text-xl md:text-2xl lg:text-3xl mb-2 sm:mb-0">Trainers List ({filteredTrainers.length}) </h2>
+        <Button type="primary" onClick={handleAddTrainer} className='bg-[#5750DF] rounded-full p-6 font-medium text-base'>
           Add Trainer
         </Button>
       </div>
 
-      <div className='d-flex  ' style={{ marginBottom: 16 }}>
+      <div className='flex  ' style={{ marginBottom: 16 }}>
         {/* Status Filter */}
         <div className='col-2'>
           <h4 className='text'>Status</h4>
@@ -265,8 +263,6 @@ function TrainerList() {
         rowKey="id"
         pagination={{ pageSize: 6 }}
         bordered
-
-
         scroll={{
           x: 'calc(700px + 100%)',
 

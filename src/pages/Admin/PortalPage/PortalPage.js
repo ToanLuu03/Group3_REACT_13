@@ -5,15 +5,14 @@ import FeedbackChart from "../../../components/Admin/FeedbackChart/FeedbackChart
 import SelectWithCheckboxes from '../../../components/Admin/SelectWithCheckboxes/SelectWithCheckboxes.js'
 import { topicsDataStatic, classesDataStatic, metricsDataStatic } from "../../../data/staticData.js";
 import { useOutletContext } from 'react-router-dom';
-import './PortalPages.css';  
+import { Row, Col, Grid, Typography } from "antd"; // Import Ant Design's Grid components
+import './PortalPages.css';
 
 const { RangePicker } = DatePicker;
+const { Text } = Typography;
 
 const PortalPage = () => {
-    const { selectMenuItem } = useOutletContext();
-    useEffect(() => {
-        selectMenuItem('3');
-    }, [selectMenuItem]);
+    
 
     const [dateRange, setDateRange] = useState([null, null]);
     const [selectedTopics, setSelectedTopics] = useState([]);
@@ -21,6 +20,8 @@ const PortalPage = () => {
     const [selectedFeedbackClasses, setSelectedFeedbackClasses] = useState([]);
     const [selectedMetrics, setSelectedMetrics] = useState([]);
     const [activeTab, setActiveTab] = useState('1');
+    const { useBreakpoint } = Grid;
+    const screens = useBreakpoint(); 
 
     const handleDateRangeChange = (dates) => {
         if (dates) {
@@ -52,39 +53,45 @@ const PortalPage = () => {
             label: 'GPA',
             children: (
                 <div className="container-portal">
-                    <div className="portal-page">
-                        <div className="select-container">
-                            <div>
-                                <h4>Select Topics</h4>
+                    <div>
+                        <Row gutter={[16, 16]}>
+                            {/* Select Topics */}
+                            <Col xs={24} sm={12} md={12} xl={8}>
+                                <Typography.Title level={3}> Select Topics</Typography.Title >
                                 <SelectWithCheckboxes
-                                    inputStyle={{ width: 250 }}
+                                    inputStyle={{  width: screens.xs ? '90%' : '250px' }}  // Responsive width
                                     options={topicsDataStatic}
                                     selectedState={selectedTopics}
                                     setState={setSelectedTopics}
                                     placeholder={topicsDataStatic.join(', ')}
                                 />
-                            </div>
-                            <div>
-                                <h4>Select Classes</h4>
+                            </Col>
+
+                            {/* Select Classes */}
+                            <Col xs={24} sm={12} md={12} xl={8}>
+                            <Typography.Title level={3}> Select Classes</Typography.Title >
                                 <SelectWithCheckboxes
-                                    inputStyle={{ width: 250 }}
+                                    inputStyle={{ width: screens.xs ? '90%' : '250px' }}  // Responsive width
                                     options={classesDataStatic}
                                     selectedState={selectedGpaClasses}
                                     setState={setSelectedGpaClasses}
                                     placeholder={classesDataStatic.join(', ')}
                                 />
-                            </div>
-                            <div>
-                                <h4>Select Date Range</h4>
+                            </Col>
+
+                            <Col xs={24} sm={12} md={12} xl={8}>
+                            <Typography.Title level={3}> Select Date Range</Typography.Title >
                                 <RangePicker
+                                style={{ width: screens.xs ? '90%' : '250px' }}
                                     value={dateRange}
                                     onChange={handleDateRangeChange}
                                     format="YYYY"
                                     picker="year"
                                     placeholder={['Start Year', 'End Year']}
                                 />
-                            </div>
-                        </div>
+                            </Col>
+
+                        </Row>
                     </div>
 
                     {selectedTopics.length > 0 && selectedGpaClasses.length > 0 && dateRange[0] && dateRange[1] && (
@@ -97,7 +104,7 @@ const PortalPage = () => {
                 </div>
             )
         },
-       
+
     ];
 
     return (

@@ -6,7 +6,8 @@ import { router } from "./routers/routers";
 const App = () => {
   return (
     <Provider store={store}>
-      <RouterProvider router={router} fallbackElement={< ></>} />
+      {/* RouterProvider bao bọc toàn bộ ứng dụng */}
+      <RouterProvider router={router} fallbackElement={<div>Loading...</div>} />
     </Provider>
   );
 };

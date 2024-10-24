@@ -32,7 +32,7 @@ const TabTraining = () => {
                 return prevSelected.filter(item => item !== topicName);
             } else {
                 const topic = selectedModule.topics.find(t => t.topicName === topicName);
-                
+
                 // Ensure topic is found and contains an ID before proceeding
                 if (topic) {
                     const contentNames = topic.contents.map(content => ({
@@ -40,16 +40,16 @@ const TabTraining = () => {
                         contentName: content.contentName,
                         id: content.id  // Use content ID
                     }));
-    
+
                     setSelectedContentNames(prevContent => [...prevContent, ...contentNames]);
                     return [...prevSelected, topicName];
                 }
-    
+
                 return prevSelected;  // If no topic found, return the previous selection
             }
         });
     };
-    
+
 
 
     const handleModalDateChange = (date) => {
@@ -73,7 +73,7 @@ const TabTraining = () => {
         console.log('Selected Module Structure:', selectedModule);
         console.log('Selected Topics:', selectedTopics);
         console.log('Selected Content Names:', selectedContentNames);
-    
+
         const reportData = {
             faClassId: selectedClass.classId,  // Ensure this has a valid value
             moduleId: selectedModule.moduleId, // Ensure this has a valid value
@@ -84,7 +84,7 @@ const TabTraining = () => {
             dailyReportCreateTopicDTOS: selectedTopics.map(topicName => {
                 // Find the topic object based on topicName
                 const topic = selectedModule.topics.find(t => t.topicName === topicName);
-    
+
                 if (topic && topic.topicId) {
                     return {
                         id: topic.topicId,  // Use the topicId
@@ -109,9 +109,9 @@ const TabTraining = () => {
                 }
             }).filter(topic => topic !== null)  // Filter out null topics (if any topic doesn't have an ID)
         };
-    
+
         console.log('Constructed Report Data:', reportData);
-    
+
         try {
             const response = await createReport(reportData);  // Send the report data
             console.log('Report created successfully:', response);
@@ -170,36 +170,36 @@ const TabTraining = () => {
 
     const updateDataSource = (module, date, deliveryTypes, trainingFormats) => {
         if (!selectedClass || !module || !date) return;
-    
+
         const filteredData = [];
         const startDate = date.toDate();
         const endDate = new Date(startDate);
         endDate.setMonth(endDate.getMonth() + 3);
-    
+
         const topics = module.topics.filter(topic => {
             const topicDate = new Date(topic.date);
             return topicDate >= startDate && topicDate <= endDate;
         });
-    
-        const rows = topics.flatMap(topic => 
+
+        const rows = topics.flatMap(topic =>
             topic.contents
-            .filter(content => 
-                (deliveryTypes.includes(content.deliveryType) || deliveryTypes.length === 0) &&
-                (trainingFormats.includes(content.trainingFormat) || trainingFormats.length === 0)
-            )
-            .map(content => ({
-                topicName: topic.topicName,
-                date: topic.date,
-                duration: topic.duration,
-                contentName: content.contentName,
-                deliveryType: content.deliveryType,
-                trainingFormat: content.trainingFormat,
-            }))
+                .filter(content =>
+                    (deliveryTypes.includes(content.deliveryType) || deliveryTypes.length === 0) &&
+                    (trainingFormats.includes(content.trainingFormat) || trainingFormats.length === 0)
+                )
+                .map(content => ({
+                    topicName: topic.topicName,
+                    date: topic.date,
+                    duration: topic.duration,
+                    contentName: content.contentName,
+                    deliveryType: content.deliveryType,
+                    trainingFormat: content.trainingFormat,
+                }))
         );
-    
+
         setDataSource(rows);
     };
-    
+
     const handleClassChange = (value) => {
         const selected = classes.find(c => c.classId === value);
         setSelectedClass(selected);
@@ -237,7 +237,7 @@ const TabTraining = () => {
     const getRowSpan = (data, index, key) => {
         const currentValue = data[index][key];
         let rowSpan = 1;
-        
+
         for (let i = index + 1; i < data.length; i++) {
             if (data[i][key] === currentValue) {
                 rowSpan++;
@@ -245,10 +245,10 @@ const TabTraining = () => {
                 break;
             }
         }
-        
+
         return rowSpan;
     };
-    
+
     const getRowSpanForColumn = (data, index, key) => {
         const currentValue = data[index][key];
         for (let i = 0; i < index; i++) {
@@ -258,7 +258,7 @@ const TabTraining = () => {
         }
         return getRowSpan(data, index, key);
     };
-    
+
     // Columns for the table
     const columns = [
         {
@@ -280,13 +280,13 @@ const TabTraining = () => {
             key: 'select',
             render: (text, record, index) => {
                 const rowSpan = getRowSpanForColumn(dataSource, index, 'topicName');
-        
+
                 // Only show the checkbox for the first row of the span
                 if (rowSpan > 0) {
                     return {
                         children: (
                             <input
-                            style={{width:"18px", height:"18"}}
+                                style={{ width: "18px", height: "18" }}
                                 type="checkbox"
                                 checked={selectedTopics.includes(record.topicName)} // Check if the topic is selected
                                 onChange={() => handleSelectTopic(record.topicName)} // Call the handler with the topic name
@@ -295,7 +295,7 @@ const TabTraining = () => {
                         props: { rowSpan }, // Apply the row span to merge cells
                     };
                 }
-        
+
                 // Return null for spanned rows to hide checkboxes and prevent cell borders
                 return {
                     children: null,
@@ -303,20 +303,20 @@ const TabTraining = () => {
                 };
             }
         },
-                { 
-            title: 'Content Name', 
-            dataIndex: 'contentName', 
-            key: 'contentName' 
+        {
+            title: 'Content Name',
+            dataIndex: 'contentName',
+            key: 'contentName'
         },
-        { 
-            title: 'Delivery Type', 
-            dataIndex: 'deliveryType', 
-            key: 'deliveryType' 
+        {
+            title: 'Delivery Type',
+            dataIndex: 'deliveryType',
+            key: 'deliveryType'
         },
-        { 
-            title: 'Training Format', 
-            dataIndex: 'trainingFormat', 
-            key: 'trainingFormat' 
+        {
+            title: 'Training Format',
+            dataIndex: 'trainingFormat',
+            key: 'trainingFormat'
         },
 
         {
@@ -332,158 +332,173 @@ const TabTraining = () => {
             }
         },
 
-        { 
-            title: 'Schedule Duration (h)', 
-            dataIndex: 'duration', 
-            key: 'duration' 
+        {
+            title: 'Schedule Duration (h)',
+            dataIndex: 'duration',
+            key: 'duration'
         }
     ];
 
     return (
-        <div className="container">
-            <div className="row mb-3">
-                <div className="col">
-                    <p>Class:</p>
-                    <Select
-                        style={{ width: '150px' }}
-                        className="select-training"
-                        placeholder="Select Class"
-                        onChange={handleClassChange}
+        <div className="mx-auto">
+            <div className="flex flex-wrap gap-4 mb-6">
+                <div className="flex flex-wrap justify-between w-full">
+                    <div className="flex flex-wrap gap-4 w-full lg:w-auto">
+                        <div className="w-full sm:w-auto">
+                            <strong>Class:</strong> <br />
+                            <Select
+                                className="select-training w-full sm:w-[140px]"
+                                placeholder="Select Class"
+                                dropdownStyle={{ textAlign: 'center' }}
+                                onChange={handleClassChange}
+                            >
+                                {classes.map((cls) => (
+                                    <Option key={cls.classId} value={cls.classId}>
+                                        {cls.className}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </div>
 
-                    >
-                        {classes.map(cls => (
-                            <Option key={cls.classId} value={cls.classId}>
-                                {cls.className}
-                            </Option>
-                        ))}
-                    </Select>
-                </div>
+                        <div className="w-full sm:w-auto">
+                            <strong>Module:</strong> <br />
+                            <Select
+                                className="select-training w-full sm:w-[140px]"
+                                placeholder="Select Module"
+                                dropdownStyle={{ textAlign: 'center' }}
+                                onChange={handleModuleChange}
+                                disabled={!selectedClass}
+                            >
+                                {modules.map((mod) => (
+                                    <Option key={mod.moduleId} value={mod.moduleId}>
+                                        {mod.moduleName}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </div>
 
-                <div className="col">
-                    <p>Module:</p>
-                    <Select
-                        style={{ width: '150px' }}
-                        className="select-training"
-                        placeholder="Select Module"
-                        onChange={handleModuleChange} 
-                        disabled={!selectedClass}
-                    >
-                        {modules.map(mod => (
-                            <Option key={mod.moduleId} value={mod.moduleId}>
-                                {mod.moduleName}
-                            </Option>
-                        ))}
-                    </Select>
-                </div>
+                        <div className="w-full sm:w-auto">
+                            <strong>Delivery Type:</strong> <br />
+                            <Select
+                                className="select-training w-full sm:w-[140px]"
+                                mode="multiple"
+                                placeholder="Select Delivery Type"
+                                onChange={handleDeliveryTypeChange}
+                                disabled={!selectedModule}
+                                maxTagCount={1}
+                                maxTagPlaceholder={() => '...'}
+                                tagRender={({ label }) => <span className="select-option">{label}</span>}
+                                dropdownStyle={{ textAlign: 'center' }}
+                            >
+                                <Option key="all" value="all" style={{ textAlign: 'center' }}>
+                                    Select All
+                                </Option>
+                                {selectedModule &&
+                                    selectedModule.topics
+                                        .flatMap((topic) => topic.contents.map((content) => content.deliveryType))
+                                        .filter((v, i, a) => a.indexOf(v) === i)
+                                        .map((type, index) => (
+                                            <Option key={index} value={type}>
+                                                {type}
+                                            </Option>
+                                        ))}
+                            </Select>
+                        </div>
 
-                <div className="col">
-                    <p>Delivery Type:</p>
-                    <Select
-                        style={{ width: '150px' }}
-                        className="select-training"
-                        mode="multiple"
-                        placeholder="Select Delivery Type"
-                        onChange={handleDeliveryTypeChange}
-                        disabled={!selectedModule}
-                    >
-                        <Option key="all" value="all">Select All</Option>
-                        {selectedModule && selectedModule.topics.flatMap(topic =>
-                            topic.contents.map(content => content.deliveryType)
-                        ).filter((v, i, a) => a.indexOf(v) === i).map((type, index) => (
-                            <Option key={index} value={type}>
-                                {type}
-                            </Option>
-                        ))}
-                    </Select>
-                </div>
+                        <div className="w-full sm:w-auto">
+                            <strong>Format Training:</strong> <br />
+                            <Select
+                                className="w-full sm:w-[140px]"
+                                mode="multiple"
+                                placeholder="Select Training Format"
+                                onChange={handleTrainingFormatChange}
+                                disabled={!selectedModule}
+                                maxTagCount={1}
+                                maxTagPlaceholder={() => '...'}
+                                tagRender={({ label }) => <span>{label}</span>}
+                                dropdownStyle={{ textAlign: 'center' }}
+                            >
+                                <Option key="all" value="all" style={{ textAlign: 'center' }}>
+                                    Select All
+                                </Option>
+                                {selectedModule &&
+                                    selectedModule.topics
+                                        .flatMap((topic) => topic.contents.map((content) => content.trainingFormat))
+                                        .filter((v, i, a) => a.indexOf(v) === i)
+                                        .map((format, index) => (
+                                            <Option key={index} value={format}>
+                                                {format}
+                                            </Option>
+                                        ))}
+                            </Select>
+                        </div>
 
-                <div className="col">
-                    <p>Format Training:</p>
-                    <Select
-                        style={{ width: '150px' }}
-                        className="select-training"
-                        mode="multiple"
-                        placeholder="Select Training Format"
-                        onChange={handleTrainingFormatChange}
-                        disabled={!selectedModule}
-                    >
-                        <Option key="all" value="all">Select All</Option>
-                        {selectedModule && selectedModule.topics.flatMap(topic =>
-                            topic.contents.map(content => content.trainingFormat)
-                        ).filter((v, i, a) => a.indexOf(v) === i).map((format, index) => (
-                            <Option key={index} value={format}>
-                                {format}
-                            </Option>
-                        ))}
-                    </Select>
-                </div>
+                        <div className="w-full sm:w-auto">
+                            <strong>Schedule Date:</strong> <br />
+                            <DatePicker onChange={handleDateChange} className="w-full sm:w-[140px]" />
+                        </div>
+                    </div>
 
-                <div className="col">
-                    <p>Schedule Date:</p>
-                    <DatePicker
-                        onChange={handleDateChange}
-                    />
-                </div>
-                <div className="col">
-                    <p>Search:</p>
-                    <Input
-                        placeholder="Search by Class, Module or Topic"
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                    <div className="w-full sm:w-auto">
+                        <strong>Search:</strong> <br />
+                        <Input
+                            placeholder="Search by Class, Module or Topic"
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full sm:w-[230px]"
+                        />
+                    </div>
                 </div>
             </div>
 
             {!isClassSelected && (
-                <div className="empty-state-report" >
+                <div className="flex justify-center text-[#888888] text-3xl italic">
                     Please choose Class
                 </div>
             )}
             {isClassSelected && !isModuleSelected && (
-                <div className="empty-state-report" >
+                <div className="flex justify-center text-[#888888] text-3xl italic">
                     Please choose Module
                 </div>
             )}
             {isModuleSelected && !isDateSelected && (
-                <div className="empty-state-report">
+                <div className="flex justify-center text-[#888888] text-3xl italic">
                     Please choose Date
                 </div>
             )}
 
             {isClassSelected && isModuleSelected && isDateSelected && (
                 <div>
-                    <div className="d-flex justify-content-between mb-3">
+                    <div className="flex flex-col lg:flex-row justify-between items-center mb-4">
                         <span>Module: {selectedModule.moduleName}</span>
-                        <div>
+                        <div className="mt-2 lg:mt-0">
                             <span>Start Date: {selectedModule.startDate}</span>
-                            <span className='e-date'>End Date: {selectedModule.endDate}</span>
+                            <span className="ml-4">End Date: {selectedModule.endDate}</span>
                         </div>
                     </div>
-                    <Table
-    dataSource={filteredDataSource}
-    columns={columns}
-    />
+                    <Table dataSource={filteredDataSource} columns={columns} />
                     <Button
                         type="primary"
                         onClick={showModal}
                         disabled={selectedTopics.length === 0}
+                        className="mt-4"
                     >
                         Report
                     </Button>
 
-                    {/* Render the ReportModal component */}
                     <ReportModal
                         visible={isModalVisible}
                         onOk={handleOk}
                         onCancel={handleCancel}
                         selectedTopics={selectedTopics}
-                        selectedContentNames={selectedContentNames} // Pass content names to modal
+                        selectedContentNames={selectedContentNames}
                         showReason={showReason}
                         onModalDateChange={handleModalDateChange}
                     />
-
                 </div>
             )}
         </div>
+
+
     );
 };
 

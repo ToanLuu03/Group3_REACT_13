@@ -10,7 +10,6 @@ import {
   SelectOption,
 } from "../../../components/Admin/Selectbox/SelectBox";
 import "./ScheduleTrackerPage.css";
-import { useOutletContext } from "react-router-dom";
 import { Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import Date from "../../../components/Admin/SelectDate/Date";
@@ -19,7 +18,6 @@ import moment from "moment";
 function ScheduleTracker() {
   const [scheduleData, setScheduleData] = useState([]);
   const [filteredScheduleData, setFilteredScheduleData] = useState([]);
-  const { selectMenuItem } = useOutletContext();
   const [searchTerm, setSearchTerm] = useState("");
 
   const [filterOptions, setFilterOptions] = useState({
@@ -46,13 +44,12 @@ function ScheduleTracker() {
     actualStartDate: null,
     actualEndDate: null,
   });
-  useEffect(() => {
-    selectMenuItem("4");
-  }, [selectMenuItem]);
+
 
   useEffect(() => {
     if (filters.selectedMethod === "Class Name") {
       fetchData(fetchDataClass);
+
     } else if (filters.selectedMethod === "Trainer") {
       fetchData(fetchDataTrainer);
     }
@@ -104,16 +101,28 @@ function ScheduleTracker() {
 
   const handleSelectMethod = (value) => {
     setFilters({
-      ...filters,
       selectedMethod: value,
-      selectedClass: [],
+      selectedClass: [], // Resetting selectedClass
       selectedTrainer: null,
-      selectedModule: [],
+      selectedModule: [], // Resetting selectedModule
       selectedDelivery: [],
       selectedStatus: [],
       selectedTraining: [],
     });
+
+    // Reset date filters
+    setDateFilters({
+      scheduleStartDate: null,
+      scheduleEndDate: null,
+      actualStartDate: null,
+      actualEndDate: null,
+    });
+    setSearchTerm("");
+    setFilteredScheduleData(scheduleData);
   };
+
+
+
   const handleDateChange = (key, value) => {
     setDateFilters((prev) => ({
       ...prev,
@@ -139,17 +148,33 @@ function ScheduleTracker() {
       updatedValue = value.length === 1 ? allOptions : [];
     }
 
+    // Reset other filters if the selected filter is Class
+    const resetFilters = (key === "selectedClass") || (key === "selectedTrainer") ? {
+      selectedModule: [], // Resetting selectedModule
+      selectedDelivery: [],
+      selectedStatus: [],
+      selectedTraining: [],
+      dateFilters: {
+        scheduleStartDate: null,
+        scheduleEndDate: null,
+        actualStartDate: null,
+        actualEndDate: null,
+      },
+    } : {};
+
+
     setFilters((prevFilters) => ({
       ...prevFilters,
+      ...resetFilters, // Apply reset filters if necessary
       [key]: updatedValue,
     }));
 
     filterScheduleData({
       ...filters,
+      ...resetFilters, // Pass reset filters to filtering function
       [key]: updatedValue,
     });
   };
-
 
 
   const filterScheduleData = (currentFilters) => {
@@ -231,122 +256,151 @@ function ScheduleTracker() {
   };
 
   return (
-    <div>
-      <h1> Schedule Tracker</h1>
-
-      <div className="tracker-by">
-        <span className="text">Track by:</span> <br />
-        <Select
-          style={{ width: 500 }}
-          onChange={handleSelectMethod}
-          options={[
-            { label: "Class Name", value: "Class Name" },
-            { label: "Trainer", value: "Trainer" },
-          ]}
-        />
-      </div>
-
-      {filters.selectedMethod && (
-        <div>
-          <div className="filters d-flex">
-            {filters.selectedMethod === "Trainer" && (
-              <div className="filter-item">
-                <span className="text">Trainer</span>
-                <SelectBox
-                  options={filterOptions.trainerOptions}
-                  onChange={(value) =>
-                    handleFilterChange("selectedTrainer", value)
+    <div className="pt-16">
+    <h1>Schedule Tracker</h1>
+  
+    <div className="tracker-by">
+      <span className="text">Track by:</span> <br />
+      <Select
+        style={{ width: 500 }}
+        onChange={handleSelectMethod}
+        options={[
+          { label: "Class Name", value: "Class Name" },
+          { label: "Trainer", value: "Trainer" },
+        ]}
+      />
+    </div>
+  
+    {filters.selectedMethod && (
+      <div>
+        <div className="filters flex flex-wrap gap-3">
+          {filters.selectedMethod === "Class Name" && (
+            <div className="w-full sm:w-auto">
+              <span className="text">Class</span>
+              <SelectBox
+                options={filterOptions.classOptions}
+                className="w-full sm:w-[350px]"
+                onChange={(values) => handleFilterChange("selectedClass", values)}
+              />
+            </div>
+          )}
+  
+          {filters.selectedMethod === "Trainer" && (
+            <div className="w-full sm:w-auto">
+              <span className="text">Trainer</span>
+              <SelectBox
+                options={filterOptions.trainerOptions}
+                className="w-full sm:w-[350px]"
+                onChange={(value) => {
+                  handleFilterChange("selectedTrainer", value);
+                  if (value) {
+                    setFilters((prevFilters) => ({
+                      ...prevFilters,
+                      selectedClass: [],
+                      selectedModule: [],
+                    }));
                   }
-                />
-              </div>
-            )}
-
-            {filters.selectedClass && (
-              <div className="filter-item">
-                <span className="text">Class</span>
-                <SelectBox
-                  options={filterOptions.classOptions}
-                  mode="multiple"
-                  onChange={(values) =>
-                    handleFilterChange("selectedClass", values)
-                  }
-                />
-              </div>
-            )}
-            {filters.selectedClass.length > 0 && ( // Show Module only if Classes are selected
-              <div className="filter-item">
-                <span className="text">Module</span>
-                <SelectBox
-                  options={filterOptions.moduleOptions}
-                  mode="multiple"
-                  onChange={(values) =>
-                    handleFilterChange("selectedModule", values)
-                  }
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="content">
-            {filters.selectedModule.length > 0 && (
-              <>
-                <div className="filter-item">
+                }}
+              />
+            </div>
+          )}
+  
+          {filters.selectedTrainer && filters.selectedMethod === "Trainer" && (
+            <div className="w-full sm:w-auto">
+              <span className="text">Class</span>
+              <SelectBox
+                options={filterOptions.classOptions}
+                className="w-full sm:w-[350px]"
+                onChange={(values) => handleFilterChange("selectedClass", values)}
+              />
+            </div>
+          )}
+  
+          {filters.selectedClass.length > 0 && (
+            <div className="w-full sm:w-auto">
+              <span className="text">Module</span>
+              <SelectBox
+                options={filterOptions.moduleOptions}
+                className="w-full sm:w-[350px]"
+                onChange={(values) => handleFilterChange("selectedModule", values)}
+              />
+            </div>
+          )}
+        </div>
+  
+        <div className="content mt-4">
+          {filters.selectedModule.length > 0 && (
+            <>
+              <div className="flex flex-wrap gap-3">
+                <div className="w-full sm:w-auto">
                   <span className="text">Delivery Type</span>
                   <SelectOption
                     options={filterOptions.deliveryOptions}
-                    mode="multiple"
-                    onChange={(values) =>
-                      handleFilterChange("selectedDelivery", values)
-                    }
+                    className="w-full sm:w-[125px]"
+                    placeholder="Select delivery type"
+                    onChange={(values) => handleFilterChange("selectedDelivery", values)}
                   />
                 </div>
-
-                <div className="filter-item">
+  
+                <div className="w-full sm:w-auto">
                   <span className="text">Status</span>
                   <SelectOption
                     options={filterOptions.statusOptions}
-                    mode="multiple"
-                    onChange={(values) =>
-                      handleFilterChange("selectedStatus", values)
-                    }
+                    className="w-full sm:w-[125px]"
+                    placeholder="Select status"
+                    onChange={(values) => handleFilterChange("selectedStatus", values)}
                   />
                 </div>
-
-                <div className="filter-item">
+  
+                <div className="w-full sm:w-auto">
                   <span className="text">Training Format</span>
                   <SelectOption
                     options={filterOptions.trainingOptions}
-                    mode="multiple"
-                    onChange={(values) =>
-                      handleFilterChange("selectedTraining", values)
-                    }
+                    className="w-full sm:w-[125px]"
+                    placeholder="Select training format"
+                    onChange={(values) => handleFilterChange("selectedTraining", values)}
                   />
                 </div>
-
-                <div className="select">
+  
+                <div className="w-full sm:w-auto">
                   <span className="text">Schedule (Start)</span>
                   <Date
                     onChange={handleDateChange}
+                    className="w-full sm:w-[125px]"
                     dateKey="scheduleStartDate"
                   />
                 </div>
-
-                <div className="select">
+  
+                <div className="w-full sm:w-auto">
                   <span className="text">Schedule (End)</span>
-                  <Date onChange={handleDateChange} dateKey="scheduleEndDate" />
+                  <Date
+                    onChange={handleDateChange}
+                    className="w-full sm:w-[125px]"
+                    dateKey="scheduleEndDate"
+                  />
                 </div>
-                <div className='select'>
-                  <span className='text'>Actual (Start)</span>
-                  <Date onChange={handleDateChange} dateKey="actualStartDate" />
+  
+                <div className="w-full sm:w-auto">
+                  <span className="text">Actual (Start)</span>
+                  <Date
+                    onChange={handleDateChange}
+                    className="w-full sm:w-[125px]"
+                    dateKey="actualStartDate"
+                  />
                 </div>
-                <div className='select'>
-                  <span className='text'>Actual (End)</span>
-                  <Date onChange={handleDateChange} dateKey="actualEndDate" />
+  
+                <div className="w-full sm:w-auto">
+                  <span className="text">Actual (End)</span>
+                  <Date
+                    onChange={handleDateChange}
+                    className="w-full sm:w-[125px]"
+                    dateKey="actualEndDate"
+                  />
                 </div>
-
-                <div className="filter-item">
+  
+                <div className="w-full sm:w-auto">
                   <span className="text">Search</span>
-                  <div className="d-flex">
+                  <div className="flex">
                     <Input
                       placeholder="Search..."
                       className="search"
@@ -367,22 +421,26 @@ function ScheduleTracker() {
                     </div>
                   </div>
                 </div>
-              </>
-            )}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    )}
+  
+    {filters.selectedModule.length > 0 && (
+      <div>
+        {filteredScheduleData.length > 0 ? (
+          <DataTable data={filteredScheduleData} />
+        ) : (
+          <div>
+            <DataTable data={filteredScheduleData} />
           </div>
-        </div>
-      )}
-
-      {filteredScheduleData.length > 0 && (
-        <div style={{ textAlign: 'center' }}>
-
-          <DataTable
-            data={filteredScheduleData}
-            style={{ textAlign: 'center' }}
-          />
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    )}
+  </div>
+  
   );
 }
 

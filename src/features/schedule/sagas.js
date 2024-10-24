@@ -1,5 +1,5 @@
 import { call, all, put, takeLatest } from "redux-saga/effects";
-import { fetchSchedule, fetchScheduleDetail, getFreeTime, postFreeTime } from "../../api/scheduleApi";
+import { fetchSchedule, fetchScheduleDetail, getFreeTime, postFreeTime, removeSlotTime } from "../../api/scheduleApi";
 import {
     GET_SCHEDULE_REQUEST,
     getScheduleSuccess,
@@ -13,6 +13,9 @@ import {
     getFreeTimeSuccess,
     GET_FREE_TIME_REQUEST,
     getFreeTimeFailure,
+    removeSlotTimeSuccess,
+    removeSlotTimeFailure,
+    REMOVE_SLOT_TIME_REQUEST,
 } from "./actions";
 
 function* fetchScheduleSaga(action) {
@@ -55,6 +58,19 @@ function* getFreeTimeSaga(action) {
     } catch (error) {
         yield put(getFreeTimeFailure(error.message));
     }
+}
+
+function* removeSlotTimeSaga(action) {
+    try {
+        yield call(removeSlotTime, action.payload.slotTimeDayParamId);
+        yield put(removeSlotTimeSuccess());
+    } catch (error) {
+        yield put(removeSlotTimeFailure(error.message));
+    }
+}
+
+export function* watchRemoveSlotTime() {
+    yield takeLatest(REMOVE_SLOT_TIME_REQUEST, removeSlotTimeSaga);
 }
 
 export function* watchGetFreeTime() {

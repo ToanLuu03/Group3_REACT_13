@@ -31,5 +31,4 @@ function formatDate(timestamp, includeTime = true) {
     return `${day}/${month}/${year}`;
   }
 }
-
 export default formatDate;

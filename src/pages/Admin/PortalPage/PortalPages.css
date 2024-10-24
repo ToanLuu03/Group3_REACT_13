@@ -87,7 +87,7 @@
     .select-container .ant-select,
     .select-container .ant-picker {
         width: 100%;
-        margin-bottom: 10px;
+        margin-bottom: 24px;
     }
 }
 
