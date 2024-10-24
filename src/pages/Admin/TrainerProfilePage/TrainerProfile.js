@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Button, Tag, Input, Table, Collapse, Select } from 'antd';
+import { Card, Button, Tag, Input, Table, Collapse, Select, Spin } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'; // Import Icons
 import { Link } from 'react-router-dom';
-import { fetchTrainerInfo } from '../../../api/AdminAPI/Trainer_info_api'; // Adjust the import path as needed
+import { fetchTrainerInfo, updateTrainerInfo } from '../../../api/AdminAPI/Trainer_info_api'; // Adjust the import path as needed
 import './TrainerProfile.css'; // CSS to style the component
 import { useSelector } from 'react-redux';
 
@@ -12,37 +12,37 @@ const { Option } = Select;
 const TrainerProfile = () => {
   const [trainerInfo, setTrainerInfo] = useState(null);
   const [error, setError] = useState(null);
-  const [isEditingGeneral, setIsEditingGeneral] = useState(false);
-  const [isEditingSkills, setIsEditingSkills] = useState(false); // State for editing skills
+  const [isEditing, setIsEditing] = useState(false); // Unified state for editing both general info and skills
   const [generalInfo, setGeneralInfo] = useState([]);
   const [skills, setSkills] = useState([]);
-  const token = useSelector((state) => state.users.users.userName.token)
+  const token = useSelector((state) => state.users.users.userName.token);
+
   useEffect(() => {
     const getTrainerInfo = async () => {
       try {
         const account = localStorage.getItem('trainerAccount');
-        const info = await fetchTrainerInfo(account, token); // Replace with dynamic account if needed
+        const info = await fetchTrainerInfo(account, token);
 
         if (info?.generalInfo) {
           setTrainerInfo(info.generalInfo);
           setGeneralInfo([
-            { label: 'Full Name', value: info.generalInfo.name || 'N/A' },
-            { label: 'Account', value: info.generalInfo.account || 'N/A' },
-            { label: 'Contact Email', value: info.generalInfo.email || 'N/A' },
-            { label: 'Phone', value: info.generalInfo.phone || 'N/A' },
-            { label: 'Employee ID', value: info.generalInfo.employeeId || 'N/A' },
-            { label: 'National ID', value: info.generalInfo.nationalId || 'N/A' },
-            { label: 'Trainer Type', value: info.generalInfo.type || 'N/A' },
-            { label: 'Contribution Type', value: info.generalInfo.educatorContributionType || 'N/A' }, // Added line
-            { label: 'Site', value: info.generalInfo.site || 'N/A' },
-            { label: 'Job Rank', value: info.generalInfo.jobRank || 'N/A' },
-            { label: 'Trainer Rank', value: info.generalInfo.trainerRank || 'N/A' },
-            { label: 'Train The Trainer Certificate', value: info.generalInfo.trainTheTrainerCert || 'N/A' },
-            { label: 'Professional Level', value: info.generalInfo.professionalLevel || 'N/A' },
-            { label: 'Training Competency Index', value: info.generalInfo.trainingCompetencyIndex || 'N/A' },
-            { label: 'Professional Index', value: info.generalInfo.professionalIndex || 'N/A' },
-            { label: 'Status', value: info.generalInfo.status ? <Tag color="green">Available</Tag> : <Tag color="red">Unavailable</Tag> },
-            { label: 'Note', value: info.generalInfo.note || 'N/A' },
+            { label: 'Full Name', value: info.generalInfo.name || 'N/A', key: 'name' },
+            { label: 'Account', value: info.generalInfo.account || 'N/A', key: 'account' },
+            { label: 'Contact Email', value: info.generalInfo.email || 'N/A', key: 'email' },
+            { label: 'Phone', value: info.generalInfo.phone || 'N/A', key: 'phone' },
+            { label: 'Employee ID', value: info.generalInfo.employeeId || 'N/A', key: 'employeeId' },
+            { label: 'National ID', value: info.generalInfo.nationalId || 'N/A', key: 'nationalId' },
+            { label: 'Trainer Type', value: info.generalInfo.type || 'N/A', key: 'type' },
+            { label: 'Contribution Type', value: info.generalInfo.educatorContributionType || 'N/A', key: 'educatorContributionType' },
+            { label: 'Site', value: info.generalInfo.site || 'N/A', key: 'site' },
+            { label: 'Job Rank', value: info.generalInfo.jobRank || 'N/A', key: 'jobRank' },
+            { label: 'Trainer Rank', value: info.generalInfo.trainerRank || 'N/A', key: 'trainerRank' },
+            { label: 'Train The Trainer Certificate', value: info.generalInfo.trainTheTrainerCert || 'N/A', key: 'trainTheTrainerCert' },
+            { label: 'Professional Level', value: info.generalInfo.professionalLevel || 'N/A', key: 'professionalLevel' },
+            { label: 'Training Competency Index', value: info.generalInfo.trainingCompetencyIndex || 'N/A', key: 'trainingCompetencyIndex' },
+            { label: 'Professional Index', value: info.generalInfo.professionalIndex || 'N/A', key: 'professionalIndex' },
+            { label: 'Status', value: info.generalInfo.status ? 'AVAILABLE' : 'UNAVAILABLE', key: 'status' },
+            { label: 'Note', value: info.generalInfo.note || 'N/A', key: 'note' }
           ]);
         } else {
           setError('General information not available.');
@@ -51,7 +51,6 @@ const TrainerProfile = () => {
         if (info?.skills) {
           setSkills(info.skills);
         }
-
       } catch (err) {
         setError('Error fetching trainer information');
         console.error('Error:', err);
@@ -61,28 +60,42 @@ const TrainerProfile = () => {
     getTrainerInfo();
   }, []);
 
-  const handleEditGeneralClick = () => {
-    setIsEditingGeneral(true);
+  const handleEditClick = () => {
+    setIsEditing(true);
   };
 
-  const handleSaveGeneralClick = () => {
-    setIsEditingGeneral(false);
+  const handleSaveClick = async () => {
+    setIsEditing(false);
+
+    const updatedGeneralInfo = generalInfo.reduce((acc, curr) => {
+      if (curr.key) {
+        acc[curr.key] = curr.value;
+      }
+      return acc;
+    }, {});
+
+    const updatedSkills = skills.map(skill => ({
+      skillName: skill.skill,
+      level: skill.level,
+      note: skill.note,
+    }));
+
+    const updatedData = {
+      ...updatedGeneralInfo,
+      trainerSkills: updatedSkills
+    };
+
+    try {
+      const account = localStorage.getItem('trainerAccount');
+      await updateTrainerInfo(account, updatedData, token);
+    } catch (err) {
+      console.error('Error saving trainer info:', err);
+      setError('Error saving trainer information');
+    }
   };
 
-  const handleCancelGeneralClick = () => {
-    setIsEditingGeneral(false);
-  };
-
-  const handleEditSkillsClick = () => {
-    setIsEditingSkills(true);
-  };
-
-  const handleSaveSkillsClick = () => {
-    setIsEditingSkills(false);
-  };
-
-  const handleCancelSkillsClick = () => {
-    setIsEditingSkills(false);
+  const handleCancelClick = () => {
+    setIsEditing(false);
   };
 
   const handleChangeGeneral = (index, event) => {
@@ -120,7 +133,7 @@ const TrainerProfile = () => {
       dataIndex: 'skill',
       key: 'skill',
       render: (text, record, index) => (
-        isEditingSkills ? (
+        isEditing ? (
           <Select value={text} onChange={(value) => handleChangeSkill(index, 'skill', value)} className="skills-select">
             <Option value="React">React</Option>
             <Option value="Java">Java</Option>
@@ -134,8 +147,14 @@ const TrainerProfile = () => {
       dataIndex: 'level',
       key: 'level',
       render: (text, record, index) => (
-        isEditingSkills ? (
-          <Input value={text} onChange={(e) => handleChangeSkill(index, 'level', e.target.value)} className="skills-input" />
+        isEditing ? (
+          <Select value={text} onChange={(value) => handleChangeSkill(index, 'level', value)} className="skills-select">
+            <Option value="INTERMEDIATE">INTERMEDIATE</Option>
+            <Option value="LIMITED_EXPERIENCE">LIMITED_EXPERIENCE</Option>
+            <Option value="FUNDAMENTAL_AWARENESS">FUNDAMENTAL_AWARENESS</Option>
+            <Option value="ADVANCED">ADVANCED</Option>
+            <Option value="EXPERT">EXPERT</Option>
+          </Select>
         ) : text
       ),
     },
@@ -144,7 +163,7 @@ const TrainerProfile = () => {
       dataIndex: 'note',
       key: 'note',
       render: (text, record, index) => (
-        isEditingSkills ? (
+        isEditing ? (
           <Input value={text} onChange={(e) => handleChangeSkill(index, 'note', e.target.value)} className="skills-input" />
         ) : text
       ),
@@ -153,8 +172,8 @@ const TrainerProfile = () => {
       title: 'Action',
       key: 'action',
       render: (text, record, index) => (
-        isEditingSkills && (
-          <Button className="delete-skill-button" onClick={() => handleDeleteSkill(index)} icon={  <DeleteOutlined className="icon-small" />}>
+        isEditing && (
+          <Button className="delete-skill-button" onClick={() => handleDeleteSkill(index)} icon={<DeleteOutlined className="icon-small" />}>
             Delete
           </Button>
         )
@@ -164,10 +183,11 @@ const TrainerProfile = () => {
 
   return (
     <div className="trainer-profile p-4">
-      <h2 className="text-xl font-bold">Trainer Profile - {trainerInfo ? trainerInfo.name : "Loading..."}</h2>
-      {error && <p className="text-red-500">Error: {error}</p>}
+
       {!trainerInfo ? (
-        <p>Loading trainer information...</p>
+        <div className="flex justify-start items-center">
+          <Spin size="large" />
+        </div>
       ) : (
         <div className="trainer-container-profile h-[calc(100vh-260px)] overflow-y-auto scrollbar-hide">
           <Collapse defaultActiveKey={['1', '2']} className="bg-gray-200 shadow-lg mb-5">
@@ -179,7 +199,7 @@ const TrainerProfile = () => {
                     <div key={index} className="flex justify-between border-b pb-2 md:border-none">
                       <strong className="w-1/3 bg-gray-200 p-2">{item.label}:</strong>
                       <span className="w-2/3 text-right border-l border-gray-300 pl-2">
-                        {isEditingGeneral ? (
+                        {isEditing ? (
                           <Input
                             value={item.value}
                             onChange={(event) => handleChangeGeneral(index, event)}
@@ -192,15 +212,6 @@ const TrainerProfile = () => {
                     </div>
                   ))}
                 </div>
-                {isEditingGeneral ? (
-                  <div className="flex justify-end gap-4 mt-4">
-                    <Button className='icon-small' onClick={handleCancelGeneralClick}>Cancel</Button>
-                    <Button type="primary" onClick={handleSaveGeneralClick}>Save</Button>
-
-                  </div>
-                ) : (
-                  <Button type="primary" onClick={handleEditGeneralClick} className="mt-4">Edit General Info</Button>
-                )}
               </Card>
             </Panel>
 
@@ -212,31 +223,33 @@ const TrainerProfile = () => {
                   dataSource={skills.map((skill, index) => ({ ...skill, key: index }))}
                   pagination={false}
                 />
-                {isEditingSkills ? (
+                {isEditing && (
                   <div className="flex flex-col items-end gap-4 mt-4">
                     <div className='bt-ad'>
                       <Button type="dashed" icon={<PlusOutlined />} onClick={handleAddSkill} className="w-full">
                         Add new skill
                       </Button>
                     </div>
-
-                    <div className="flex gap-4">
-                      <Button className='icon-small' onClick={handleCancelSkillsClick}>Cancel</Button>
-                      <Button type="primary" onClick={handleSaveSkillsClick}>Save</Button>
-
-                    </div>
                   </div>
-                ) : (
-                  <Button type="primary" onClick={handleEditSkillsClick} className="mt-4">Edit Skills</Button>
                 )}
               </Card>
             </Panel>
           </Collapse>
-          <div className="mt-4">
-            <Button className='custom-button mt-4' type="button">
-              <Link to='/ADMIN/trainer-list'>Back to Trainers List</Link>
+          <div className="flex justify-between mt-4">
+            <Button type="default">
+              <Link to="/ADMIN/trainer-list">Back to Trainers List</Link>
             </Button>
 
+            <div className="flex gap-4">
+              {!isEditing ? (
+                <Button type="primary" onClick={handleEditClick}>Edit information</Button>
+              ) : (
+                <>
+                  <Button onClick={handleCancelClick}>Cancel</Button>
+                  <Button type="primary" onClick={handleSaveClick}>Save</Button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}

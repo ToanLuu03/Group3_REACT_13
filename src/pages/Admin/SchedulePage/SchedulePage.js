@@ -299,7 +299,7 @@ const SchedulePage = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center">
+            <div className="flex justify-start items-center">
                 <Spin size="large" />
             </div>
         );

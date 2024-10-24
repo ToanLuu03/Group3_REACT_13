@@ -25,4 +25,25 @@ export const fetchTrainerInfo = async (account, token) => {
     }
 };
 
+export const updateTrainerInfo = async (account, updatedData, token) => {
+    try {
+        const response = await axios.put(
+            `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/update-trainer/${account}`,
+            updatedData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        console.log('Trainer Update Response:', response.data); 
+        return response.data;
+    } catch (error) {
+        console.error('Error updating trainer info:', error.message);
+        throw new Error('Failed to update trainer info');
+    }
+};
+
 
