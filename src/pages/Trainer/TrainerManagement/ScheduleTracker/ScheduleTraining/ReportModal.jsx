@@ -1,20 +1,15 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Modal, Button, DatePicker, Input } from "antd";
+import { Modal, Button, DatePicker, Input, message } from "antd";
 import { useSelector } from "react-redux";
 import TrainerAPI from "../../../../../services/trainer";
 import dayjs from "dayjs";
 
-const ReportModal = ({
-  visible,
-  onClose,
-  onSubmit,
-  filteredData,
-}) => {
+const ReportModal = ({ visible, onClose, onSubmit, filteredData, setFilteredData }) => {
   const { TextArea } = Input;
   const [errors, setErrors] = useState({});
   const token = useSelector((state) => state.users?.users?.userName?.token);
   const [isLoading, setIsLoading] = useState(false);
-  // Initialize form data
+
   const [formData, setFormData] = useState({
     faClassId: null,
     moduleId: null,
@@ -24,27 +19,25 @@ const ReportModal = ({
     note: "",
     dailyReportCreateTopicDTOS: [],
   });
-
-  // Memoize filteredData processing to avoid unnecessary recalculations
-  const dailyReportCreateTopicDTOS = useMemo(() => {
-    if (!filteredData || filteredData.length === 0) return [];
-    // Check that topicId belongs to the correct moduleId
-    return filteredData.map((item) => {
-      if (item.moduleId === formData.moduleId) {
-        return {
-          id: item.topicId,
-          dailyReportCreateContentDTOS: [{ id: item.contentId }]
-        };
-      } else {
-        return null; // or handle error
-      }
-    }).filter(item => item !== null); // filter out invalid data
-  }, [filteredData, formData.moduleId]);
-
+  const [localFilteredData, setLocalFilteredData] = useState([...filteredData]);
   useEffect(() => {
-    if (filteredData && filteredData.length > 0) {
-      const firstData = filteredData[0];
+    setLocalFilteredData([...filteredData]);
+  }, [filteredData]);
 
+  const dailyReportCreateTopicDTOS = useMemo(() => {
+    if (!localFilteredData || localFilteredData.length === 0) return [];
+
+    // Filter topics by moduleId to ensure only valid ones are submitted
+    return localFilteredData
+      .filter(item => item.moduleId === formData.moduleId) // Only include topics that match the current moduleId
+      .map((item) => ({
+        id: item.topicId,
+        dailyReportCreateContentDTOS: [{ id: item.contentId }]
+      }));
+  }, [localFilteredData, formData.moduleId]);
+  useEffect(() => {
+    if (localFilteredData.length > 0) {
+      const firstData = localFilteredData[0];
       setFormData((prev) => ({
         ...prev,
         faClassId: firstData.faClassId || null,
@@ -54,7 +47,7 @@ const ReportModal = ({
         dailyReportCreateTopicDTOS: dailyReportCreateTopicDTOS,
       }));
     }
-  }, [filteredData, dailyReportCreateTopicDTOS]);
+  }, [localFilteredData]);
 
   const handleInputChange = (field) => (value) => {
     setFormData((prev) => ({
@@ -67,29 +60,36 @@ const ReportModal = ({
   const validateForm = () => {
     const requiredFields = ["dateTime", "duration", "reason"];
     const newErrors = {};
+
     requiredFields.forEach((field) => {
       if (!formData[field]) {
-        newErrors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)} is required.`;
+        newErrors[field] = `${field.charAt(0).toUpperCase() + field.slice(1)
+          } is required.`;
       }
     });
+
+    // If there are validation errors, return them
+    setErrors(newErrors); // Ensure errors are set to trigger display
     return newErrors;
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true)
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length) {
       setErrors(validationErrors);
-    } else {
-      try {
-        console.log("Submitting formData:", formData);
-        await TrainerAPI.scheduleReport(token, formData);
-        onSubmit();
-      } catch (error) {
-        console.error("API Submission Error:", error);
-      }finally{
-        setIsLoading(false);
-      }
+      return;
+    }
+
+    setIsLoading(true); // Set loading to true when submitting starts
+    try {
+      // Submit form data to the API
+      await TrainerAPI.scheduleReport(token, formData);
+      onSubmit(); // Call the onSubmit function passed as a prop (if applicable)
+    } catch (error) {
+      console.error("API Submission Error:", error);
+      message.error("Failed to submit report."); // Show an error message to the user
+    } finally {
+      setIsLoading(false); // Always set loading to false after API call completes
     }
   };
 
@@ -106,9 +106,14 @@ const ReportModal = ({
   const inputClassName = (error) =>
     `w-full px-3 border rounded-md ${error ? "border-red-500" : "border-gray-300"}`;
 
+  const handleRemoveRow = (contentId) => {
+    const updatedReportData = localFilteredData.filter(item => item.contentId !== contentId);
+    setLocalFilteredData(updatedReportData);
+  };
+
   return (
     <Modal visible={visible} onCancel={onClose} footer={null} width={600}>
-      <div className="text-2xl font-medium pb-10">Schedule Report</div>
+      <div className="text-2xl font-medium mb-10">Schedule Report</div>
       <div className="space-y-6">
         <div className="grid grid-cols-2 gap-4">
           {renderField(
@@ -132,19 +137,43 @@ const ReportModal = ({
             />
           )}
         </div>
+        {/* Table with Topics and Content */}
+        <div className="overflow-y-auto max-h-52">
+          <table className="min-w-full border border-gray-300">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="px-4 py-2 text-left">Topic</th>
+                <th className="px-4 py-2 text-left">Content</th>
+                <th className="px-4 py-2 text-left">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {localFilteredData.map((item, index) => {
+                const isLastItem = index === localFilteredData.length - 1;
 
-        <div className="h-auto">
-          <h3 className="text-base font-medium mb-2">Schedule 01</h3>
-          <div className="flex flex-wrap border-gray-300">
-            {filteredData.map((item, index) => (
-              <div key={index} className="flex w-1/2 justify-between items-center space-x-4 mb-2">
-                <span className="flex-grow">{item.topicName}</span>
-                <button className="text-gray-500 hover:text-gray-600 font-bold pr-3">
-                  X
-                </button>
-              </div>
-            ))}
-          </div>
+                return (
+                  <tr key={item.contentId}>
+                    <td className="px-4 py-2 border">{item.topicName}</td>
+                    <td className="px-4 py-2 border">- {item.contentName}</td>
+                    <td className="pl-8 py-2 border">
+                      <button
+                        onClick={() =>
+                          isLastItem && handleRemoveRow(item.contentId)
+                        }
+                        className={`${isLastItem
+                          ? "text-[#FF0000] hover:text-red-700"
+                          : "text-[#808080]"
+                          }`}
+                        disabled={!isLastItem}
+                      >
+                        X
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
 
         {renderField(
@@ -169,13 +198,20 @@ const ReportModal = ({
             className={inputClassName(errors.reason)}
           />
         )}
-
         <div className="flex justify-end space-x-4">
-          <Button onClick={onClose} className="bg-gray-300 hover:bg-gray-400 text-black font-medium py-2 px-4 rounded-full">
+          <Button
+            onClick={onClose}
+            className="bg-gray-300 hover:bg-gray-400 text-black font-medium py-2 px-4 rounded-full"
+          >
             Cancel
           </Button>
-          <Button disabled={isLoading} type="primary" onClick={handleSubmit} className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-full">
-          {isLoading ? 'Submiting...' : 'Submit'}
+          <Button
+            disabled={isLoading} // Only disable when loading
+            type="primary"
+            onClick={handleSubmit}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-full"
+          >
+            {isLoading ? "Submitting..." : "Submit"}
           </Button>
         </div>
       </div>

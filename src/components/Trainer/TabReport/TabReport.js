@@ -76,15 +76,17 @@ const TabReport = () => {
 
         if (filteredData.length > 0) {
           const formattedData = filteredData.flatMap(item =>
-            item.reports.map(report => ({
-              key: report.date,
-              date: new Date(report.date).toLocaleDateString(),
-              topic: report.topics.map(topic => topic.topicName).join(', '),
-              deliveryType: report.topics.map(topic => topic.deliveryType || 'N/A').join(', '),
-              trainingFormat: report.topics.map(topic => topic.trainingFormat || 'N/A').join(', '),
-              duration: report.topics.reduce((total, topic) => total + (topic.duration || 0), 0),
-              note: report.topics.map(topic => topic.note).join(', '),
-            }))
+            item.reports.flatMap(report =>
+              report.topics.map(topic => ({
+                key: `${report.date}-${topic.topicName}`,
+                date: new Date(report.date).toLocaleDateString(),
+                topic: topic.topicName,
+                deliveryType: topic.deliveryType || 'N/A',
+                trainingFormat: topic.trainingFormat || 'N/A',
+                duration: topic.duration || 0,
+                note: topic.note || 'N/A',
+              }))
+            )
           );
           setDataSource(formattedData);
         } else {
@@ -98,6 +100,7 @@ const TabReport = () => {
       message.error('Failed to fetch report');
     }
   };
+
 
   const handleSearchChange = (event) => {
     setSearchText(event.target.value);

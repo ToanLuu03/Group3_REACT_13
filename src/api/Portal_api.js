@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const API_BASE_URL = 'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer-management/portal';
 
-const accountUsername = localStorage.getItem('username'); // Get username from local storage
 
 export const fetchDataGpa = () => {
+  const accountUsername = localStorage.getItem('username'); // Get username from local storage
 
   return axios.get(`${API_BASE_URL}/${accountUsername}`);
 };

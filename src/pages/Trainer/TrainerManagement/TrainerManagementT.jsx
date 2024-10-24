@@ -32,7 +32,7 @@ const TrainerManagementT = ({ collapsed }) => {
 
   return (
     <div className="mt-[60px]">
-      <div className=" mx-auto">
+      <div className="mx-auto">
         <Title />
         <Category />
         {/* Add other content as needed */}

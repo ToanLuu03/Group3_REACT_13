@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 
-const token = localStorage.getItem('token');
 export const fetchDataTrainer = async () => {
     const URLTrainer = 'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/admin/schedule-tracker?option=TRAINER';
+    const token = localStorage.getItem('token');
 
     try {
         const trainer = await axios.get(URLTrainer, {
@@ -27,6 +27,7 @@ export const fetchDataTrainer = async () => {
 
 export const fetchDataClass = async () => {
     const URLClass = 'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/admin/schedule-tracker?option=CLASS';
+    const token = localStorage.getItem('token');
 
     try {
         if (!token) {
@@ -77,6 +78,7 @@ const extractContents = (trainerData) => {
                     contentDeliveryType: content?.contentDeliveryType,
                     contentTrainingFormat: content?.contentTrainingFormat,
                     contentPlannedDate: content?.contentPlannedDate,
+                    topicPlannedDate: content?.topicPlannedDate,
                     reportActualDate: content?.reportActualDate,
                     reportDuration: content?.reportDuration,
                     reportNote: content?.reportNote,

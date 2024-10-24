@@ -3,7 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Modal, notification, Popover, Spin } from "antd";
+import { Button, Modal, notification, Popover, Spin } from "antd";
 import dayjs from "dayjs";
 import "./SchedulePage.css";
 import LeftCalendar from "../../../components/Trainer/Schedule/LeftCalendar/LeftCalendar";
@@ -15,6 +15,7 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { BankOutlined, DeleteOutlined, EditOutlined, FieldTimeOutlined, UserOutlined } from "@ant-design/icons";
 import EventModal from "../../../components/Admin/Schedule/EventModal/EventModal";
 import { useOutletContext } from "react-router-dom";
+import { MdDelete, MdDomain, MdPerson, MdTimer } from "react-icons/md";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -305,8 +306,8 @@ const SchedulePage = () => {
         );
     }
     return (
-        <div className="flex flex-col lg:flex-row justify-between h-[calc(100vh-250px)]">
-            <div className="w-full lg:flex-1 max-w-[250px] p-5 bg-gray-100">
+        <div className="flex flex-col lg:flex-row lg:flex-row justify-between h-[calc(100vh-250px)]">
+            <div className="w-full lg:w-auto lg:flex-1 max-w-full lg:max-w-[250px] p-5 bg-gray-100 mb-[24px] lg:mb-0 min-w-[250px]">
                 <LeftCalendar
                     currentDate={currentDate}
                     setCurrentDate={setCurrentDate}
@@ -314,7 +315,7 @@ const SchedulePage = () => {
                 />
             </div>
 
-            <div className="w-full lg:ml-2 lg:flex-1 h-[calc(100vh-190px)] full-calendar">
+            <div className="w-full lg:ml-2 lg:flex-1 h-[calc(100vh-190px)]  min-w-[250px] full-calendar">
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -323,15 +324,23 @@ const SchedulePage = () => {
                     events={allEvents}
                     eventContent={(arg) => {
                         const { type, room, admin, isFreeTime } = arg.event.extendedProps;
-                        const eventClass = `h-full w-full bg-gray-200 rounded-md p-2 text-white text-center ${type === 'fresher' ? 'bg-orange-400' : type === 'intern' ? 'bg-green-400' : type === 'free_time' ? 'bg-[#509ADF] bg-opacity-75' : ''}`;
-
+                        const eventClass = `h-full w-full rounded-md p-2 text-white text-center 
+                            ${type === 'fresher' ? 'bg-orange-400' :
+                                type === 'intern' ? 'bg-green-400' :
+                                    type === 'free_time' ? 'bg-[#509ADF] bg-opacity-75' : ''}
+                                        text-xs sm:text-sm lg:text-base`;
                         return (
                             <Popover
                                 content={() => (
-                                    <div className="p-2">
+                                    <div className="p-2 text-xs sm:text-sm lg:text-base">
                                         {isFreeTime ? (
                                             <>
-                                                <p className="mb-2"><strong><FieldTimeOutlined /> Time:</strong> {dayjs(arg.event.start).format("hh:mm A")} - {dayjs(arg.event.end).format("hh:mm A")}</p>
+                                                <div className="modal-section flex items-center mb-2">
+                                                    <MdTimer className="text-xl mr-2" />
+                                                    <div>
+                                                        <p><strong>Time:</strong> {dayjs(arg.event.start).format("hh:mm A")} - {dayjs(arg.event.end).format("hh:mm A")}</p>
+                                                    </div>
+                                                </div>
                                                 {/* <div className="popover-actions"> */}
                                                 {/* <button className="popover-button delete-button">
                                                         <DeleteOutlined className="button-icon" /> Delete
@@ -340,9 +349,24 @@ const SchedulePage = () => {
                                             </>
                                         ) : (
                                             <>
-                                                <p className="mb-2"><strong><BankOutlined /> Location:</strong> {room}</p>
-                                                <p className="mb-2"><strong><UserOutlined /> Admin:</strong> {admin}</p>
-                                                <p className="mb-2"><strong><FieldTimeOutlined /> Time:</strong> {dayjs(arg.event.start).format("hh:mm A")} - {dayjs(arg.event.end).format("hh:mm A")}</p>
+                                                <div className="modal-section flex items-center mb-2">
+                                                    <MdDomain className="text-xl mr-2" />
+                                                    <div>
+                                                        <p><strong>Location:</strong> {room}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="modal-section flex items-center mb-2">
+                                                    <MdPerson className="text-xl text-black mr-2" />
+                                                    <div>
+                                                        <p><strong>Admin:</strong> {admin}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="modal-section flex items-center mb-2">
+                                                    <MdTimer className="text-xl mr-2" />
+                                                    <div>
+                                                        <p><strong>Time:</strong> {dayjs(arg.event.start).format("hh:mm A")} - {dayjs(arg.event.end).format("hh:mm A")}</p>
+                                                    </div>
+                                                </div>
                                                 {/* <div className="popover-actions">
                                                     <button
                                                         className="popover-button edit-button"
@@ -360,23 +384,25 @@ const SchedulePage = () => {
                                                     </button>
                                                     // 
                                                 </div> */}
-                                                <button className="border-none bg-transparent cursor-pointer p-1 text-base text-red-600"
+                                                <Button
+                                                    className="border-none bg-transparent cursor-pointer p-1 text-base text-red-600"
                                                     onClick={() => handleDeleteEvent(arg.event.extendedProps.dayParamId)}
                                                 >
-                                                    <DeleteOutlined className="mr-4" /> Delete
-                                                </button>
+                                                    <MdDelete className="mr-2" />
+                                                    Delete
+                                                </Button>
                                             </>
                                         )}
                                     </div>
                                 )}
-                                title={<span className={`font-bold ${type === 'fresher' ? 'text-orange-500' : type === 'intern' ? 'text-green-500' : type === 'free_time' ? 'text-[#509ADF]' : ''}`}>{arg.event.title}</span>}
+                                title={<span className={`font-bold ${type === 'fresher' ? 'text-orange-500' : type === 'intern' ? 'text-green-500' : 'text-[#509ADF]'}`}>{arg.event.title}</span>}
                                 trigger="click"
                                 open={visiblePopover[arg.event.id] || false}
                                 onOpenChange={(visible) => handlePopoverVisibleChange(visible, arg.event.id)}
                                 placement="top"
                                 overlayStyle={{ position: "fixed" }}
                             >
-                                <div className={eventClass}>
+                                <div className={`${eventClass} cursor-pointer`}>
                                     {arg.event.title}
                                 </div>
                             </Popover>

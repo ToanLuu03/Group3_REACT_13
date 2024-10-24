@@ -1,178 +1,21 @@
-/* .calendar-container-admin {
-    display: flex;
-    justify-content: space-between;
-    height: calc(100vh - 250px);
-}
+.full-calendar .fc-v-event {
+    background-color: transparent !important;
+    border-radius: none !important;
+    border: none !important;
+  }
 
-.left-calendar-admin .ant-picker-calendar {
-    flex: 1;
-    max-width: 250px;
-    padding: 20px;
-    background-color: #e8e8e8;
-}
+@media (Max-width: 412px) {   
 
-.left-calendar-admin .ant-picker-panel {
-    background-color: #e8e8e8;
-}
-
-.right-calendar-admin {
-    margin-left: 5px;
-    flex: 1;
-    overflow-y: hidden;
-    height: calc(100vh - 190px);
-}
-
-.right-calendar-admin .fc-scroller {
-    overflow-y: auto;
-}
-
-.right-calendar-admin .fc-timegrid {
-    overflow: hidden;
-}
-
-.custom-modal {
-    border-radius: 8px;
-}
-
-.custom-modal .ant-modal-title {
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center;
-}
-
-.right-calendar-admin .fc-event-title {
-    height: 100%;
-    width: 100%;
-    background-color: #e8e8e8;
-    border-radius: 3px;
-    padding: 5px;
-    color: #fff;
-    text-align: center;
-}
-
-.right-calendar-admin .fc-event {
-    background-color: #e8e8e8;
-    border: none;
-}
-
-.right-calendar-admin .fc-scrollgrid-sync-inner a {
-    text-decoration: none;
-    color: black;
-}
-
-.right-calendar-admin .fc-timegrid-slot-minor {
-    border-top-style: solid;
-}
-
-.event-fresher {
-    background-color: orange !important;
-}
-
-.event-intern {
-    background-color: green !important;
-}
-
-.event-free_time {
-    background-color: #509ADF75 !important;
-}
-
-.event-title {
-    font-weight: bold;
-}
-
-.event-title-fresher {
-    color: orange !important;
-}
-
-.event-title-intern {
-    color: green !important;
-}
-
-.event-title-free_time {
-    color: #509ADF75 !important;
-}
-
-.popover-content {
-    padding: 10px;
-}
-
-.popover-detail {
-    margin-bottom: 8px;
-}
-
-.popover-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    border-top: 1px solid #000;
-}
-
-.popover-button {
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    padding: 4px;
-    font-size: 14px;
-}
-
-.edit-button {
-    color: #4caf50;
-}
-
-.delete-button {
-    color: #f44336;
-}
-
-.button-icon {
-    margin-right: 4px;
-}
-
-@media (Max-width: 768px) {
-    .left-calendar-admin .ant-picker-calendar {
-        max-width: 190px;
+    .full-calendar .fc .fc-toolbar-title {
+        font-size: 0.6rem;
     }
 
-    .right-calendar-admin {
-        max-width: calc(100vw - 196px);
-    }
-}
-
-@media (Max-width: 678px) {
-
-    .calendar-container-admin {
-        display: block;
-        justify-content: space-between;
-        align-items: center;
-        overflow-y: auto;
-    }
-
-    .calendar-container-admin::-webkit-scrollbar {
-        display: none;
-    }
-
-    .left-calendar-admin .ant-picker-calendar {
-        max-width: 100%;
-    }
-
-    .right-calendar-admin {
-        max-width: 100vh;
-    }
-
-    .right-calendar-admin .fc .fc-toolbar-title {
-        font-size: 0.75rem;
-    }
-
-    .right-calendar-admin .fc-scrollgrid-sync-inner a {
-        font-size: 11px;
+    .full-calendar .fc-scrollgrid-sync-inner a {
+        font-size: 10px;
     }
 
     .fc-direction-ltr .fc-timegrid-slot-label-frame {
         text-align: center;
         font-size: 0.6rem;
     }
-} */
-.full-calendar .fc-v-event {
-    background-color: transparent !important;
-    border-radius: none !important;
-    border: none !important;
-  }
+} 

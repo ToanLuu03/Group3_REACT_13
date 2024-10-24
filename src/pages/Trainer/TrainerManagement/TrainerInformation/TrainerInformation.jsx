@@ -15,7 +15,7 @@ const TrainerInformation = ({ selectedTrainer }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 md:p-6 lg:p-8">
+    <div className="flex flex-col gap-4 md:p-3 lg:p-2">
       <div className="h-full">
         <Button
           onClick={() => toggleDropdown("generalInfo")}
@@ -25,7 +25,7 @@ const TrainerInformation = ({ selectedTrainer }) => {
           {dropdownState.generalInfo ? <UpOutlined /> : <DownOutlined />}
         </Button>
         {dropdownState.generalInfo && (
-          <div className="mt-4">
+          <div className="">
             <GeneralInfo userInfoData={selectedTrainer} />
           </div>
         )}

@@ -101,6 +101,7 @@ const ScheduleTraining = ({ collapsed }) => {
                 topicId: topic.topicId,
                 topicName: topic.topicName,
                 contentId: content.contentId,
+                contentName: content.contentName,
                 deliveryType: content.deliveryType,
                 trainingFormat: content.trainingFormat,
                 date: dayjs(topic.date).format("DD/MM/YYYY"),
@@ -141,55 +142,55 @@ const ScheduleTraining = ({ collapsed }) => {
   const moduleOptions = useMemo(() => {
     return selectedClass
       ? scheduleData
-          .find((item) => item.className === selectedClass)
-          ?.modules.map((module) => ({
-            label: module.moduleName,
-            value: module.moduleName,
-          })) || []
+        .find((item) => item.className === selectedClass)
+        ?.modules.map((module) => ({
+          label: module.moduleName,
+          value: module.moduleName,
+        })) || []
       : [];
   }, [selectedClass, scheduleData]);
 
   const deliveryTypeOptions = useMemo(() => {
     return selectedModule
       ? scheduleData
-          .flatMap((item) =>
-            item.modules
-              .filter((module) => module.moduleName === selectedModule)
-              .flatMap((module) =>
-                module.topics.flatMap((topic) =>
-                  topic.contents.map((content) => ({
-                    label: content.deliveryType,
-                    value: content.deliveryType,
-                  }))
-                )
+        .flatMap((item) =>
+          item.modules
+            .filter((module) => module.moduleName === selectedModule)
+            .flatMap((module) =>
+              module.topics.flatMap((topic) =>
+                topic.contents.map((content) => ({
+                  label: content.deliveryType,
+                  value: content.deliveryType,
+                }))
               )
-          )
-          .filter(
-            (value, index, self) =>
-              index === self.findIndex((t) => t.value === value.value)
-          )
+            )
+        )
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.value === value.value)
+        )
       : [];
   }, [selectedModule, scheduleData]);
 
   const trainingFormatOptions = useMemo(() => {
     return selectedModule
       ? scheduleData
-          .flatMap((item) =>
-            item.modules
-              .filter((module) => module.moduleName === selectedModule)
-              .flatMap((module) =>
-                module.topics.flatMap((topic) =>
-                  topic.contents.map((content) => ({
-                    label: content.trainingFormat,
-                    value: content.trainingFormat,
-                  }))
-                )
+        .flatMap((item) =>
+          item.modules
+            .filter((module) => module.moduleName === selectedModule)
+            .flatMap((module) =>
+              module.topics.flatMap((topic) =>
+                topic.contents.map((content) => ({
+                  label: content.trainingFormat,
+                  value: content.trainingFormat,
+                }))
               )
-          )
-          .filter(
-            (value, index, self) =>
-              index === self.findIndex((t) => t.value === value.value)
-          )
+            )
+        )
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((t) => t.value === value.value)
+        )
       : [];
   }, [selectedModule, scheduleData]);
 
@@ -208,8 +209,22 @@ const ScheduleTraining = ({ collapsed }) => {
     setDateRange({ startDate: null, endDate: null });
   };
 
-  const handleReportClick = () => setIsModalVisible(true);
-  const handleModalClose = () => setIsModalVisible(false);
+  const handleReportClick = () => {
+    // Optional: Make a copy of the data to avoid direct modifications in the modal
+    const reportData = [...filteredData].filter(
+      (content) =>
+        (!selectedDeliveryType || content.deliveryType === selectedDeliveryType) &&
+        (!selectedTrainingFormat || content.trainingFormat === selectedTrainingFormat)
+    ).sort((a, b) => a.contentName.localeCompare(b.contentName));
+
+    setFilteredData(reportData); // Pass filtered data to the modal
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    // fetchScheduleData(); // Optional: refetch the schedule data to reset any modifications made in ReportModal
+  };
   const handleCheckboxChange = (isChecked) => setIsCheckboxChecked(isChecked);
 
   if (loading)
@@ -222,9 +237,8 @@ const ScheduleTraining = ({ collapsed }) => {
 
   return (
     <div
-      className={`flex flex-col transition-all duration-300 ${
-        collapsed ? "mr-[0]" : "mr-[0px]"
-      }`}
+      className={`flex flex-col transition-all duration-300 ${collapsed ? "mr-[0]" : "mr-[0px]"
+        }`}
     >
       {/* Main container for the Selects and Inputs in one row */}
       <div className="flex flex-wrap w-full justify-between items-center">
@@ -318,8 +332,8 @@ const ScheduleTraining = ({ collapsed }) => {
         visible={isModalVisible}
         onClose={handleModalClose}
         onSubmit={() => setIsModalVisible(false)}
-        filteredData={filteredData}
-        setFilteredData={setFilteredData}
+        filteredData={[...filteredData]} // Pass a copy instead of modifying the original
+        setFilteredData={setFilteredData} // Optional, only pass if you need to modify data in parent
       />
     </div>
   );

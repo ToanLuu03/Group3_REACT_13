@@ -1,15 +1,16 @@
 import axios from 'axios';
 
-const token = localStorage.getItem('token');
 
 export const fetchClasses = async () => {
     try {
+        const token = localStorage.getItem('token');
+
         const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainers/trainer-report/get-schedule-non-report', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
-        console.log('Response: ',response)
+        console.log('Response: ', response)
         return response;
     } catch (error) {
         console.error('Error fetching classes:', error);
@@ -19,6 +20,8 @@ export const fetchClasses = async () => {
 
 export const fetchReport = async () => {
     try {
+        const token = localStorage.getItem('token');
+
         const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainers/reports-history', {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -33,6 +36,7 @@ export const fetchReport = async () => {
 
 export const createReport = async (reportData) => {
     try {
+        const token = localStorage.getItem('token');
         const response = await axios.post('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainers/reports', reportData, {
             headers: {
                 Authorization: `Bearer ${token}`

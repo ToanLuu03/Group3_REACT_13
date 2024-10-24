@@ -18,6 +18,7 @@ export const fetchClasses = async () => {
 };
 
 export const fetchReport = async () => {
+    const token = localStorage.getItem('token');
     try {
         const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainers/reports-history', {
             headers: {

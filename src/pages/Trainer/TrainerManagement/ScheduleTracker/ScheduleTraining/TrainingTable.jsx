@@ -13,7 +13,7 @@ const TrainingTable = ({ filteredData, onCheckboxChange }) => {
           <thead>
             <tr>
               <th className="border p-2 text-left">Schedule</th>
-              <th className="border p-2 text-left"></th> {/* Checkbox column */}
+              <th className="border p-2 text-left"></th>
               <th className="border p-2 text-left">Topic</th>
               <th className="border p-2 text-left">Delivery Type</th>
               <th className="border p-2 text-left">Training Format</th>

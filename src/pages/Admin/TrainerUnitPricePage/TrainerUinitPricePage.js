@@ -18,8 +18,10 @@ function TrainerUnitPricePage() {
   const [trainerId, setTrainerId] = useState("");
 
   const fetchData = async () => {
+    const token = localStorage.getItem('token');
+
     const account = localStorage.getItem("trainerAccount");
-    fetchTrainerUnitPrices(account)
+    fetchTrainerUnitPrices(account, token)
       .then((data) => {
         if (data && data.data && Array.isArray(data.data.trainerUnitPrice)) {
           const trainerUnitPrices = data.data.trainerUnitPrice.map((item) => ({
