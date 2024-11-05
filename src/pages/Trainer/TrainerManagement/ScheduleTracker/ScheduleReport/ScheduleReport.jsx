@@ -20,7 +20,7 @@ const ScheduleReport = ({ collapsed }) => {
   const [dateRange, setDateRange] = useState({ startDate: null, endDate: null });
   const [searchQuery, setSearchQuery] = useState(""); // State for search input
 
-  const token = useSelector((state) => state.users.users.userName.token);
+  const token = localStorage.getItem('token')
 
   const fetchtrainersReportHistory = useCallback(async () => {
     try {

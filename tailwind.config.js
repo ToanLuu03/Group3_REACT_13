@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       colors:{
         antBgContainer: '#ffffff',
+        customRed: '#FF0000',
       }
     },
   },

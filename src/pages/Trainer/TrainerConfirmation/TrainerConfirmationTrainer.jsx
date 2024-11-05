@@ -22,8 +22,8 @@ const TrainerConfirmation = () => {
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
   const username = useSelector((state) => state.users.users.userName.username);
-  const token = useSelector((state) => state.users.users.userName.token);
-  const role = useSelector((state) => state.role.selectedRole.role);
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem('role');
   const navigate = useNavigate();
 
   const getTrainerConfirmation = useCallback(async () => {

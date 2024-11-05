@@ -1,0 +1,18 @@
+.table-body {
+    word-wrap: break-word;
+    white-space: normal;
+    text-align: center;
+
+}
+
+.table-header {
+    max-width: auto;
+    white-space: nowrap;
+    text-align: center;
+
+}
+
+
+.date{
+    font-weight: 400;
+}

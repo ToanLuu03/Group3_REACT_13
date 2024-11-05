@@ -1,21 +1,25 @@
 .full-calendar .fc-v-event {
-    background-color: transparent !important;
-    border-radius: none !important;
-    border: none !important;
+  background-color: transparent !important;
+  border-radius: none !important;
+  border: none !important;
+}
+
+@media (max-width: 512px) {
+  .full-calendar .fc .fc-toolbar-title {
+    font-size: 1.25rem;
   }
 
-@media (Max-width: 412px) {   
+  .full-calendar .fc-scrollgrid-sync-inner a {
+    font-size: 10px;
+  }
 
-    .full-calendar .fc .fc-toolbar-title {
-        font-size: 0.6rem;
-    }
-
-    .full-calendar .fc-scrollgrid-sync-inner a {
-        font-size: 10px;
-    }
-
-    .fc-direction-ltr .fc-timegrid-slot-label-frame {
-        text-align: center;
-        font-size: 0.6rem;
-    }
-} 
+  .fc-direction-ltr .fc-timegrid-slot-label-frame {
+    text-align: center;
+    font-size: 0.6rem;
+  }
+}
+@media (max-width: 412px) {
+  .full-calendar .fc .fc-toolbar-title {
+    font-size: 0.6rem;
+  }
+}

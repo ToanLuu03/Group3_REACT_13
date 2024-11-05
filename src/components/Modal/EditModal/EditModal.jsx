@@ -1,5 +1,4 @@
 import { Row, Col, Button, Modal, Input, Switch, DatePicker, Checkbox, InputNumber } from "antd";
-import './editmodal.css';
 import { useState, useEffect } from "react";
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -91,62 +90,65 @@ const EditModal = ({ isVisible, onCancel, initialData, onSave }) => {
       visible={isVisible}
       onCancel={onCancel}
       footer={null}
-      className="edit-modal"
+      className="max-w-full mx-auto"
+      bodyStyle={{ padding: '1rem', overflow: 'hidden' }}  // Ensures no overflow
     >
-      <Row className="edit-modal-row">
-        <Col lg={18}>
+      <Row className="flex flex-wrap justify-between items-center mb-4">
+        <Col lg={18} xs={24} className="mb-4 lg:mb-0">
           <Input
             type="text"
-            value={roomName}
+            value={initialData.title}
             onChange={(e) => setRoomName(e.target.value)}
-            className="edit-modal-input"
+            className="w-full p-2 bg-gray-100 border border-gray-300 rounded"
             placeholder="Room Name"
           />
         </Col>
-        <Col lg={6} className="repeat-section">
-          <Switch 
-            className="repeat-switch" 
+        <Col lg={6} xs={24} className="flex items-center justify-end lg:justify-start">
+          <Switch
+            className="m-auto"
             defaultChecked={isRepeat}
-            onChange={handleRepeatChange} 
+            onChange={handleRepeatChange}
           />
-          <span className="repeat-label">Repeat</span>
+          <span className="ml-2 text-sm">Repeat</span>
         </Col>
       </Row>
 
-      <Row className="edit-modal-row">
+      <Row className="mb-4 lg:mb-0">
         <Col span={24}>
           <RangePicker
             showTime={{ format: 'HH:mm' }}
             format="YYYY-MM-DD HH:mm:ss"
             value={[startTime, endTime]}
             onChange={handleRangeChange}
-            className="edit-modal-rangepicker"
+            className="w-full md:w-3/4 lg:w-1/2"  // Full width to ensure it fits the modal width
             disabledDate={disablePastDates}
             disabledTime={disablePastTime}
+            dropdownClassName="max-w-full"  // Ensures dropdown also respects width
+            allowClear={false}
           />
         </Col>
       </Row>
 
       {isRepeat && (
         <>
-          <Row className="edit-modal-row">
+          <Row className="flex items-center mb-4">
             <Col span={24}>
               <span>Recur every </span>
               <InputNumber
-                size={2}
                 min={1}
                 value={repeatInterval}
                 onChange={(value) => setRepeatInterval(value)}
+                className="mx-2"
               />
               <span> week(s)</span>
             </Col>
           </Row>
 
-          <Row className="edit-modal-row repeat-days">
+          <Row className="flex flex-wrap gap-2 mb-4">
             {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
-              <Col key={day} span={8}>
+              <Col key={day} lg={8} xs={12}>
                 <Checkbox
-                  checked={selectedDays.includes(day)} // Check the box if day is in selectedDays
+                  checked={selectedDays.includes(day)}
                   onChange={(e) => handleDayChange(day, e.target.checked)}
                 >
                   {day}
@@ -157,11 +159,11 @@ const EditModal = ({ isVisible, onCancel, initialData, onSave }) => {
         </>
       )}
 
-      <Row className="button-section">
-        <Button className="modal-cancel-button" onClick={onCancel}>
+      <Row className="flex justify-end mt-6 space-x-3">
+        <Button className="bg-white text-red-500 border border-red-500" onClick={onCancel}>
           Cancel
         </Button>
-        <Button className="modal-save-button" onClick={handleSaveEdit}>
+        <Button className="bg-indigo-600 text-white" onClick={handleSaveEdit}>
           Save
         </Button>
       </Row>

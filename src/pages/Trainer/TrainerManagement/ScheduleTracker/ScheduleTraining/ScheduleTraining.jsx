@@ -29,7 +29,7 @@ const ScheduleTraining = ({ collapsed }) => {
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const token = useSelector((state) => state.users.users.userName.token);
+  const token = localStorage.getItem("token");
 
   const fetchScheduleData = useCallback(async () => {
     setLoading(true);
@@ -223,7 +223,7 @@ const ScheduleTraining = ({ collapsed }) => {
 
   const handleModalClose = () => {
     setIsModalVisible(false);
-    // fetchScheduleData(); // Optional: refetch the schedule data to reset any modifications made in ReportModal
+    setLoading(false);
   };
   const handleCheckboxChange = (isChecked) => setIsCheckboxChecked(isChecked);
 
@@ -332,8 +332,9 @@ const ScheduleTraining = ({ collapsed }) => {
         visible={isModalVisible}
         onClose={handleModalClose}
         onSubmit={() => setIsModalVisible(false)}
-        filteredData={[...filteredData]} // Pass a copy instead of modifying the original
-        setFilteredData={setFilteredData} // Optional, only pass if you need to modify data in parent
+        filteredData={[...filteredData]} 
+        loading={loading}
+        setLoading={setLoading}
       />
     </div>
   );

@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { Tabs, DatePicker } from "antd";
 import GpaChart from "../../../components/Admin/GpaChart/GpaChart.js";
-import FeedbackChart from "../../../components/Admin/FeedbackChart/FeedbackChart.js";
 import SelectWithCheckboxes from '../../../components/Admin/SelectWithCheckboxes/SelectWithCheckboxes.js'
-import { topicsDataStatic, classesDataStatic, metricsDataStatic } from "../../../data/staticData.js";
-import { useOutletContext } from 'react-router-dom';
+import { topicsDataStatic, classesDataStatic } from "../../../data/staticData.js";
 import { Row, Col, Grid, Typography } from "antd"; // Import Ant Design's Grid components
 import './PortalPages.css';
 
@@ -17,8 +15,6 @@ const PortalPage = () => {
     const [dateRange, setDateRange] = useState([null, null]);
     const [selectedTopics, setSelectedTopics] = useState([]);
     const [selectedGpaClasses, setSelectedGpaClasses] = useState([]);
-    const [selectedFeedbackClasses, setSelectedFeedbackClasses] = useState([]);
-    const [selectedMetrics, setSelectedMetrics] = useState([]);
     const [activeTab, setActiveTab] = useState('1');
     const { useBreakpoint } = Grid;
     const screens = useBreakpoint(); 
@@ -32,7 +28,6 @@ const PortalPage = () => {
     };
 
     const handleTabClick = (key) => {
-        setActiveTab(key);
 
         if (key === '1') {
             setSelectedTopics([]);
@@ -40,11 +35,6 @@ const PortalPage = () => {
             setDateRange([null, null]);
         }
 
-        if (key === '2') {
-            setSelectedMetrics([]);
-            setSelectedFeedbackClasses([]);
-            setDateRange([null, null]);
-        }
     };
 
     const tabItems = [

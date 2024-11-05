@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LoginLogo from "../../assets/FSA-logo.png";
-import { Modal } from "antd"; // Ant Design Modal
+import { Button, Modal } from "antd"; // Ant Design Modal
 import { loginFAMS } from "../../services/login"; // API loginFAMS
 
 const HomePage = () => {
@@ -24,21 +24,21 @@ const HomePage = () => {
     setIsUsernameEmpty(false);
     setIsPasswordEmpty(false);
     setErrorMessage("");
-  
+
     // Kiểm tra đầu vào rỗng
     if (!username) setIsUsernameEmpty(true);
     if (!password) setIsPasswordEmpty(true);
     if (!username || !password) return;
-  
+
     setIsLoading(true);
-  
+
     try {
       // Gọi API loginFAMS
       const response = await loginFAMS(username, password);
-  
+
       // Debug phản hồi của API
       console.log("API Response:", response);
-  
+
       // Nếu đăng nhập thành công với cấu trúc phản hồi đúng
       if (response && response.data) {
         const rolesString = response.data.roles; // Chuỗi roles
@@ -46,17 +46,17 @@ const HomePage = () => {
         setAccessToken(token); // Lưu token
         localStorage.setItem('username', response.data.username);
         localStorage.setItem('token', response.data.accessToken);
-  
+
         // Chuyển chuỗi roles thành mảng
         const rolesArray = rolesString.split(",");
-  
+
         // Gộp vai trò thành ADMIN nếu vai trò là FAMS_ADMIN, FA_MANAGER, hoặc CLASS_ADMIN
         const consolidatedRoles = rolesArray.map((role) =>
           ["FAMS_ADMIN", "FA_MANAGER", "CLASS_ADMIN"].includes(role)
-            ? "ADMIN"
+            ? "CLASS_ADMIN"
             : role
         );
-  
+
         // Nếu có nhiều vai trò, hiển thị Modal để chọn
         if (consolidatedRoles.length > 1) {
           setUserRoles(consolidatedRoles);
@@ -77,24 +77,19 @@ const HomePage = () => {
       setIsLoading(false);
     }
   };
-  
 
-  const dispatchLoginAndNavigate = (role, token) => {
-    // Dispatch thông tin người dùng và vai trò lên Redux
-    dispatch({
-      type: "users/setUserNameSaga",
-      payload: { username, token },
-    });
-    dispatch({
-      type: "role/setRoleSaga",
-      payload: { role },
-    });
 
+  const dispatchLoginAndNavigate = (role) => {
+    localStorage.setItem('role', role);
     // Điều hướng dựa trên vai trò của người dùng
-    if (role === "ADMIN") {
-      navigate("/ADMIN");
+    if (role === "CLASS_ADMIN") {
+      navigate("/CLASS_ADMIN");
     } else if (role === "TRAINER") {
       navigate("/TRAINER");
+    } else if (role === "TRAINER_MANAGER") {
+      navigate("/TRAINER_MANAGER");
+    } else if (role === "DELIVERY_MANAGER") {
+      navigate("/DELIVERY_MANAGER");
     }
   };
 
@@ -107,7 +102,6 @@ const HomePage = () => {
       setErrorMessage("Please select a role");
     }
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-full sm:max-w-md bg-white p-6 sm:p-8 rounded-lg shadow-lg mx-4">
@@ -125,9 +119,8 @@ const HomePage = () => {
         <div className="relative mb-4">
           <input
             type="text"
-            className={`block w-full p-3 border ${
-              isUsernameEmpty ? "border-red-500" : "border-gray-300"
-            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`block w-full p-3 border ${isUsernameEmpty ? "border-red-500" : "border-gray-300"
+              } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="Username"
             value={username}
             onChange={(e) => {
@@ -144,9 +137,8 @@ const HomePage = () => {
         <div className="relative mb-4">
           <input
             type="password"
-            className={`block w-full p-3 border ${
-              isPasswordEmpty ? "border-red-500" : "border-gray-300"
-            } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+            className={`block w-full p-3 border ${isPasswordEmpty ? "border-red-500" : "border-gray-300"
+              } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
             placeholder="Password"
             value={password}
             onChange={(e) => {
@@ -190,16 +182,25 @@ const HomePage = () => {
 
         {/* Nút đăng nhập */}
         <button
-          className={`w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none ${
-            isLoading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none ${isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           onClick={handleLogin}
           disabled={isLoading}
         >
           {isLoading ? "Signing in..." : "Sign in"}
         </button>
+        <div>
+          <Link
+            to="/FEEDBACK_LINK"
+            className=" mt-4 flex items-center justify-center"
+          >
+            FeedBack Link
+          </Link>
+        </div>
       </div>
+
     </div>
+
   );
 };
 

@@ -5,21 +5,22 @@ import {
   fetchTrainerUnitPrices,
   updateTrainerUnitPrices,
   addTrainerUnitPrice,
-  deleteTrainerUnitPrices, // Import the delete function
+  deleteTrainerUnitPrices,
 } from "../../../api/AdminAPI/Unit_Prices_API";
+import { Link, useOutletContext } from "react-router-dom";
 
 function TrainerUnitPricePage() {
   const [trainers, setTrainers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState([]);
-  const [newRowData, setNewRowData] = useState(null); // State to manage new row data
+  const [newRowData, setNewRowData] = useState(null);
   const [name, setName] = useState("");
   const [trainerId, setTrainerId] = useState("");
+  const { collapsed } = useOutletContext();
 
   const fetchData = async () => {
-    const token = localStorage.getItem('token');
-
+    const token = localStorage.getItem("token");
     const account = localStorage.getItem("trainerAccount");
     fetchTrainerUnitPrices(account, token)
       .then((data) => {
@@ -83,22 +84,19 @@ function TrainerUnitPricePage() {
     try {
       const token = localStorage.getItem("token");
       await updateTrainerUnitPrices(dataToSave, token);
-
-      // Nếu có dữ liệu dòng mới, lưu vào cơ sở dữ liệu
       if (newRowData) {
         const newUnitData = {
           unitCode: newRowData.unitCode,
-          lastModifiedBy: "Default User", // Để trống cho dòng mới
-          lastModifiedDate: new Date().toISOString(), // Để trống cho dòng mới
+          lastModifiedBy: "Default User",
+          lastModifiedDate: new Date().toISOString(),
           trainerId: trainerId,
           price: newRowData.price,
           note: newRowData.note,
         };
-        await addTrainerUnitPrice([newUnitData], token); // Thêm dòng mới
+        await addTrainerUnitPrice([newUnitData], token);
       }
-
       fetchData();
-      setNewRowData(null); // Xóa dòng mới sau khi lưu
+      setNewRowData(null);
     } catch (error) {
       console.error("Error while updating:", error);
     }
@@ -108,7 +106,7 @@ function TrainerUnitPricePage() {
   const handleCancelClick = () => {
     setEditedData([...trainers]);
     setIsEditing(false);
-    setNewRowData(null); // Xóa dòng mới nếu hủy
+    setNewRowData(null);
   };
 
   const handleDelete = async (id) => {
@@ -136,11 +134,7 @@ function TrainerUnitPricePage() {
   };
 
   const columns = [
-    {
-      title: "No",
-      dataIndex: "id",
-      key: "id",
-    },
+    { title: "No", dataIndex: "id", key: "id" },
     {
       title: "Unit Code",
       dataIndex: "unitCode",
@@ -208,7 +202,6 @@ function TrainerUnitPricePage() {
           text
         ),
     },
-
     ...(isEditing
       ? [
         {
@@ -233,41 +226,51 @@ function TrainerUnitPricePage() {
   return (
     <div className="px-2">
       {loading ? (
-        <Spin size="large"></Spin>
+        <div>
+          <Spin size="large" />
+        </div>
       ) : (
         <>
-          <h3 className="mb-4">Trainer Profile - {name}</h3>
-          <div>
-            <Table
-              dataSource={newRowData ? [...editedData, newRowData] : editedData}
-              columns={columns}
-              rowKey="id"
-              pagination={{
-                pageSize: 5,
-              }}
-            />
-
-            <div className="button-right flex justify-end mt-2">
-              {isEditing ? (
-                <>
-                  <Button className="mr-2" onClick={handleCancelClick}>
-                    Cancel
-                  </Button>
-                  <Button type="primary" onClick={handleSaveClick}>
-                    Save
-                  </Button>
-                </>
-              ) : (
-                <Button type="primary" onClick={handleEditClick}>
-                  Edit trainer Unit Price
+          <Table
+            dataSource={newRowData ? [...editedData, newRowData] : editedData}
+            columns={columns}
+            rowKey="id"
+            pagination={{
+              pageSize: 5,
+            }}
+            className="text-sm"
+          />
+          <div className="flex justify-end mt-2 space-x-2">
+            {isEditing ? (
+              <>
+                <Button className="text-gray-500" onClick={handleCancelClick}>
+                  Cancel
                 </Button>
-              )}
-              {isEditing && (
-                <Button className="ml-2" onClick={handleAddNewUnitClick}>
-                  + Add New Unit Price
+                <Button type="primary" onClick={handleSaveClick}>
+                  Save
                 </Button>
-              )}
-            </div>
+              </>
+            ) : (
+              <Button type="primary" onClick={handleEditClick}>
+                Edit Trainer Unit Price
+              </Button>
+            )}
+            {isEditing && (
+              <Button className="ml-2" onClick={handleAddNewUnitClick}>
+                + Add New Unit Price
+              </Button>
+            )}
+          </div>
+          <div
+            className={`fixed bottom-0 left-0 ${collapsed ? "md:left-0" : "md:left-64"
+              } right-0 bg-white p-4 flex flex-col md:flex-row justify-between border-t shadow-lg gap-2`}
+          >
+            <Button
+              type="default"
+              className="w-full md:w-auto text-sm md:text-base order-last md:order-first"
+            >
+              <Link to="/CLASS_ADMIN/trainer-list">Back to Trainers List</Link>
+            </Button>
           </div>
         </>
       )}

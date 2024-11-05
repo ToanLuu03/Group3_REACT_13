@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 dayjs.extend(customParseFormat);
 const { RangePicker } = DatePicker;
 
-const FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTrainer }) => {
+const   FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTrainer }) => {
   const [roomName, setRoomName] = useState(initialData?.location || "");
   const [startTime, setStartTime] = useState(dayjs(`${initialData?.date} ${initialData?.start_time}`, 'YYYY-MM-DD HH:mm:ss') || dayjs());
   const [endTime, setEndTime] = useState(

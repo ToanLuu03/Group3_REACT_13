@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { Table, Input, Dropdown, Menu, Button, Checkbox, Tag } from 'antd';
+import { Table, Input, Dropdown, Menu, Button, Checkbox, Tag, Select } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 // import './TrainerList.css';
 import { fetchClasses } from '../../../api/AdminAPI/Trainer_list_api';
@@ -21,13 +21,13 @@ function TrainerList() {
   const [statusSearchValue, setStatusSearchValue] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [siteDropdownVisible, setSiteDropdownVisible] = useState(false);
-  const role = useSelector((state) => state.role.selectedRole.role);
-  const token = useSelector((state) => state.users.users.userName.token)
-
+  const [roleAdmin, setRoleAdmin] = useState('')
   const navigate = useNavigate();
 
   useEffect(() => {
-
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    setRoleAdmin(role)
     const getTrainers = async () => {
       try {
         const data = await fetchClasses(token);
@@ -46,7 +46,7 @@ function TrainerList() {
   }, []);
 
   const handleAddTrainer = () => {
-    navigate(`/${role}/add-trainer`);
+    navigate(`/${roleAdmin}/add-trainer`);
   };
 
   const handleStatusChange = (checkedValues) => {
@@ -104,7 +104,7 @@ function TrainerList() {
 
   const handleTrainerClick = (trainerId, account) => {
     localStorage.setItem('trainerAccount', account);
-    navigate(`/${role}/trainer-management`);
+    navigate(`/${roleAdmin}/trainer-management`);
   };
 
   const columns = [
@@ -114,6 +114,7 @@ function TrainerList() {
       key: 'id',
       render: (text, record, index) => index + 1,
       align: 'center',
+      width: 80,
     },
     {
       title: 'Trainer Name',
@@ -131,18 +132,19 @@ function TrainerList() {
     { title: 'The Trainer Cert', dataIndex: 'trainTheTrainerCert', key: 'trainTheTrainerCert', align: 'center', },
     { title: 'Professional Level', dataIndex: 'professionalLevel', key: 'professionalLevel', align: 'center', },
     { title: 'Professional Index', dataIndex: 'professionalIndex', key: 'professionalIndex', align: 'center', },
-    { title: 'Competence Index', dataIndex: 'trainingCompetenceIndex', key: 'trainingCompetenceIndex', align: 'center', },
     {
-      title: 'Status', dataIndex: 'status', key: 'status',
+      title: 'Status', dataIndex: 'status', key: 'status', fixed: 'right',
+
       render: (status) => {
         let color = 'green';
-        if (status === 'Busy') color = 'volcano';
-        if (status === 'Out') color = 'red';
-        if (status === 'Onsite') color = 'geekblue';
+        if (status === 'BUSY') color = 'blue';
+        if (status === 'OUT') color = 'red';
+        if (status === 'ONSITE') color = 'green';
         return <Tag color={color}>{status || 'N/A'}</Tag>;
       },
       align: 'center',
     },
+    { title: 'Competence Index', dataIndex: 'trainingCompetenceIndex', key: 'trainingCompetenceIndex', align: 'center', },
     { title: 'Taught Skills', dataIndex: 'taughtSkills', key: 'taughtSkills', align: 'center', },
     { title: 'Email ', dataIndex: 'email', key: 'email', align: 'center', },
     { title: 'Type', dataIndex: 'type', key: 'type', align: 'center', },
@@ -213,17 +215,19 @@ function TrainerList() {
         </Button>
       </div>
 
-      <div className='flex  ' style={{ marginBottom: 16 }}>
+      <div className='flex mb-4 gap-4'>
         {/* Status Filter */}
         <div className='col-2'>
+
           <h4 className='text'>Status</h4>
           <Dropdown
+            style={{ width: 150 }}
             overlay={statusMenu}
             trigger={['click']}
             visible={dropdownVisible}
             onVisibleChange={(flag) => setDropdownVisible(flag)}
           >
-            <Button className='button'>
+            <Button className='button w-[200px] justify-end'>
               <DownOutlined />
             </Button>
           </Dropdown>
@@ -238,7 +242,7 @@ function TrainerList() {
             visible={siteDropdownVisible}
             onVisibleChange={(flag) => setSiteDropdownVisible(flag)}
           >
-            <Button className='button'>
+            <Button className='button w-[200px] justify-end'>
               <DownOutlined />
             </Button>
           </Dropdown>
@@ -250,7 +254,7 @@ function TrainerList() {
           <Search
             placeholder="Search by name"
             onSearch={handleSearch}
-            className="custom-search"
+            className="custom-search w-[300px]"
           />
         </div>
       </div>
@@ -265,7 +269,6 @@ function TrainerList() {
         bordered
         scroll={{
           x: 'calc(700px + 100%)',
-
         }}
       />
     </div>

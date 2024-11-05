@@ -7,8 +7,8 @@ import { updateTrainerInfo } from "../../../features/trainerInfo/trainerSaga";
 
 const TrainerManagementT = ({ collapsed }) => {
   // Lấy username và token từ Redux store
-  const username = useSelector((state) => state.users.users.userName.username);
-  const token = useSelector((state) => state.users.users.userName.token);
+  const username = localStorage.getItem("username");
+  const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const fetchFlag = useSelector((state) => state.trainer.fetchFlag);
   const trainerData = useSelector((state) => state.trainer.trainerInfo);

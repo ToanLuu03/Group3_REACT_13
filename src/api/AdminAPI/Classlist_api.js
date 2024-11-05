@@ -11,7 +11,6 @@ export const fetchClassList = async (trainerAcc) => {
               Authorization: `Bearer ${token}`
           }
       });
-      console.log('token class list fetching :', token);
       return response.data;
   } catch (error) {
       console.error('Error fetching :', error);

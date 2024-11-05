@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Button, Select, Row, Col, Collapse, Table, Space, Popconfirm, message } from 'antd';
+import { Form, Input, Button, Select, Row, Col, Collapse, Table, Space, Popconfirm, message, notification } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import './AddTrainerPage.css';
@@ -80,11 +80,19 @@ const AddTrainerPage = () => {
 
     try {
       await AddTrainer_api(payload, token);
-      message.success('Trainer added successfully!');
-      navigate('/ADMIN/trainer-list');
+      notification.success({
+        message: "Trainer added successfully!",
+        placement: "topRight",
+        duration: 3,
+      });
+      navigate('/CLASS_ADMIN/trainer-list');
     } catch (error) {
-      message.error('Failed to add trainer.');
-      console.error(error);
+      const extractedText = error.response.data.message.split(":")[1].trim();
+      notification.error({
+        message: extractedText,
+        placement: "topRight",
+        duration: 3,
+      }); console.error(error);
     }
   };
 
@@ -421,10 +429,10 @@ const AddTrainerPage = () => {
 
       <Space style={{ marginTop: '24px', justifyContent: 'space-between' }}>
         <div className="button-container">
-          <Button type="default" onClick={() => navigate('/ADMIN/trainer-list')}>
+          <Button type="default" onClick={() => navigate('/CLASS_ADMIN/trainer-list')}>
             Back to Trainers List
           </Button>
-          <Button type="default" onClick={() => navigate('/ADMIN/trainer-list')} className="cancel-button">
+          <Button type="default" onClick={() => navigate('/CLASS_ADMIN/trainer-list')} className="cancel-button">
             Cancel
           </Button>
           <Button type="primary" className="save-button" onClick={handleSave}>

@@ -22,7 +22,7 @@ const getStatusBadgeClass = (status) => {
 };
 
 const ClassList = ({ onModuleClick }) => {
-  const token = useSelector((state) => state.users.users.userName.token);
+  const token = localStorage.getItem("token");
   const [classData, setClassData] = useState([]);
   const [openClass, setOpenClass] = useState({});
   const [selectedStatus, setSelectedStatus] = useState("All");

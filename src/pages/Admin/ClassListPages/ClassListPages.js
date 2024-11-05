@@ -54,7 +54,7 @@ function ClassList() {
             e.preventDefault();
             try {
               const moduleDetails = await fetchModuleDetail(record.id); // Fetch module details using the record ID
-              navigate(`/ADMIN/trainer-management/module/info`, {
+              navigate(`/CLASS_ADMIN/trainer-management/module/info`, {
                 state: { moduleData: moduleDetails.data }, // Pass the fetched module data to the next page
               });
             } catch (error) {

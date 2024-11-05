@@ -79,7 +79,7 @@ export default function ModuleDetailsPageAD() {
   ];
 
   const handleBackToClassList = () => {
-    navigate('/ADMIN/trainer-management', { state: { defaultActiveKey: '3' } });
+    navigate('/CLASS_ADMIN/trainer-management', { state: { defaultActiveKey: '3' } });
   };
 
 

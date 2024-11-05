@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Outlet } from 'react-router-dom';
-// import TrainerSidebar from '../../../components/sidebar/trainer/TrainerSidebar';
 import Sidebar from '../../../components/sidebar/Sidebar';
 
 const TrainerLayout = () => {

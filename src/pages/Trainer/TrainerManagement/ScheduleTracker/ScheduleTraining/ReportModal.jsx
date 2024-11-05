@@ -4,11 +4,10 @@ import { useSelector } from "react-redux";
 import TrainerAPI from "../../../../../services/trainer";
 import dayjs from "dayjs";
 
-const ReportModal = ({ visible, onClose, onSubmit, filteredData, setFilteredData }) => {
+const ReportModal = ({ visible, onClose, onSubmit, filteredData, loading, setLoading }) => {
   const { TextArea } = Input;
   const [errors, setErrors] = useState({});
   const token = useSelector((state) => state.users?.users?.userName?.token);
-  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     faClassId: null,
@@ -68,8 +67,7 @@ const ReportModal = ({ visible, onClose, onSubmit, filteredData, setFilteredData
       }
     });
 
-    // If there are validation errors, return them
-    setErrors(newErrors); // Ensure errors are set to trigger display
+    setErrors(newErrors); 
     return newErrors;
   };
 
@@ -80,16 +78,15 @@ const ReportModal = ({ visible, onClose, onSubmit, filteredData, setFilteredData
       return;
     }
 
-    setIsLoading(true); // Set loading to true when submitting starts
+    setLoading(true); 
     try {
-      // Submit form data to the API
       await TrainerAPI.scheduleReport(token, formData);
-      onSubmit(); // Call the onSubmit function passed as a prop (if applicable)
+      onSubmit(); 
     } catch (error) {
       console.error("API Submission Error:", error);
-      message.error("Failed to submit report."); // Show an error message to the user
+      message.error("Failed to submit report."); 
     } finally {
-      setIsLoading(false); // Always set loading to false after API call completes
+      setLoading(false); 
     }
   };
 
@@ -206,12 +203,12 @@ const ReportModal = ({ visible, onClose, onSubmit, filteredData, setFilteredData
             Cancel
           </Button>
           <Button
-            disabled={isLoading} // Only disable when loading
+            disabled={loading}
             type="primary"
             onClick={handleSubmit}
             className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-full"
           >
-            {isLoading ? "Submitting..." : "Submit"}
+            {loading ? "Submitting..." : "Submit"}
           </Button>
         </div>
       </div>
