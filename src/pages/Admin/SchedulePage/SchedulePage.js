@@ -9,7 +9,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Button, Modal, notification, Popover, Spin } from "antd";
+import { Button, Modal, Popover, Spin } from "antd";
 import dayjs from "dayjs";
 import "./SchedulePage.css";
 import LeftCalendar from "../../../components/Admin/Schedule/LeftCalendar/LeftCalendar";
@@ -19,7 +19,7 @@ import {
   getScheduleDetailRequest,
   getScheduleRequest,
   removeSlotTimeRequest,
-} from "../../../features/schedule/actions";
+} from "../../../features/schedule/scheduleSlice";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
@@ -33,53 +33,63 @@ dayjs.extend(isSameOrBefore);
 const SchedulePage = () => {
   const dispatch = useDispatch();
   const schedule = useSelector((state) => state.schedule.schedule);
-  const scheduleDetail = useSelector(
-    (state) => state.scheduleDetail.scheduleDetail
-  );
-  const freeTime = useSelector((state) => state.freeTimeReducer.freeTime);
+  const scheduleDetail = useSelector((state) => state.schedule.scheduleDetail);
+  const freeTime = useSelector((state) => state.schedule.freeTime);
   const trainerAccount = localStorage.getItem("trainerAccount");
+  const loadingSchedule = useSelector(
+    (state) => state.schedule.loading.getSchedule
+  );
+  const loadingScheduleDetail = useSelector(
+    (state) => state.schedule.loading.getScheduleDetail
+  );
+  const loadingFreeTime = useSelector(
+    (state) => state.schedule.loading.getFreeTime
+  );
+  const errorSchedule = useSelector(
+    (state) => state.schedule.error.getSchedule
+  );
+  const errorScheduleDetail = useSelector(
+    (state) => state.schedule.error.getScheduleDetail
+  );
+  const errorFreeTime = useSelector(
+    (state) => state.schedule.error.getFreeTime
+  );
 
   const [visiblePopover, setVisiblePopover] = useState({});
   const calendarRef = useRef(null);
   const [currentDate, setCurrentDate] = useState(dayjs());
-  const [loading, setLoading] = useState(true);
   const { collapsed } = useOutletContext();
+  const initialScheduleFetched = useRef(false);
 
   useEffect(() => {
     if (calendarRef.current) {
-      setTimeout(() => {
-        calendarRef.current.getApi().updateSize();
-      }, 300);
+      const calendarApi = calendarRef.current.getApi();
+      if (calendarApi) {
+        setTimeout(() => {
+          calendarApi.updateSize();
+        }, 300);
+      }
     }
   }, [collapsed]);
 
-  const initialRender = useRef(true);
-
   useEffect(() => {
-    if (initialRender.current) {
-      dispatch(getScheduleRequest(trainerAccount));
-      dispatch(getFreeTimeRequest(trainerAccount));
-      initialRender.current = false;
-    }
+    dispatch(getScheduleRequest({ account: trainerAccount }));
+    dispatch(getFreeTimeRequest({ trainerAccount }));
   }, [dispatch, trainerAccount]);
 
   useEffect(() => {
-    if (schedule && Array.isArray(schedule)) {
+    if (
+      schedule &&
+      Array.isArray(schedule) &&
+      !initialScheduleFetched.current
+    ) {
       const scheduleIds = schedule.map((item) => item.id);
-
       if (scheduleIds.length > 0) {
-        dispatch(getScheduleDetailRequest(scheduleIds));
+        dispatch(getScheduleDetailRequest({ slotTimeIds: scheduleIds }));
+        initialScheduleFetched.current = true;
       }
     }
   }, [dispatch, schedule]);
-
-  useEffect(() => {
-    if (schedule && scheduleDetail) {
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
-    }
-  }, [schedule, scheduleDetail]);
 
   const detailMap = useMemo(() => {
     const map = {};
@@ -152,40 +162,44 @@ const SchedulePage = () => {
               const [startHour, startMinute] = startTime.split(":").map(Number);
               const [endHour, endMinute] = endTime.split(":").map(Number);
 
-              const startDateTime = dayjs(currentWeekEventDate)
-                .hour(startHour)
-                .minute(startMinute)
-                .second(0)
-                .tz()
-                .format();
-              const endDateTime = dayjs(currentWeekEventDate)
-                .hour(endHour)
-                .minute(endMinute)
-                .second(0)
-                .tz()
-                .format();
-
               if (
-                !events.some(
-                  (event) =>
-                    event.start === startDateTime && event.end === endDateTime
-                )
+                startHour < endHour ||
+                (startHour === endHour && startMinute < endMinute)
               ) {
-                events.push({
-                  id: `${eventItem.id}-${dayParam.id}-${day}-${currentDate}`,
-                  dayParamId: dayParam.id,
-                  title: moduleName,
-                  start: startDateTime,
-                  end: endDateTime,
-                  room,
-                  admin,
-                  type: attendeeType,
-                  isFreeTime,
-                });
+                const startDateTime = dayjs(currentWeekEventDate)
+                  .hour(startHour)
+                  .minute(startMinute)
+                  .second(0)
+                  .tz()
+                  .format();
+                const endDateTime = dayjs(currentWeekEventDate)
+                  .hour(endHour)
+                  .minute(endMinute)
+                  .second(0)
+                  .tz()
+                  .format();
+
+                if (
+                  !events.some(
+                    (event) =>
+                      event.start === startDateTime && event.end === endDateTime
+                  )
+                ) {
+                  events.push({
+                    id: `${eventItem.id}-${dayParam.id}-${day}-${currentDate}`,
+                    dayParamId: dayParam.id,
+                    title: moduleName,
+                    start: startDateTime,
+                    end: endDateTime,
+                    room,
+                    admin,
+                    type: attendeeType,
+                    isFreeTime,
+                  });
+                }
               }
             }
           });
-
           currentDate = currentDate.add(1, "day");
         }
       });
@@ -200,6 +214,8 @@ const SchedulePage = () => {
       .flatMap((event) => {
         const start = dayjs.utc(event.startTime).tz(dayjs.tz.guess(), true);
         const end = dayjs.utc(event.endTime).tz(dayjs.tz.guess(), true);
+        if (!start.isBefore(end)) return [];
+
         const recurrenceWeeks = event.recur_time
           ? parseInt(event.recur_time)
           : 0;
@@ -235,14 +251,21 @@ const SchedulePage = () => {
             .set("hour", end.hour())
             .set("minute", end.minute());
 
-          events.push({
-            id: `${event.id}-${currentDay.format("YYYY-MM-DD")}`,
-            title: "Free Time",
-            start: eventStart.toISOString(),
-            end: eventEnd.toISOString(),
-            isFreeTime: true,
-            type: "free_time",
-          });
+          // Check if the start hour is greater than or equal to end hour
+          if (
+            eventStart.hour() < eventEnd.hour() ||
+            (eventStart.hour() === eventEnd.hour() &&
+              eventStart.minute() < eventEnd.minute())
+          ) {
+            events.push({
+              id: `${event.id}-${currentDay.format("YYYY-MM-DD")}`,
+              title: "Free Time",
+              start: eventStart.toISOString(),
+              end: eventEnd.toISOString(),
+              isFreeTime: true,
+              type: "free_time",
+            });
+          }
 
           currentDay = currentDay.add(1, "day");
         }
@@ -264,14 +287,20 @@ const SchedulePage = () => {
                   .set("hour", end.hour())
                   .set("minute", end.minute());
 
-                events.push({
-                  id: `${event.id}-${recurringDay.format("YYYY-MM-DD")}`,
-                  title: "Free Time",
-                  start: eventStart.toISOString(),
-                  end: eventEnd.toISOString(),
-                  isFreeTime: true,
-                  type: "free_time",
-                });
+                if (
+                  eventStart.hour() < eventEnd.hour() ||
+                  (eventStart.hour() === eventEnd.hour() &&
+                    eventStart.minute() < eventEnd.minute())
+                ) {
+                  events.push({
+                    id: `${event.id}-${recurringDay.format("YYYY-MM-DD")}`,
+                    title: "Free Time",
+                    start: eventStart.toISOString(),
+                    end: eventEnd.toISOString(),
+                    isFreeTime: true,
+                    type: "free_time",
+                  });
+                }
               }
             });
           }
@@ -298,32 +327,27 @@ const SchedulePage = () => {
     Modal.confirm({
       title: "Are you sure you want to delete this event?",
       onOk: () => {
-        dispatch(removeSlotTimeRequest(dayParamId))
-          .then(() => {
-            notification.success({
-              message: "Delete Successful",
-              description: "The event has been successfully deleted.",
-            });
-          })
-          .catch((error) => {
-            notification.error({
-              message: "Delete Failed",
-              description: `Error: ${
-                error.message || "Failed to delete the event"
-              }`,
-            });
-          });
+        dispatch(removeSlotTimeRequest(dayParamId));
       },
     });
   };
 
-  if (loading) {
+  if (loadingSchedule || loadingFreeTime || loadingScheduleDetail) {
     return (
-      <div className="flex justify-start items-center">
+      <div className="flex justify-center items-center h-full">
         <Spin size="large" />
       </div>
     );
   }
+
+  if (errorSchedule || errorScheduleDetail || errorFreeTime) {
+    return (
+      <div className="flex justify-center items-center h-full text-red-500">
+        <p>Error loading schedule data. Please try again later.</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       {" "}

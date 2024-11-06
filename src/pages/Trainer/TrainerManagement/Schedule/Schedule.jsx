@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Calendar, Select, Spin } from "antd";
+import { Calendar, Select, Spin, Badge } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import isBetween from "dayjs/plugin/isBetween";
@@ -16,20 +16,21 @@ dayjs.extend(customParseFormat);
 dayjs.extend(isBetween);
 
 const Schedule = () => {
-  const [view, setView] = useState("week");
+  const [view, setView] = useState("month");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isFreeTimeModalVisible, setIsFreeTimeModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [modalInitialData, setModalInitialData] = useState(null);
   const [currentDateRange, setCurrentDateRange] = useState({
-    start: dayjs().startOf("week"),
-    end: dayjs().endOf("week"),
+    start: dayjs().startOf("month"),
+    end: dayjs().endOf("month"),
   });
   const [events, setEvents] = useState([]);
   const [calendarDate, setCalendarDate] = useState(dayjs());
   const [selectedTrainer, setSelectedTrainer] = useState("");
   const [loading, setLoading] = useState(true);
-  const calendarRef = React.createRef(); // Add a ref for the FullCalendar component
+  const [selectedDate, setSelectedDate] = useState(null); // Add state for selected date
+  const calendarRef = React.createRef();
   const username = localStorage.getItem("username");
   const token = localStorage.getItem("token");
 
@@ -80,7 +81,7 @@ const Schedule = () => {
             if (dayMappings[day].start && dayMappings[day].end) {
               let currentDay = startDate;
               while (currentDay.isBefore(endDate) || currentDay.isSame(endDate)) {
-                const eventDate = currentDay.startOf("week").add(day, "day");
+                const eventDate = currentDay.startOf("month").add(day, "day");
                 eventDays.push({
                   id: item.id,
                   title: item.module.name,
@@ -90,7 +91,7 @@ const Schedule = () => {
                   isFreeTime: false,
                   backgroundColor: backgroundColor,
                 });
-                currentDay = currentDay.add(1, "week");
+                currentDay = currentDay.add(1, "month");
               }
             }
           });
@@ -150,26 +151,55 @@ const Schedule = () => {
   };
 
   const onDateSelect = (value) => {
-    setCalendarDate(value);
-    setCurrentDateRange({
-      start: value.startOf("week"),
-      end: value.endOf("week"),
-    });
-    
-    if (calendarRef.current) {
-      calendarRef.current.getApi().gotoDate(value.format("YYYY-MM-DD"));
+    setSelectedDate(value); // Set the selected date
+    if (value.isSame(currentDateRange.start, "month")) {
+      setCalendarDate(value);
+      if (calendarRef.current) {
+        calendarRef.current.getApi().gotoDate(value.format("YYYY-MM-DD"));
+      }
+    } else {
+      setCalendarDate(value);
+      setCurrentDateRange({
+        start: value.startOf("month"),
+        end: value.endOf("month"),
+      });
+      if (calendarRef.current) {
+        calendarRef.current.getApi().gotoDate(value.format("YYYY-MM-DD"));
+      }
+      fetchTrainerDataAndEvents();
     }
   };
   
-
   const handleTodayClick = () => {
     const today = dayjs();
     setCalendarDate(today);
     setCurrentDateRange({
-      start: today.startOf("week"),
-      end: today.endOf("week"),
+      start: today.startOf("month"),
+      end: today.endOf("month"),
     });
-    calendarRef.current.getApi().today(); // This will reset FullCalendar to today's date
+    calendarRef.current.getApi().today();
+  };
+
+  // Helper function to check if a day has events
+  const hasEvents = (date) => {
+    return events.some((event) => dayjs(event.start).isSame(date, "day"));
+  };
+
+  // Custom date cell rendering with a notice for days with events
+  const dateFullCellRender = (date) => {
+    const hasEvent = hasEvents(date);
+    const isSelected = selectedDate && selectedDate.isSame(date, "day");
+    return (
+      <div className={`relative h-6 w-7 rounded-lg ${isSelected ? 'bg-blue-500 text-white' : ''}`} onClick={() => onDateSelect(date)}>
+        {date.date()}
+        {hasEvent && (
+          <Badge
+            color="orange"
+            className=" absolute -top-2 right-1"
+          />
+        )}
+      </div>
+    );
   };
 
   return (
@@ -182,16 +212,15 @@ const Schedule = () => {
 
       <div className={`opacity-${loading ? "50" : "100"} transition-opacity duration-300`}>
         <div className="flex flex-col lg:flex-row gap-4">
-          {/* Ant Design Calendar */}
           <div className="w-full lg:w-1/4 border border-gray-300 rounded-lg p-4 shadow-md h-96 overflow-y-auto">
             <Calendar 
               fullscreen={false}
               onSelect={onDateSelect}
               value={calendarDate}
+              dateFullCellRender={dateFullCellRender}
               headerRender={({ value, onChange }) => {
                 const year = value.year();
                 const month = value.month();
-
                 const monthOptions = [];
                 const current = value.clone();
                 const localeData = value.localeData();
@@ -202,7 +231,6 @@ const Schedule = () => {
                     </Select.Option>
                   );
                 }
-
                 const yearOptions = [];
                 for (let i = year - 10; i < year + 10; i++) {
                   yearOptions.push(
@@ -232,7 +260,7 @@ const Schedule = () => {
                         onChange(now);
                       }}
                       dropdownMatchSelectWidth={false}
-                      className="border rounded-md px-2 py-1" // Tailwind styling for Select
+                      className="border rounded-md px-2 py-1"
                     >
                       {monthOptions}
                     </Select>
@@ -242,18 +270,17 @@ const Schedule = () => {
             />
           </div>
 
-          {/* FullCalendar */}
           <div className="w-full lg:w-3/4 border border-gray-300 rounded-lg p-4 shadow-md">
             <FullCalendar
-              ref={calendarRef} // Attach the ref here
+              ref={calendarRef}
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              initialView="timeGridWeek"
+              initialView="dayGridMonth"
               initialDate={calendarDate.format("YYYY-MM-DD")}
               events={events}
               dateClick={handleDateClick}
               eventClick={handleEventClick}
               headerToolbar={{
-                left: "today", // Keep the today button
+                left: "today",
                 center: "title",
                 right: "dayGridMonth,timeGridWeek,timeGridDay",
               }}
@@ -265,7 +292,7 @@ const Schedule = () => {
               customButtons={{
                 today: {
                   text: 'today',
-                  click: handleTodayClick, // Use handleTodayClick for custom today button behavior
+                  click: handleTodayClick,
                 },
               }}
             />

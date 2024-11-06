@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Card, Typography, Button, Form, Modal, message, Tabs } from "antd";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
 import {
   PlusCircleOutlined,
   CloseCircleOutlined,
   CloseOutlined,
 } from "@ant-design/icons";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { useNavigate } from "react-router-dom";
 import {
   TraineeInformation,
   TextQuestion,
@@ -21,8 +21,7 @@ const EditTemplate = () => {
   const [sections, setSections] = useState([{ id: Date.now(), questions: [] }]);
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const navigate = useNavigate();
-  
-  // Toggle options visibility
+
   const toggleOptions = () => {
     setIsOptionsVisible(!isOptionsVisible);
   };
@@ -76,21 +75,38 @@ const EditTemplate = () => {
 
   const handleSave = () => {
     Modal.confirm({
-      title: "Are you sure you want to save?",
+      title: "Custom Template",
+      content: "Are you sure you want to save?",
+      okText: "Yes",
+      cancelText: "Cancel",
       onOk: () => {
         message.success("Action saved successfully");
-        navigate("/CLASS_ADMIN/trainee-management/trainee-feedback");
+        navigate("/CLASS_ADMIN/trainee-management/trainee-feedback?tab=2"); // Redirect to Custom Template tab in TraineeFeedback
+      },
+      okButtonProps: {
+        style: { backgroundColor: "green", color: "white" },
+      },
+      cancelButtonProps: {
+        style: { color: "black" },
       },
     });
   };
 
   const handleBack = () => {
     Modal.confirm({
-      title: "There are unsaved changes. Are you sure you want to back to Class Template?",
+      title: "BACK TO CLASS TEMPLATE",
+      content:
+        "There are unsaved changes. Are you sure you want to go back to Class Template?",
       okText: "Yes",
       cancelText: "No",
       onOk: () => {
-        navigate("/CLASS_ADMIN/trainee-management/trainee-feedback");
+        navigate("/CLASS_ADMIN/trainee-management/trainee-feedback?tab=2"); // Redirect to Class Template tab in TraineeFeedback
+      },
+      okButtonProps: {
+        style: { backgroundColor: "red", color: "white" },
+      },
+      cancelButtonProps: {
+        style: { color: "black" },
       },
     });
   };
@@ -100,11 +116,10 @@ const EditTemplate = () => {
       key: "1",
       label: (
         <div>
-          {/* Header */}
-          <div className="flex justify-between items-center pb-4 border-b">
-            <Title level={4}>Trainee Feedback</Title>
+          <div className="flex justify-between items-center pb-4 border-b sticky top-0 bg-white z-10">
+            <Title level={3}>Trainee Feedback</Title>
           </div>
-          <span className="text-2xl font-semibold mb-2 text-gray-800">
+          <span className="text-xl font-semibold mb-2 text-gray-800 sticky top-[64px] bg-white z-10">
             Edit Template
           </span>
         </div>
@@ -112,7 +127,6 @@ const EditTemplate = () => {
       children: (
         <div className="min-h-screen flex justify-center bg-gray-100 p-6">
           <div className="w-full max-w-3xl space-y-6">
-            {/* Banner Section */}
             <Card className="shadow-lg">
               <div className="w-full h-5 bg-orange-500 rounded-t-lg mb-4"></div>
               <Title level={3} className="text-orange-600 text-center">
@@ -229,12 +243,10 @@ const EditTemplate = () => {
               </DragDropContext>
             </Card>
 
-            {/* Bottom Buttons */}
             <div
               className="fixed bottom-0 left-64 bg-white p-3 shadow-md flex justify-between items-center"
               style={{ width: "calc(100% - 16rem)" }}
             >
-              {/* "Back" button with confirmation modal */}
               <Button className="text-blue-500" onClick={handleBack}>
                 Back to custom template
               </Button>
@@ -251,6 +263,7 @@ const EditTemplate = () => {
       ),
     },
   ];
+
   return <Tabs className="pt-16" defaultActiveKey="1" items={items} />;
 };
 

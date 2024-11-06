@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 dayjs.extend(customParseFormat);
 const { RangePicker } = DatePicker;
 
-const   FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTrainer }) => {
+const FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTrainer }) => {
   const [roomName, setRoomName] = useState(initialData?.location || "");
   const [startTime, setStartTime] = useState(dayjs(`${initialData?.date} ${initialData?.start_time}`, 'YYYY-MM-DD HH:mm:ss') || dayjs());
   const [endTime, setEndTime] = useState(
@@ -20,6 +20,7 @@ const   FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTra
   const [isRepeat, setIsRepeat] = useState(false);
   const [repeatInterval, setRepeatInterval] = useState(1);
   const [selectedDays, setSelectedDays] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {     
     if (initialData) {
@@ -35,6 +36,7 @@ const   FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTra
   }, [initialData]);
 
   const handleSaveEdit = async () => {
+    setLoading(true); // Disable button after initial click
     const updatedData = {
       trainerAccount: selectedTrainer.account,
       start_time: startTime.toISOString(),
@@ -59,6 +61,7 @@ const   FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTra
         console.log('Free time posted successfully:', response.data);
         onSave(); // Trigger data refresh in the parent component
         onCancel(); // Close the modal after saving
+        setLoading(false);
       } else {
         alert(`Failed to save. Server responded with status: ${response.status}`);
       }
@@ -70,6 +73,7 @@ const   FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTra
       } else {
         alert(`Error: ${error.message}`);
       }
+      setLoading(false); // Re-enable button if error occurs
     }
   };
 
@@ -165,8 +169,12 @@ const   FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTra
         <Button className="modal-cancel-button" onClick={onCancel}>
           Cancel
         </Button>
-        <Button className="modal-save-button" onClick={handleSaveEdit}>
-          Save
+        <Button 
+          className="modal-save-button" 
+          onClick={handleSaveEdit} 
+          loading={loading} // Disable button when loading
+        >
+           {loading ? "Saving..." : "Save"}
         </Button>
       </Row>
     </Modal>

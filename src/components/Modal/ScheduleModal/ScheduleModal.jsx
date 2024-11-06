@@ -43,7 +43,7 @@ const ScheduleModal = ({ isVisible, event, onClose, onDelete }) => {
         onOk={onClose}
         onCancel={onClose}
         footer={null}
-        width='1000'
+  
       >
         <div className="modal-section">
           <MdDomain className="modal-icon" />

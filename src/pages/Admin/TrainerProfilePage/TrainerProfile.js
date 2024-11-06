@@ -15,7 +15,6 @@ import {
   updateTrainerInfo,
 } from "../../../api/AdminAPI/Trainer_info_api";
 import "./TrainerProfile.css";
-import { useSelector } from "react-redux";
 
 const { Panel } = Collapse;
 const { Option } = Select;
@@ -43,7 +42,8 @@ const TrainerProfile = () => {
   const [activeCollapse, setActiveCollapse] = useState([]);
   const [skills, setSkills] = useState([]);
   const { collapsed } = useOutletContext();
-  const token = useSelector((state) => state.users.users.userName.token);
+  const [tempSkills, setTempSkills] = useState([]);
+  const [tempGeneralInfo, setTempGeneralInfo] = useState([]);
 
   useEffect(() => {
     const getTrainerInfo = async () => {
@@ -147,12 +147,14 @@ const TrainerProfile = () => {
               key: "note",
             },
           ]);
+          setTempGeneralInfo(generalInfo)
         } else {
           setError("General information not available.");
         }
 
         if (info?.skills) {
           setSkills(info.skills);
+          setTempSkills(info.skills);
         }
       } catch (err) {
         setError("Error fetching trainer information");
@@ -163,76 +165,112 @@ const TrainerProfile = () => {
     getTrainerInfo();
   }, []);
 
+  const handleChangeGeneral = (index, event) => {
+    const newGeneralInfo = [...tempGeneralInfo];
+    newGeneralInfo[index].value = event.target.value;
+    setTempGeneralInfo(newGeneralInfo);
+  };
+
   const handleEditClick = () => {
     setIsEditing(true);
     setActiveCollapse(["1", "2"]);
+    setTempSkills([...skills]);
+    setTempGeneralInfo([...generalInfo]);
   };
 
   const handleSaveClick = async () => {
-    setIsEditing(false);
+    let isGeneralInfoValid = true;
 
-    const updatedGeneralInfo = generalInfo.reduce((acc, curr) => {
-      if (curr.key) {
-        acc[curr.key] = curr.value;
+    tempGeneralInfo.forEach((info) => {
+      const value =
+        typeof info.value === "string" ? info.value.trim() : info.value;
+
+      if (!value || value === "") {
+        notification.warning({
+          message: "Field Required",
+          description: `${info.label} is required and cannot be empty.`,
+          placement: "topRight",
+        });
+        isGeneralInfoValid = false;
       }
-      return acc;
-    }, {});
+    });
 
-    const updatedSkills = skills.map((skill) => ({
-      skillName: skill.skill,
-      level: skill.level,
-      note: skill.note,
-    }));
+    const isSkillsValid = tempSkills.every((skill) => {
+      if (!skill.skill || !skill.level) {
+        notification.warning({
+          message: "Field Required",
+          description: `Skill and Level fields are required and cannot be empty.`,
+          placement: "topRight",
+        });
+        return false;
+      }
+      return true;
+    });
 
-    const updatedData = {
-      ...updatedGeneralInfo,
-      trainerSkills: updatedSkills,
-    };
+    if (isGeneralInfoValid && isSkillsValid) {
+      setIsEditing(false);
+      setSkills(tempSkills);
+      setGeneralInfo(tempGeneralInfo)
 
-    try {
-      const account = localStorage.getItem("trainerAccount");
-      const token = localStorage.getItem("token");
-      await updateTrainerInfo(account, updatedData, token);
-      notification.success({
-        message: "Update Successful",
-        description: "The trainer information has been updated successfully.",
-        placement: "topRight",
-        duration: 3,
-      });
-    } catch (err) {
-      notification.error({
-        message: "Update Failed",
-        description: "An error occurred while updating the information.",
-        placement: "topRight",
-        duration: 3,
-      });
+      const updatedGeneralInfo = generalInfo.reduce((acc, curr) => {
+        if (curr.key) {
+          acc[curr.key] = curr.value;
+        }
+        return acc;
+      }, {});
+
+      const updatedSkills = tempSkills.map((skill) => ({
+        skillName: skill.skill,
+        level: skill.level,
+        note: skill.note,
+      }));
+
+      const updatedData = {
+        ...updatedGeneralInfo,
+        trainerSkills: updatedSkills,
+      };
+
+      try {
+        const account = localStorage.getItem("trainerAccount");
+        const token = localStorage.getItem("token");
+        await updateTrainerInfo(account, updatedData, token);
+        notification.success({
+          message: "Update Successful",
+          description: "The trainer information has been updated successfully.",
+          placement: "topRight",
+          duration: 3,
+        });
+      } catch (err) {
+        notification.error({
+          message: "Update Failed",
+          description: "An error occurred while updating the information.",
+          placement: "topRight",
+          duration: 3,
+        });
+      }
     }
   };
 
   const handleCancelClick = () => {
     setIsEditing(false);
-  };
-
-  const handleChangeGeneral = (index, event) => {
-    const newGeneralInfo = [...generalInfo];
-    newGeneralInfo[index].value = event.target.value;
-    setGeneralInfo(newGeneralInfo);
-  };
-
-  const handleChangeSkill = (index, field, value) => {
-    const newSkills = [...skills];
-    newSkills[index][field] = value;
-    setSkills(newSkills);
-  };
-
-  const handleDeleteSkill = (index) => {
-    const newSkills = [...skills];
-    newSkills.splice(index, 1);
-    setSkills(newSkills);
+    setTempSkills([...skills]);
+    setTempGeneralInfo([...generalInfo]);
   };
 
   const handleAddSkill = () => {
-    setSkills([...skills, { skill: "", level: "", note: "" }]);
+    setTempSkills([...tempSkills, { skill: "", level: "", note: "" }]);
+  };
+
+  const handleChangeSkill = (index, field, value) => {
+    const newSkills = [...tempSkills];
+    newSkills[index][field] = value;
+    setTempSkills(newSkills);
+  };
+
+  const handleDeleteSkill = (index) => {
+    const newSkills = [...tempSkills];
+    newSkills.splice(index, 1);
+    setTempSkills(newSkills);
   };
 
   const skillColumns = [
@@ -341,7 +379,7 @@ const TrainerProfile = () => {
             {/* General Info Collapse */}
             <Panel header="General Information" key="1" className="font-bold">
               <div className="grid lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 border overflow-y-auto">
-                {generalInfo.map((item, index) => (
+                {tempGeneralInfo.map((item, index) => (
                   <div
                     key={index}
                     className={`flex border ${
@@ -473,7 +511,7 @@ const TrainerProfile = () => {
               <div className="overflow-x-auto font-normal">
                 <Table
                   columns={skillColumns}
-                  dataSource={skills.map((skill, index) => ({
+                  dataSource={tempSkills.map((skill, index) => ({
                     ...skill,
                     key: index,
                   }))}

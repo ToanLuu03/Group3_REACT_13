@@ -53,6 +53,7 @@ import ClassManagementTM from "../pages/TrainerManger/ClassManagement/ClassManag
 import ContentManagementTM from "../pages/TrainerManger/ContentManagement/ContentManagement";
 import LogWorksTM from "../pages/TrainerManger/LogWorks/LogWorks";
 import FAQTM from "../pages/TrainerManger/FAQ/FAQ";
+import Checkpoint1 from "../pages/TrainerManger/ClassManagement/Checkpoint/Checkpoint";
 
 //CA/DM/TM
 import Statistics from "../pages/Statistics/Statistics";
@@ -63,6 +64,19 @@ import FeedbackForm from "../pages/FeedbackLink/FeedbackFrom/FeedBackForm";
 import FeedbackLayout from "../pages/FeedbackLink/FeedbackLayout";
 import FeedbackLink from "../pages/FeedbackLink/FeedbackLinkPage/FeedbackLink";
 import FeedbackSuccess from "../pages/FeedbackLink/FeedbackSucces/FeedbackSucces";
+import InProgressClass from "../pages/Admin/ClassManagement/InProgressClass/InProgressClass";
+import Checkpoint from "../pages/Admin/ClassManagement/Checkpoint/Checkpoint";
+import TraineeList from "../pages/TrainingReport/TraineeList/TraineeList";
+import MyEffort from "../pages/Admin/LogWorks/MyEffort/MyEffort";
+import DeclareEfforts from "../pages/Admin/LogWorks/DeclareEfforts/DeclareEfforts";
+import AddExtensionEfforts from "../pages/Admin/LogWorks/AddExtensionEfforts/AddExtensionEfforts";
+import ConfirmEfforts from "../pages/Admin/LogWorks/ConfirmEfforts/ConfirmEfforts";
+import TrainingCourseProgram from "../pages/Admin/ContentManagement/TrainingCourseProgram/TrainingCourseProgram";
+import TrainingProgram from "../pages/Admin/ContentManagement/TrainingProgram/TrainingProgram";
+import Topic from "../pages/Admin/ContentManagement/Topic/Topic";
+import Reports from "../pages/Admin/Reports/Reports";
+import Faqs from "../pages/Admin/Faqs/Faqs";
+import TraineeManagement from "../pages/TrainerManger/TraineeManagement/TraineeManagement";
 
 export const router = createBrowserRouter([
   {
@@ -107,6 +121,56 @@ export const router = createBrowserRouter([
       {
         path: "/CLASS_ADMIN/class-management/training-report",
         element: <TrainingReport />,
+      },
+      {
+        path: "/CLASS_ADMIN/class-management/in-progress",
+        element: <InProgressClass />,
+      },
+      {
+        path: "/CLASS_ADMIN/class-management/checkpoint",
+        element: <Checkpoint />,
+      },
+      {
+        path: "/CLASS_ADMIN/trainee-management/trainee-list",
+        element: <TraineeList />,
+      },
+      {
+        path: "/CLASS_ADMIN/logwork/my-effort",
+        element: <MyEffort />,
+      },
+      {
+        path: "/CLASS_ADMIN/logwork/declare-efforts",
+        element: <DeclareEfforts />,
+      },
+
+      {
+        path: "/CLASS_ADMIN/logwork/add-extension-efforts",
+        element: <AddExtensionEfforts />,
+      },
+
+      {
+        path: "/CLASS_ADMIN/logwork/confirm-efforts",
+        element: <ConfirmEfforts />,
+      },
+      {
+        path: "/CLASS_ADMIN/content-management/course-program",
+        element: <TrainingCourseProgram />,
+      },
+      {
+        path: "/CLASS_ADMIN/content-management/program",
+        element: <TrainingProgram />,
+      },
+      {
+        path: "/CLASS_ADMIN/content-management/topic",
+        element: <Topic />,
+      },
+      {
+        path: "/CLASS_ADMIN/reports/export-data",
+        element: <Reports />,
+      },
+      {
+        path: "/CLASS_ADMIN/faqs",
+        element: <Faqs />,
       },
     ],
   },
@@ -172,6 +236,46 @@ export const router = createBrowserRouter([
         element: <TrainingReport />,
       },
       { path: "/TRAINER_MANAGER/statistics", element: <Statistics /> },
+      {
+        path: "/TRAINER_MANAGER/class-management/in-progress",
+        element: <InProgressClass />,
+      },
+      {
+        path: "/TRAINER_MANAGER/class-management/checkpoint",
+        element: <Checkpoint1 />,
+      },
+      {
+        path: "/TRAINER_MANAGER/trainee-management",
+        element: <TraineeManagement />,
+      },
+      {
+        path: "/TRAINER_MANAGER/logwork/my-effort",
+        element: <MyEffort />,
+      },
+      {
+        path: "/TRAINER_MANAGER/logwork/declare-efforts",
+        element: <DeclareEfforts />,
+      },
+      {
+        path: "/TRAINER_MANAGER/logwork/add-extension-efforts",
+        element: <AddExtensionEfforts />,
+      },
+      {
+        path: "/TRAINER_MANAGER/logwork/confirm-efforts",
+        element: <ConfirmEfforts />,
+      },
+      {
+        path: "/TRAINER_MANAGER/content-management/course-program",
+        element: <ConfirmEfforts />,
+      },
+      {
+        path: "/TRAINER_MANAGER/content-management/program",
+        element: <TrainingProgram />,
+      },
+      {
+        path: "/TRAINER_MANAGER/content-management/topic",
+        element: <Topic />,
+      },
     ],
   },
   {

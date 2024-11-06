@@ -12,8 +12,6 @@ export const fetchTrainerInfo = async (account, token) => {
             },
         });
 
-        console.log('Trainer Info Response:', response.data); // Log the API response
-
         if (response?.data?.data?.trainerInfo?.generalInfo) {
             return response.data.data.trainerInfo;
         } else {
@@ -38,7 +36,6 @@ export const updateTrainerInfo = async (account, updatedData, token) => {
             }
         );
 
-        console.log('Trainer Update Response:', response.data); 
         return response.data;
     } catch (error) {
         console.error('Error updating trainer info:', error.message);

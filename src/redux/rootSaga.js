@@ -6,8 +6,8 @@ import { roleSaga } from "../features/auth/roleSaga";
 import { usersSaga } from "../features/users/usersSaga";
 import { trainerWatcher } from "../features/trainerInfo/trainerSaga"; // Import trainer saga
 import { moduleWatcher } from "../features/classlist/moduleSaga";
-import { watchFetchSchedule, watchFetchScheduleDetail, watchGetFreeTime, watchPostFreeTime, watchRemoveSlotTime } from "../features/schedule/sagas";
 import { portalWatcher } from "../features/portal/portalSaga";
+import { watchScheduleActions } from "../features/schedule/scheduleSaga";
 
 export function* rootSaga() {
   yield all([
@@ -18,10 +18,6 @@ export function* rootSaga() {
     roleSaga(),
     usersSaga(),
     trainerWatcher(), // Add trainerWatcher saga
-    watchFetchSchedule(),
-    watchFetchScheduleDetail(),
-    watchPostFreeTime(),
-    watchGetFreeTime(),
-    watchRemoveSlotTime(),
+    watchScheduleActions(),
   ]);
 }
