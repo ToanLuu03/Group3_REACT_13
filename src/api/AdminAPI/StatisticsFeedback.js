@@ -38,9 +38,13 @@ export const get_Trainer_data = async () => {
 
 export const Get_Evaluate_by_Module = async ({ module, trainerAccount }) => {
   try {
+    const token = localStorage.getItem("token");
     const response = await axios.get(
       'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/statistic/evaluate-by-module',
       {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         params: {
           module: encodeURIComponent(module),
           trainerAccount: trainerAccount.map(account => encodeURIComponent(account)),
@@ -65,9 +69,13 @@ export const Get_Evaluate_by_Module = async ({ module, trainerAccount }) => {
 };
 export const Get_Evaluate_by_Trainer = async ({ classCode, trainerAccount }) => {
   try {
+    const token = localStorage.getItem("token");
     const response = await axios.get(
       'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/statistic/module-by-trainer',
       {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         params: {
           trainerAccount: encodeURIComponent(trainerAccount),
           classCode: classCode.map(classCode => encodeURIComponent(classCode)),
@@ -114,10 +122,14 @@ export const Get_Course_by_Module = async ({ classCode }) => {
   try {
     // Ensure classCode is an array
     const validClassCode = Array.isArray(classCode) ? classCode : [classCode];
+    const token = localStorage.getItem("token");
 
     const response = await axios.get(
       'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/statistic/by-technical-group',
       {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         params: {
           classCode: validClassCode.map(code => encodeURIComponent(code)), // .map() works now safely
         },
@@ -142,9 +154,13 @@ export const Get_Course_by_Module = async ({ classCode }) => {
 
 export const getByModule = async ({ modules }) => {
   try {
+    const token = localStorage.getItem("token");
     const response = await axios.get(
       'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/statistic/by-module',
       {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         params: {
           module: modules.map(encodeURIComponent),
         },
@@ -162,9 +178,16 @@ export const getByModule = async ({ modules }) => {
 
 export const getStatisticsByModuleName = async (moduleName) => {
   try {
+    const token = localStorage.getItem("token");
     const module = encodeURIComponent(moduleName)
     const response = await axios.get(
       `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/statistic/by-module-name?module=${module}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+
     );
     return response.data;
 

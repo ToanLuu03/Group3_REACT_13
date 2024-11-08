@@ -42,9 +42,10 @@ function CourseOrganization() {
                         const technical = response.data.map(item => item.technicalGroupName);
 
                         // Flatten the className arrays and remove duplicates
-                        const classes = [...new Set(response.data.flatMap(item => item.className))];
+                        const classes = [...new Set(response.data.flatMap(item => item.classCode))];
 
                         setTechnicalOption(technical)
+                        console.log("classOptionModule:.....", classOptionModule)
                         setClassOptionModule(classes)
 
                     }

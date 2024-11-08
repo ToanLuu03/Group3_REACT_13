@@ -182,6 +182,9 @@ function TrainingProgramContent() {
         setModuleData([]);
         setSelectDisabled(true);
         setTimeout(() => setSelectDisabled(false), 300);
+        handleCloseDetailTable();
+        handleCloseBadFeedbackTable();
+        handleCloseGoodFeedbackTable();
       } else {
         setModuleValue(moduleOptions);
         fetchModuleData(moduleOptions);
@@ -211,7 +214,8 @@ function TrainingProgramContent() {
       return <span>Select All</span>;
     }
 
-    if (values.length === 1) return values[0];
+    if (values.length === 1)
+      return values[0].length > 40 ? values[0].slice(0, 40) + "..." : values[0];
     else {
       const textString = values.slice(0, 3).join(", ");
 
