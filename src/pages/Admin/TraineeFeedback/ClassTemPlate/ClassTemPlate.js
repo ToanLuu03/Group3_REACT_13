@@ -118,11 +118,11 @@ function ClassTemplate({ setActiveKey }){
             </div>
 
             {/* Templates Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-x-10 gap-y-10">
                 {filteredTemplates.slice(startIndex, endIndex).map((template) => (
-                    <div key={template.id} className="relative bg-white border border-gray-400 rounded-lg shadow-lg p-4">
+                    <div key={template.id} className="relative bg-white border border-gray-500 rounded-lg shadow-lg p-3 transition-transform transform hover:translate-y-[-4px] hover:shadow-xl ">
                         <div className="mb-5">
-                            <img src={template.image} alt={template.title} className="rounded-md w-full" />
+                            <img src={template.image} alt={template.title} className="rounded-md w-full border border-gray-500" />
                         </div>
                         <div className="text">
                             <h2 className="text-lg font-semibold text-gray-800 mb-2">{template.title}</h2>
@@ -140,7 +140,7 @@ function ClassTemplate({ setActiveKey }){
                 ))}
             </div>
 
-            <div className="fixed bottom-0 right-0 w-full bg-white p-3 shadow-md flex justify-end items-center gap-5">
+            <div className="fixed bottom-0 right-0 w-full bg-white p-4 shadow-md flex justify-end items-center gap-5">
                 {/* Pagination */}
                 <Pagination
                     current={currentPage}

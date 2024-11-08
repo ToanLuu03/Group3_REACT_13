@@ -1,212 +1,246 @@
-// src/components/FilterSection.js
-
-import React, { useState } from "react";
-import { Select, DatePicker, Input, Checkbox } from "antd";
-import { CheckOutlined } from "@ant-design/icons";
+import React, { useState, useMemo } from "react";
+import { Select, DatePicker, Checkbox } from "antd";
 import Star from "../../../../assets/image/star.png";
+
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-const FilterSection = () => {
-  const classOptions = ["Java01", "Java02", "Java03"];
-  const moduleOptions = ["HTML CSS", "JS", "ReactJS"];
+const FilterSection = ({ data, onFilterChange }) => {
   const [selectedClasses, setSelectedClasses] = useState([]);
   const [selectedModules, setSelectedModules] = useState([]);
-  // Handle selection and "Select All" functionality
+  const [selectedTrainers, setSelectedTrainers] = useState([]);
+  const [selectedYears, setSelectedYears] = useState([]);
+
+  // Filter data based on selected trainers
+  const filteredData = useMemo(() => {
+    if (selectedTrainers.length === 0) return data;
+    return data.filter((item) =>
+      selectedTrainers.includes(item.trainerAccount)
+    );
+  }, [data, selectedTrainers]);
+
+  // Dynamically generate class and module options based on filtered data
+  const classOptions = Array.from(
+    new Set(filteredData.map((item) => item.className))
+  );
+  const moduleOptions = Array.from(
+    new Set(filteredData.map((item) => item.moduleName))
+  );
+  const trainerOptions = Array.from(
+    new Set(data.map((item) => item.trainerAccount))
+  );
+
+  const handleTrainerChange = (selectedValues) => {
+    setSelectedTrainers(selectedValues);
+    setSelectedClasses([]); // Reset classes and modules when trainer changes
+    setSelectedModules([]);
+    onFilterChange({
+      trainers: selectedValues,
+      classes: [],
+      modules: [],
+      years: selectedYears,
+    });
+  };
+
   const handleClassChange = (selectedValues) => {
     setSelectedClasses(selectedValues);
+    onFilterChange({
+      trainers: selectedTrainers,
+      classes: selectedValues,
+      modules: selectedModules,
+      years: selectedYears,
+    });
   };
 
   const handleModuleChange = (selectedValues) => {
     setSelectedModules(selectedValues);
+    onFilterChange({
+      trainers: selectedTrainers,
+      classes: selectedClasses,
+      modules: selectedValues,
+      years: selectedYears,
+    });
   };
 
-  // Handle checkbox change for individual options
-  const handleCheckboxChange = (checkedValue) => {
-    if (selectedClasses.includes(checkedValue)) {
-      setSelectedClasses(
-        selectedClasses.filter((item) => item !== checkedValue)
-      );
-    } else {
-      setSelectedClasses([...selectedClasses, checkedValue]);
-    }
+  const handleYearChange = (dates) => {
+    setSelectedYears(dates ? [dates[0].year(), dates[1].year()] : []);
+    onFilterChange({
+      trainers: selectedTrainers,
+      classes: selectedClasses,
+      modules: selectedModules,
+      years: dates ? [dates[0].year(), dates[1].year()] : [],
+    });
   };
 
-  // Handle "Select All" checkbox
+  const handleClassCheckboxChange = (checkedValue) => {
+    const updatedClasses = selectedClasses.includes(checkedValue)
+      ? selectedClasses.filter((item) => item !== checkedValue)
+      : [...selectedClasses, checkedValue];
+    setSelectedClasses(updatedClasses);
+    onFilterChange({
+      trainers: selectedTrainers,
+      classes: updatedClasses,
+      modules: selectedModules,
+      years: selectedYears,
+    });
+  };
+
+  const handleModuleCheckboxChange = (checkedValue) => {
+    const updatedModules = selectedModules.includes(checkedValue)
+      ? selectedModules.filter((item) => item !== checkedValue)
+      : [...selectedModules, checkedValue];
+    setSelectedModules(updatedModules);
+    onFilterChange({
+      trainers: selectedTrainers,
+      classes: selectedClasses,
+      modules: updatedModules,
+      years: selectedYears,
+    });
+  };
+
   const handleSelectAllClasses = () => {
-    if (selectedClasses.length === classOptions.length) {
-      setSelectedClasses([]);
-    } else {
-      setSelectedClasses(classOptions);
-    }
+    const allClassesSelected =
+      selectedClasses.length === classOptions.length ? [] : classOptions;
+    setSelectedClasses(allClassesSelected);
+    onFilterChange({
+      trainers: selectedTrainers,
+      classes: allClassesSelected,
+      modules: selectedModules,
+      years: selectedYears,
+    });
   };
+
   const handleSelectAllModules = () => {
-    if (selectedModules.length === moduleOptions.length) {
-      setSelectedModules([]);
-    } else {
-      setSelectedModules(moduleOptions);
-    }
+    const allModulesSelected =
+      selectedModules.length === moduleOptions.length ? [] : moduleOptions;
+    setSelectedModules(allModulesSelected);
+    onFilterChange({
+      trainers: selectedTrainers,
+      classes: selectedClasses,
+      modules: allModulesSelected,
+      years: selectedYears,
+    });
   };
+
   return (
     <div className="flex gap-4 p-4">
+      {/* Trainer Options Section */}
       <div>
-        <div>
-          <label className="font-semibold flex gap-2">
-            Trainer <img src={Star} className=" h-[10px] mt-1" />
-          </label>
-          <Select
-            mode="multiple"
-            showSearch
-            placeholder="Select Trainer"
-            className="w-52"
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              option.children.toLowerCase().includes(input.toLowerCase())
-            }
-            maxTagCount={2} // Show up to 2 tags, then show "+X" for additional selections
-            dropdownRender={(menu) => (
-              <div>
-                {/* Custom Search Field */}
-                <div className="p-2">
-                  <Input
-                    type="text"
-                    placeholder="Search"
-                    className="w-full px-2  border border-gray-300 rounded"
-                  />
-                </div>
-                {menu}
-              </div>
-            )}
-          >
-            <Option value="Trang<33000">
-              Trang&lt;33000 <CheckOutlined className="ml-2" />
+        <label className="font-semibold flex gap-2">
+          Trainer <img src={Star} className="h-[10px] mt-1" alt="required" />
+        </label>
+        <Select
+          mode="multiple"
+          showSearch
+          placeholder="Select Trainer"
+          className="w-52"
+          optionFilterProp="children"
+          maxTagCount={2}
+          onChange={handleTrainerChange}
+          value={selectedTrainers}
+        >
+          {trainerOptions.map((trainer) => (
+            <Option key={trainer} value={trainer}>
+              {trainer}
             </Option>
-            <Option value="Trang01">Trang01</Option>
-            <Option value="Trang02">Trang02</Option>
-            <Option value="Trang03">Trang03</Option>
-          </Select>
-        </div>
-      </div>
-      <div>
-        <div>
-          <label className="font-semibold flex gap-2">
-            Class <img src={Star} className=" h-[10px] mt-1" />
-          </label>
-          <Select
-            mode="multiple"
-            value={selectedClasses}
-            onChange={handleClassChange}
-            placeholder="JAVA01,JAVA02,JAVA03"
-            className="w-52"
-            dropdownRender={() => (
-              <div>
-                <div>
-                  {/* Custom Search Field */}
-                  <div className="p-2">
-                    <Input
-                      type="text"
-                      placeholder="Search"
-                      className="w-full px-2  border border-gray-300 rounded"
-                    />
-                  </div>
-                </div>
-                <div className="p-2 ">
-                  <Checkbox
-                    onChange={handleSelectAllClasses}
-                    checked={selectedClasses.length === classOptions.length}
-                    indeterminate={
-                      selectedClasses.length > 0 &&
-                      selectedClasses.length < classOptions.length
-                    }
-                  >
-                    Select All
-                  </Checkbox>
-                </div>
-                <div className="p-2">
-                  {classOptions.map((className) => (
-                    <div key={className} className="flex items-center mb-2">
-                      <Checkbox
-                        checked={selectedClasses.includes(className)}
-                        onChange={() => handleCheckboxChange(className)}
-                      >
-                        {className}
-                      </Checkbox>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          >
-            {/* Empty Option tags to allow controlled Select component */}
-            {classOptions.map((className) => (
-              <Option key={className} value={className} />
-            ))}
-          </Select>
-        </div>
+          ))}
+        </Select>
       </div>
 
+      {/* Class Options Section */}
       <div>
-      <div>
-          <label className="font-semibold flex gap-2">
-            Module <img src={Star} className=" h-[10px] mt-1" />
-          </label>
-          <Select
-            mode="multiple"
-            value={selectedModules}
-            onChange={handleModuleChange}
-            placeholder="HTML,CSS,JS,REACTJS"
-            className="w-52"
-            dropdownRender={() => (
-              <div>
-                <div>
-                  {/* Custom Search Field */}
-                  <div className="p-2">
-                    <Input
-                      type="text"
-                      placeholder="Search"
-                      className="w-full px-2  border border-gray-300 rounded"
-                    />
-                  </div>
-                </div>
-                <div className="p-2 ">
-                  <Checkbox
-                    onChange={handleSelectAllModules}
-                    checked={selectedModules.length === moduleOptions.length}
-                    indeterminate={
-                      selectedModules.length > 0 &&
-                      selectedModules.length < moduleOptions.length
-                    }
-                  >
-                    Select All
-                  </Checkbox>
-                </div>
-                <div className="p-2">
-                  {moduleOptions.map((className) => (
-                    <div key={className} className="flex items-center mb-2">
-                      <Checkbox
-                        checked={selectedModules.includes(className)}
-                        onChange={() => handleCheckboxChange(className)}
-                      >
-                        {className}
-                      </Checkbox>
-                    </div>
-                  ))}
-                </div>
+        <label className="font-semibold flex gap-2">
+          Class <img src={Star} className="h-[10px] mt-1" alt="required" />
+        </label>
+        <Select
+          mode="multiple"
+          value={selectedClasses}
+          onChange={handleClassChange}
+          placeholder="Select Class"
+          className="w-52"
+          dropdownRender={() => (
+            <div>
+              <div className="p-2">
+                <Checkbox
+                  onChange={handleSelectAllClasses}
+                  checked={selectedClasses.length === classOptions.length}
+                  indeterminate={
+                    selectedClasses.length > 0 &&
+                    selectedClasses.length < classOptions.length
+                  }
+                >
+                  Select All
+                </Checkbox>
               </div>
-            )}
-          >
-            {/* Empty Option tags to allow controlled Select component */}
-            {classOptions.map((className) => (
-              <Option key={className} value={className} />
-            ))}
-          </Select>
-        </div>
+              <div className="p-2">
+                {classOptions.map((className) => (
+                  <div key={className} className="flex items-center mb-2">
+                    <Checkbox
+                      checked={selectedClasses.includes(className)}
+                      onChange={() => handleClassCheckboxChange(className)}
+                    >
+                      {className}
+                    </Checkbox>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        />
       </div>
+
+      {/* Module Options Section */}
       <div>
-      <label className="font-semibold flex gap-2">
-            Year <img src={Star} className=" h-[10px] mt-1" />
-          </label>
-        <RangePicker picker="year" className="w-52" />
+        <label className="font-semibold flex gap-2">
+          Module <img src={Star} className="h-[10px] mt-1" alt="required" />
+        </label>
+        <Select
+          mode="multiple"
+          value={selectedModules}
+          onChange={handleModuleChange}
+          placeholder="Select Module"
+          className="w-52"
+          dropdownRender={() => (
+            <div>
+              <div className="p-2">
+                <Checkbox
+                  onChange={handleSelectAllModules}
+                  checked={selectedModules.length === moduleOptions.length}
+                  indeterminate={
+                    selectedModules.length > 0 &&
+                    selectedModules.length < moduleOptions.length
+                  }
+                >
+                  Select All
+                </Checkbox>
+              </div>
+              <div className="p-2">
+                {moduleOptions.map((moduleName) => (
+                  <div key={moduleName} className="flex items-center mb-2">
+                    <Checkbox
+                      checked={selectedModules.includes(moduleName)}
+                      onChange={() => handleModuleCheckboxChange(moduleName)}
+                    >
+                      {moduleName}
+                    </Checkbox>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        />
+      </div>
+
+      {/* Year Picker Section */}
+      <div>
+        <label className="font-semibold flex gap-2">
+          Year <img src={Star} className="h-[10px] mt-1" alt="required" />
+        </label>
+        <RangePicker
+          picker="year"
+          style={{ height: "32px" }}
+          onChange={handleYearChange}
+        />
       </div>
     </div>
   );

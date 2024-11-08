@@ -39,38 +39,29 @@ const FeedBack = () => {
     trainerFeedback:
       "I have learned many skills in Front End development, but some exercises are too difficult for beginners.",
     content: [
-      {
-        question: "I am satisfied with the module/course's content.",
-        rating: 80,
-      },
+      { question: "I am satisfied with the module/course's content.", rating: 80 },
       { question: "The training objectives are clearly defined.", rating: 70 },
-      {
-        question: "The level of the course is appropriate for the trainees.",
-        rating: 90,
-      },
+      { question: "The level of the course is appropriate for the trainees.", rating: 90 },
       { question: "The course is useful for your work.", rating: 85 },
-      {
-        question: "The materials distributed are appropriate and helpful.",
-        rating: 75,
-      },
+      { question: "The materials distributed are appropriate and helpful.", rating: 75 },
     ],
     trainerFeedbackItems: [
       { question: "The trainer has a wide-range of knowledge.", rating: 85 },
       { question: "Training content follows curriculum.", rating: 80 },
-      {
-        question: "The trainer’s instructions are clear and understandable.",
-        rating: 90,
-      },
+      { question: "The trainer’s instructions are clear and understandable.", rating: 90 },
       { question: "Trainer supports enthusiastically.", rating: 95 },
     ],
     courseOrganization: [
-      {
-        question: "Materials distributed are appropriate and helpful.",
-        rating: 75,
-      },
+      { question: "Materials distributed are appropriate and helpful.", rating: 75 },
       { question: "Course structure is clear.", rating: 80 },
+      { question: "Course schedule is well-organized.", rating: 85 }, // New addition
+      { question: "The course materials are easy to follow.", rating: 90 }, // New addition
+      { question: "The course environment promotes interaction.", rating: 88 }, // New addition
+      { question: "The course pace is appropriate.", rating: 92 }, // New addition
     ],
   };
+  
+  
 
   const handleSortChange = (option) => {
     if (sortOption === option) {
@@ -161,7 +152,7 @@ const FeedBack = () => {
                   <img
                     src="https://hoatuoi360.vn/uploads/file/Baiviet2024/hoa-tulip-trang.jpg"
                     alt={`Image ${item.id}`}
-                    className="object-cover w-full h-48 rounded-md shadow-md"
+                    className="object-cover w-full h-48 rounded-md shadow-md border border-gray-500"
                   />
                 </div>
 

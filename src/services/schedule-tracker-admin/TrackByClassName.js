@@ -3,7 +3,7 @@ import { instance } from "../instance";
 export const TrackByClassName = async (accessToken) => {
   try {
     const response = await instance.get(
-      "admin/schedule-tracker?option=CLASS",
+      "v1/admin/schedule-tracker?option=CLASS",
       {
         headers: { Authorization: `Bearer ${accessToken}` },
       }

@@ -29,7 +29,7 @@ const CVTemplate = ({
       />
 
       {/* Content */}
-      <div className="mt-2 w-full mb-2 p-2">
+      <div className="w-full my-2  p-2">
         <h3 className="text-lg font-bold">{item.title}</h3>
         <div className="flex items-center justify-between">
           <div className="gap-2 flex">

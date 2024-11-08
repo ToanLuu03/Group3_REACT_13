@@ -4,16 +4,16 @@ import { RiErrorWarningLine } from "react-icons/ri";
 
 const RatingSection = ({ title, items }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  //   const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const showModal = (item) => {
-    // setSelectedItem(item);
+    setSelectedItem(item);
     setIsModalVisible(true);
   };
 
   const closeModal = () => {
     setIsModalVisible(false);
-    // setSelectedItem(null);
+    setSelectedItem(null);
   };
 
   return (
@@ -24,10 +24,18 @@ const RatingSection = ({ title, items }) => {
       <div className="space-y-4">
         {items.map((item, index) => (
           <div key={index} className="flex items-center justify-between">
-            <span>{item.label}</span>
-            <div className="flex items-center gap-4">
-              <RatingBar rating={item.rating} />
-              <button onClick={() => showModal(item)}>Details</button>
+            <span className="w-[30%]">{item.label}</span>
+            <div className="flex items-center w-[65%] gap-2">
+              <div className="flex-grow">
+                <RatingBar rating={item.rating} />
+              </div>
+              {/* Button */}
+              <button
+                onClick={() => showModal(item)}
+                className="whitespace-nowrap"
+              >
+                Details
+              </button>
             </div>
           </div>
         ))}
@@ -40,7 +48,7 @@ const RatingSection = ({ title, items }) => {
           onClick={closeModal}
         >
           <div
-            className="bg-white p-8  rounded shadow-lg w-1/3 text-center"
+            className="bg-white p-8 rounded shadow-lg w-1/3 text-center"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex gap-4 items-center">
@@ -48,8 +56,10 @@ const RatingSection = ({ title, items }) => {
               <h2 className="text-lg font-semibold">Problem details</h2>
             </div>
             <p>
-              {/* {selectedItem ? selectedItem.details : "No details available"} */}
-              There are some problems in case getting 3 star feedback
+              {selectedItem
+                ? "There are some problems in case getting 3 star feedbacks"
+                : "No details available"}
+              {/* selectedItem.details */}
             </p>
             <div className="flex justify-end">
               <button

@@ -1,11 +1,10 @@
 import React from "react";
 
 const RatingBar = ({ rating }) => {
-  // Determine the number of segments based on the rating scale
   const segmentCount = rating > 5 ? 10 : 5;
 
   return (
-    <div className="flex space-x-1 w-[700px] mđ:w-[500px]">
+    <div className="flex space-x-1 w-full">
       {[...Array(segmentCount)].map((_, index) => (
         <div
           key={index}

@@ -3,7 +3,7 @@ import { instance } from "../instance";
 export const addNewTrainer = async (trainerData, token) => {
   try {
     const response = await instance.post(
-      "trainer/add-trainer",
+      "v1/trainer/add-trainer",
       trainerData,
       {
         headers: {

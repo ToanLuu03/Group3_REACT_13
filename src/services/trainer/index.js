@@ -1,10 +1,11 @@
 import { instance } from "../instance";
 
 const TrainerAPI = {
+  
   getscheduleNonReport: async (token) => {
     try {
       const response = await instance.get(
-        "trainers/trainer-report/get-schedule-non-report",
+        "v1/trainers/trainer-report/get-schedule-non-report",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -17,9 +18,10 @@ const TrainerAPI = {
       return null;
     }
   },
+/*************  ✨ Codeium Command 🌟  *************/
   trainersReportHistory: async (token) => {
     try {
-      const response = await instance.get("trainers/reports-history-v2", {
+      const response = await instance.get("v1/trainers/reports-history-v2", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -29,9 +31,10 @@ const TrainerAPI = {
       console.error("Error fetching schedule report:", error.message);
     }
   },
+/******  e790a642-456a-4782-989e-6445d5287153  *******/
   scheduleReport: async (token, formData) => {
     try {
-      const response = await instance.post("trainers/reports", formData, {
+      const response = await instance.post("v1/trainers/reports", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -41,7 +44,7 @@ const TrainerAPI = {
   },
   gettrainerInfo: async (token, username) => {
     try {
-      const response = await instance.get(`trainer/get-info/${username}`, {
+      const response = await instance.get(`v1/trainer/get-info/${username}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -54,7 +57,7 @@ const TrainerAPI = {
   updateTrainerInfo: async (token, username, data) => {
     try {
       const response = await instance.put(
-        `trainer/update-trainer/${username}`,
+        `v1/trainer/update-trainer/${username}`,
         data,
         {
           headers: {
@@ -69,7 +72,7 @@ const TrainerAPI = {
   },
   trainerConfirmation: async(username,token) => {
     try {
-      const response = await instance.get(`trainer/confirm-module/get-list-class/${username}`,{
+      const response = await instance.get(`v1/trainer/confirm-module/get-list-class/${username}`,{
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -78,6 +81,19 @@ const TrainerAPI = {
     } catch (error) {
       console.log(error);
     }
-  }
+  },
+  getScheduleByClass : async(token, classId) => {
+    try {
+      const response = await instance.get(`v3/trainers/trainer-report/get-schedule-by-class?classID=${classId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "*/*",
+        },
+      });
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
 export default TrainerAPI;

@@ -10,9 +10,9 @@ function ClassList() {
   const [classSearch, setClassSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [tableData, setTableData] = useState([]); 
-  const [loading, setLoading] = useState(false); 
-  const [error, setError] = useState(null); 
+  const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ function ClassList() {
         const response = await fetchClassList();
         setTableData(response.data);
         setFilteredData(response.data);
-        
+
         const uniqueStatuses = [...new Set(response.data.map(item => item.status))];
         setStatusOptions(uniqueStatuses);
       } catch (error) {
@@ -44,23 +44,23 @@ function ClassList() {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-GB'); // Will format as DD/MM/YYYY
   };
-  
-const [filteredData, setFilteredData] = useState(tableData); 
-const [startDate, setStartDate] = useState(null); 
-  const [endDate, setEndDate] = useState(null); 
+
+  const [filteredData, setFilteredData] = useState(tableData);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   useEffect(() => {
     const filtered = tableData.filter(item => {
       const matchesStatus = statusFilter ? item.status === statusFilter : true;
-      const matchesClassSearch = classSearch ? 
+      const matchesClassSearch = classSearch ?
         item.classCode.toLowerCase().includes(classSearch.toLowerCase()) : true;
 
       const expectedStartDate = item.expectedStartDate ? new Date(item.expectedStartDate) : null;
       const expectedEndDate = item.expectedEndDate ? new Date(item.expectedEndDate) : null;
 
-      const matchesStartDate = startDate ? 
+      const matchesStartDate = startDate ?
         (expectedStartDate && expectedStartDate >= startDate) : true;
-      const matchesEndDate = endDate ? 
+      const matchesEndDate = endDate ?
         (expectedEndDate && expectedEndDate <= endDate) : true;
 
       return matchesStatus && matchesClassSearch && matchesStartDate && matchesEndDate;
@@ -69,150 +69,151 @@ const [startDate, setStartDate] = useState(null);
   }, [classSearch, statusFilter, startDate, endDate, tableData]);
 
 
-const onSelectChange = (newSelectedRowKeys) => {
-  setSelectedRowKeys(newSelectedRowKeys);
-};
+  const onSelectChange = (newSelectedRowKeys) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
 
-const columns = [
-  {
-    title: 'No',
-    dataIndex: 'no',
-    key: 'no',
-    render: (_, __, index) => index + 1,
-    
-  },
-  {
-    title: 'Class Code',
-    dataIndex: 'classCode',
-    key: 'classCode',
-    fixed: 'left',
-   
-    render: (text, record) => (
-      <Link
+  const columns = [
+    {
+      title: 'No',
+      dataIndex: 'no',
+      key: 'no',
+      render: (_, __, index) => index + 1,
+
+    },
+    {
+      title: 'Class Code',
+      dataIndex: 'classCode',
+      key: 'classCode',
+      fixed: 'left',
+
+      render: (text, record) => (
+        <Link
           onClick={async (e) => {
-              e.preventDefault();
-              try {
-                  navigate(`/CLASS_ADMIN/class-management/training-report`, {
-                    state: { classId: record.id }
-                  });
-              } catch (error) {
-                  console.error('Failed to fetch module details:', error);
-              }
+            e.preventDefault();
+            try {
+              navigate(`/CLASS_ADMIN/class-management/training-report`, {
+                state: { classId: record.id }
+              });
+            } catch (error) {
+              console.error('Failed to fetch module details:', error);
+            }
           }}
-      >
+        >
           {text}
-      </Link>
-    ),
-  },
-  {
-    title: 'Trainee Type',
-    dataIndex: 'traineeType',
-    key: 'traineeType',
-   
-  },
-  {
-    title: 'Class Admin',
-    dataIndex: 'classAdmin',
-    key: 'classAdmin',
-    
-  },
-  {
-    title: 'Technical Group',
-    dataIndex: 'technicalGroup',
-    key: 'technicalGroup',
-    
-  },
-  {
-    title: 'Training Program',
-    dataIndex: 'trainingProgram',
-    key: 'trainingProgram',
-    
-  },
-  {
-    title: 'Site',
-    dataIndex: 'site',
-    key: 'site',
-    
-  },
-  {
-    title: 'Trainee Numbers',
-    children: [
-      {
-        title: 'Planned',
-        dataIndex: 'traineeNumberPlanned',
-        key: 'traineeNumberPlanned',
-    
-      },
-      {
-        title: 'Actual',
-        dataIndex: 'traineeNumberActual',
-        key: 'traineeNumberActual',
-    
-      },
-    ],
-  },
-  {
-    title: 'Dates',
-    children: [
-      {
-        title: 'Start (Expected)',
-        dataIndex: 'expectedStartDate',
-        key: 'expectedStartDate',
-        width: 120,
-        render: (date) => formatDate(date, false),
-      },
-      {
-        title: 'Start (Actual)',
-        dataIndex: 'startDateActual',
-        key: 'startDateActual',
-        width: 200,
-      },
-      {
-        title: 'End (Expected)',
-        dataIndex: 'expectedEndDate',
-        key: 'expectedEndDate',
-        width: 120,
-        render: (date) => formatDate(date, false),
-      },
-      {
-        title: 'End (Actual)',
-        dataIndex: 'endDateActual',
-        key: 'endDateActual',
-        width: 120,
-      },
-    ],
-  },
-  {
-    title: 'Master Trainer',
-    dataIndex: 'masterTrainer',
-    key: 'masterTrainer',
-    width: 150,
-  },
-  {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
-    width: 100,
-  },
-];
+        </Link>
+      ),
+    },
+    {
+      title: 'Trainee Type',
+      dataIndex: 'traineeType',
+      key: 'traineeType',
 
-const rowSelection = {
-  selectedRowKeys,
-  onChange: onSelectChange, // Update selected rows
-};
+    },
+    {
+      title: 'Class Admin',
+      dataIndex: 'classAdmin',
+      key: 'classAdmin',
 
-    if (loading) {
-      return <Spin size="large" />;
-    }
+    },
+    {
+      title: 'Technical Group',
+      dataIndex: 'technicalGroup',
+      key: 'technicalGroup',
 
-    if (error) {
-      return <div>Error: {error}</div>;
-    }
-  
+    },
+    {
+      title: 'Training Program',
+      dataIndex: 'trainingProgram',
+      key: 'trainingProgram',
+
+    },
+    {
+      title: 'Site',
+      dataIndex: 'site',
+      key: 'site',
+
+    },
+    {
+      title: 'Trainee Numbers',
+      children: [
+        {
+          title: 'Planned',
+          dataIndex: 'traineeNumberPlanned',
+          key: 'traineeNumberPlanned',
+
+        },
+        {
+          title: 'Actual',
+          dataIndex: 'traineeNumberActual',
+          key: 'traineeNumberActual',
+
+        },
+      ],
+    },
+    {
+      title: 'Dates',
+      children: [
+        {
+          title: 'Start (Expected)',
+          dataIndex: 'expectedStartDate',
+          key: 'expectedStartDate',
+          width: 120,
+          render: (date) => formatDate(date, false),
+        },
+        {
+          title: 'Start (Actual)',
+          dataIndex: 'startDateActual',
+          key: 'startDateActual',
+          width: 200,
+        },
+        {
+          title: 'End (Expected)',
+          dataIndex: 'expectedEndDate',
+          key: 'expectedEndDate',
+          width: 120,
+          render: (date) => formatDate(date, false),
+        },
+        {
+          title: 'End (Actual)',
+          dataIndex: 'endDateActual',
+          key: 'endDateActual',
+          width: 120,
+        },
+      ],
+    },
+    {
+      title: 'Master Trainer',
+      dataIndex: 'masterTrainer',
+      key: 'masterTrainer',
+      width: 150,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      width: 100,
+    },
+  ];
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange, // Update selected rows
+  };
+
+  if (loading) {
+    return <Spin size="large" />;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+
   return (
     <div className="pt-16 pr-5 h-[calc(100vh-80px)] overflow-x-hidden">
-         <Typography.Title level={2}>Class List</Typography.Title>
-         <Divider style={{ marginTop:"0px" }}/>
+      <Typography.Title level={2}>Class List</Typography.Title>
+      <Divider style={{ marginTop: "0px" }} />
       <Row gutter={[100, 16]} className="mb-10">
         <Col xs={24} sm={12} md={6} xl={6}>
           <Typography.Title level={5}>Status</Typography.Title>
@@ -232,17 +233,17 @@ const rowSelection = {
 
         <Col xs={24} sm={12} md={6} xl={6}>
           <Typography.Title level={5}>Actual Start Date</Typography.Title>
-          <DatePicker 
-          onChange={(date) => setStartDate(date ? date.toDate() : null)} // Update start date state
-          style={{ width: '100%' }} 
-        />
+          <DatePicker
+            onChange={(date) => setStartDate(date ? date.toDate() : null)} // Update start date state
+            style={{ width: '100%' }}
+          />
         </Col>
         <Col xs={24} sm={12} md={6} xl={6}>
           <Typography.Title level={5}>Actual End Date</Typography.Title>
-          <DatePicker 
-          onChange={(date) => setEndDate(date ? date.toDate() : null)} // Update end date state
-          style={{ width: '100%' }} 
-        />
+          <DatePicker
+            onChange={(date) => setEndDate(date ? date.toDate() : null)} // Update end date state
+            style={{ width: '100%' }}
+          />
         </Col>
         <Col xs={24} sm={12} md={6} xl={6}>
           <Typography.Title level={5}>Class</Typography.Title>
@@ -257,13 +258,13 @@ const rowSelection = {
 
       {/* Render Table with merged module data */}
       <Table
-         rowSelection={rowSelection}
+        rowSelection={rowSelection}
         columns={columns}
         dataSource={filteredData}
         bordered
         pagination={false}
         scroll={{ x: true }}
-        
+
       />
     </div>
   );

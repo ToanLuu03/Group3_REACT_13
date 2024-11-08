@@ -2,7 +2,7 @@ import { instance } from "../instance";
 
 export const loginFAMS = async (username, password) => {
   try {
-    const response = await instance.post('test/loginToFAMS', {
+    const response = await instance.post('v1/test/loginToFAMS', {
       username: username,
       password: password
     });

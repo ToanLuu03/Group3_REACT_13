@@ -4,6 +4,7 @@ import './TabTraining.css';
 import { Modal, Button } from 'antd';
 import ReportModal from './ReportModal'; // Import the new ReportModal componeqsqs
 import { fetchClasses, createReport } from '../../../api/TrainerAPI/Report_api'; // Import createReport
+import { toast } from 'react-toastify';
 
 const { Option } = Select;
 
@@ -38,7 +39,8 @@ const TabTraining = () => {
                     const contentNames = topic.contents.map(content => ({
                         topic: topicName,
                         contentName: content.contentName,
-                        id: content.id  // Use content ID
+                        contentId: content.contentId,
+                        
                     }));
 
                     setSelectedContentNames(prevContent => [...prevContent, ...contentNames]);
@@ -50,7 +52,16 @@ const TabTraining = () => {
         });
     };
 
-
+    const handleRemoveContent = (contentId) => {
+        // Remove the content from selectedContentNames using ID
+        setSelectedContentNames(prevContent => {
+            const newContent = prevContent.filter(c => c.contentId !== contentId);
+            const remainingTopics = [...new Set(newContent.map(c => c.topic))];
+            setSelectedTopics(remainingTopics);
+            
+            return newContent;
+        });
+    };
 
     const handleModalDateChange = (date) => {
         const topicDates = selectedTopics.map(topic => new Date(topic.date));
@@ -69,10 +80,6 @@ const TabTraining = () => {
 
 
     const handleOk = async (duration, note, reason) => {
-        // Log selected data to debug
-        console.log('Selected Module Structure:', selectedModule);
-        console.log('Selected Topics:', selectedTopics);
-        console.log('Selected Content Names:', selectedContentNames);
 
         const reportData = {
             faClassId: selectedClass.classId,  // Ensure this has a valid value
@@ -116,9 +123,14 @@ const TabTraining = () => {
             const response = await createReport(reportData);  // Send the report data
             console.log('Report created successfully:', response);
             setIsModalVisible(false);  // Close the modal
+            toast.success('Report created successfully!'); 
+            setSelectedTopics([]);
+            setSelectedContentNames([]);
+
         } catch (error) {
             console.error('Error creating report:', error);
-            console.error('Report Data:', reportData);  // Log report data for debugging
+            console.error('Report Data:', reportData);
+            toast.error('Failed to create report. Please try again.');
         }
     };
     const handleCancel = () => {
@@ -486,14 +498,14 @@ const TabTraining = () => {
                     </Button>
 
                     <ReportModal
-                        visible={isModalVisible}
-                        onOk={handleOk}
-                        onCancel={handleCancel}
-                        selectedTopics={selectedTopics}
-                        selectedContentNames={selectedContentNames}
-                        showReason={showReason}
-                        onModalDateChange={handleModalDateChange}
-                    />
+            visible={isModalVisible}
+            onOk={handleOk}
+            onCancel={handleCancel}
+            selectedContentNames={selectedContentNames}
+            showReason={showReason}
+            onModalDateChange={handleModalDateChange}
+            onRemoveContent={handleRemoveContent}  // Add this new prop
+        />
                 </div>
             )}
         </div>

@@ -1,38 +1,126 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StarFilled, DownOutlined, UpOutlined } from "@ant-design/icons";
-import { Progress } from "antd";
+import { Progress, Select, Checkbox, Modal } from "antd";
+
+const classOptions = ["FSA.HCM", "FSA.HN", "FSA.DN", "FSA.CT"]; // Danh sách lớp học
 
 const FeedbackDetail = ({ feedback, onBack }) => {
-  const [isModuleOpen, setIsModuleOpen] = useState(false);
-  const [isTrainerOpen, setIsTrainerOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false); // Trạng thái cho việc mở rộng các phần
+  const [selectedClasses, setSelectedClasses] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [isRateBoxVisible, setIsRateBoxVisible] = useState(true); // State to manage visibility of rate statistics
 
-  const toggleModuleFeedback = () => setIsModuleOpen(!isModuleOpen);
-  const toggleTrainerFeedback = () => setIsTrainerOpen(!isTrainerOpen);
+  const toggleExpandFeedback = () => setIsExpanded(!isExpanded);
+
+  const handleClassChange = (value) => {
+    setSelectedClasses(value);
+  };
+
+  const handleSelectAllChange = (e) => {
+    if (e.target.checked) {
+      setSelectedClasses(classOptions);
+    } else {
+      setSelectedClasses([]);
+    }
+  };
+
+  const showModal = () => {
+    setIsModalVisible(true); // Show the modal when clicking Details
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false); // Close the modal when Done is clicked
+  };
+
+  // Scroll event handler to hide rate box when scrolling down
+  const handleScroll = () => {
+    if (window.scrollY > 100) { // Adjust the value based on when you want to hide the box
+      setIsRateBoxVisible(false); // Hide the rate box
+    } else {
+      setIsRateBoxVisible(true); // Show the rate box when at the top
+    }
+  };
+
+  // Attach scroll event listener
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
-    <div className="p-4">
-      {/* Overall Rating */}
-      <div className="mb-6">
-        <h2 className="text-3xl font-semibold">Average</h2>
-        <div className="flex items-center">
-          <span className="text-4xl font-bold mr-2">5</span>
-          <StarFilled style={{ color: "#fadb14", fontSize: "32px" }} />
-        </div>
-        <div className="mt-4">
-          {[5, 4, 3, 2, 1].map((star) => (
-            <div key={star} className="flex items-center mb-2">
-              <span className="mr-2">{`${star} ★`}</span>
-              <Progress
-                percent={star === 5 ? 100 : 0} // Only show 100% for 5 stars
-                showInfo={false}
-                strokeColor="#fadb14"
-                style={{ width: "200px", marginRight: "8px" }}
-              />
-              <span>{star === 5 ? 10 : 0}</span> {/* Sample data */}
+    <div className="p-6">
+      {/* Class Name Dropdown */}
+      <div className=" mb-6 flex justify-end items-center">
+        <label className="font-bold mr-4">Class Name:</label>
+        <Select
+          mode="multiple"
+          placeholder="Select Class"
+          value={selectedClasses}
+          onChange={handleClassChange}
+          style={{ width: 250 }}
+          dropdownRender={() => (
+            <div style={{ padding: "8px 8px 0" }}>
+              <Checkbox
+                onChange={handleSelectAllChange}
+                checked={selectedClasses.length === classOptions.length}
+                indeterminate={selectedClasses.length > 0 && selectedClasses.length < classOptions.length}
+                style={{ marginBottom: "8px", fontWeight: "bold" }}
+              >
+                Select All
+              </Checkbox>
+              <div>
+                {classOptions.map((className) => (
+                  <div key={className} style={{ padding: "4px 0" }}>
+                    <Checkbox
+                      checked={selectedClasses.includes(className)}
+                      onChange={(e) => {
+                        const newSelectedClasses = e.target.checked
+                          ? [...selectedClasses, className]
+                          : selectedClasses.filter((c) => c !== className);
+                        setSelectedClasses(newSelectedClasses);
+                      }}
+                    >
+                      {className}
+                    </Checkbox>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
+          )}
+          options={classOptions.map((className) => ({
+            label: className,
+            value: className,
+          }))}
+          notFoundContent={null} // Xóa thông báo "No data"
+        />
       </div>
+
+      {/* Rate Statistics Box */}
+      {isRateBoxVisible && (
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold">Average Rating</h2>
+          <div className="flex items-center mb-4">
+            <span className="text-3xl font-bold mr-2">5</span>
+            <StarFilled style={{ color: "#fadb14", fontSize: "28px" }} />
+          </div>
+          <div>
+            {[5, 4, 3, 2, 1].map((star) => (
+              <div key={star} className="flex items-center mb-2">
+                <span className="mr-2">{`${star} ★`}</span>
+                <Progress
+                  percent={star === 5 ? 100 : 0} // Only show 100% for 5 stars as sample data
+                  showInfo={false}
+                  strokeColor="#fadb14"
+                  style={{ width: "200px", marginRight: "8px" }}
+                />
+                <span>{star === 5 ? 10 : 0}</span> {/* Sample data */}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Filter Section */}
       <div className="mb-6">
@@ -40,73 +128,108 @@ const FeedbackDetail = ({ feedback, onBack }) => {
         {["All", 5, 4, 3, 2, 1].map((filter, index) => (
           <button
             key={index}
-            className={`py-1 px-3 mr-2 border rounded ${
-              filter === "All" ? "border-gray-500" : "border-yellow-400"
-            }`}
+            className={`py-1 px-3 mr-2 border rounded ${filter === "All" ? "border-gray-500" : "border-yellow-400"
+              }`}
           >
             {filter} ★
           </button>
         ))}
       </div>
 
-      {/* Student Feedback Content */}
+      {/* Feedback Sections */}
       <div className="mb-6">
         {/* Module's Feedback */}
         <div
           className="p-4 border border-gray-300 rounded mb-4 flex justify-between items-center cursor-pointer"
-          onClick={toggleModuleFeedback}
+          onClick={toggleExpandFeedback}
         >
           <div className="flex items-start">
             <span className="text-lg font-bold mr-2">5</span>
             <StarFilled style={{ color: "#fadb14", fontSize: "18px", marginRight: "8px", marginTop: "3px" }} />
             <div>
-              <span>Module's feedback: {feedback.moduleFeedback}</span>
-              <p>Trainer's feedback: {feedback.trainerFeedback}</p>
+              <span>Module's feedback: I have no problem in this part.</span>
+              <p>Trainer's feedback: I have learned many skills in Front End development, but some exercises are too difficult for beginners.</p>
             </div>
           </div>
-          {isModuleOpen ? <UpOutlined /> : <DownOutlined />}
+          {isExpanded ? <UpOutlined /> : <DownOutlined />}
         </div>
-        {isModuleOpen && (
-          <div className="p-4 border border-gray-300 rounded mb-4">
-            {feedback.content.map((item, index) => (
-              <div key={index} className="flex justify-between items-center mb-2">
-                <span>{item.question}</span>
-                <Progress percent={item.rating} showInfo={false} strokeColor="#1890ff" style={{ width: "200px" }} />
-              </div>
-            ))}
-          </div>
-        )}
+        {isExpanded && (
+          <>
+            {/* Training Program & Content */}
+            <div className="p-4 border border-gray-300 rounded mb-4">
+              <h3 className="font-bold text-lg mb-2 text-center ">Training Program & Content</h3>
+              {feedback.content.map((item, index) => (
+                <div key={index} className="flex justify-between items-center mb-2">
+                  <span>{item.question}</span>
+                  <div className="flex items-center">
+                    <Progress percent={item.rating} showInfo={false} strokeColor="#1890ff" style={{ width: "150px" }} />
+                    <button onClick={showModal} className="ml-4 text-blue-500">Details</button>
+                  </div>
+                </div>
+              ))}
+            </div>
 
-        {/* Trainer's Feedback */}
-        <div
-          className="p-4 border border-gray-300 rounded flex justify-between items-center cursor-pointer"
-          onClick={toggleTrainerFeedback}
-        >
-          <div className="flex items-start">
-            <span className="text-lg font-bold mr-2">5</span>
-            <StarFilled style={{ color: "#fadb14", fontSize: "18px", marginRight: "8px", marginTop: "3px" }} />
-            <div>
-              <span>Module's feedback: {feedback.moduleFeedback}</span>
-              <p>Trainer's feedback: {feedback.trainerFeedback}</p>
+            {/* Trainer / Coach */}
+            <div className="p-4 border border-gray-300 rounded mb-4">
+              <h3 className="font-bold text-lg mb-2 text-center">Trainer / Coach</h3>
+              {feedback.trainerFeedbackItems.map((item, index) => (
+                <div key={index} className="flex justify-between items-center mb-2">
+                  <span>{item.question}</span>
+                  <div className="flex items-center">
+                    <Progress percent={item.rating} showInfo={false} strokeColor="#1890ff" style={{ width: "150px" }} />
+                    <button onClick={showModal} className="ml-4 text-blue-500">Details</button>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-          {isTrainerOpen ? <UpOutlined /> : <DownOutlined />}
-        </div>
-        {isTrainerOpen && (
-          <div className="p-4 border border-gray-300 rounded mb-4">
-            {feedback.trainerFeedbackItems.map((item, index) => (
-              <div key={index} className="flex justify-between items-center mb-2">
-                <span>{item.question}</span>
-                <Progress percent={item.rating} showInfo={false} strokeColor="#1890ff" style={{ width: "200px" }} />
-              </div>
-            ))}
-          </div>
+
+            {/* Course Organization */}
+            <div className="p-4 border border-gray-300 rounded mb-4">
+              <h3 className="font-bold text-lg mb-2 text-center">Course Organization</h3>
+              {feedback.courseOrganization.map((item, index) => (
+                <div key={index} className="flex justify-between items-center mb-2">
+                  <span>{item.question}</span>
+                  <div className="flex items-center">
+                    <Progress percent={item.rating} showInfo={false} strokeColor="#1890ff" style={{ width: "150px" }} />
+                    <button onClick={showModal} className="ml-4 text-blue-500">Details</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
-      <button onClick={onBack} className="text-blue-500 mb-4">
+      <button
+        onClick={onBack}
+        className="fixed bottom-3  text-blue-600 hover:text-blue-800 font-semibold py-1 px-3 rounded-lg border border-blue-500 hover:border-blue-700 transition-all duration-300 ease-in-out"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="w-5 h-5 mr-2"
+        >
+
+        </svg>
         ← Back to Feedback List
       </button>
+
+
+
+      {/* Modal to show Problem details */}
+      <Modal
+        title="Problem Details"
+        visible={isModalVisible}
+        onOk={handleModalClose}
+        onCancel={handleModalClose}
+        footer={[
+          <button key="done" onClick={handleModalClose} className="bg-blue-500 text-white py-2 px-4 rounded">Done</button>
+        ]}
+      >
+        <p>There are some problems in case getting 3 star feedback.</p>
+      </Modal>
     </div>
   );
 };

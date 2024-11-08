@@ -35,3 +35,39 @@ export const fetchClassStatus = async (account, startDate, endDate) => {
     throw new Error("Failed to fetch Class Status Data");
   }
 };
+
+export const fetchTraineeStatistics = async () => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.get(
+      `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/statistics/trainees`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching :", error);
+    throw new Error("Failed to fetch Trainee Data");
+  }
+};
+
+export const fetchTechnicalManager = async (allTime, yearToDate, oneYear) => {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await axios.get(
+      `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/statistics/technical-manager?allTime=${allTime}&yearToDate=${yearToDate}&oneYear=${oneYear}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching :", error);
+    throw new Error("Failed to fetch Technical Manager Data");
+  }
+};

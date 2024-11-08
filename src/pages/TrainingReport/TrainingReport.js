@@ -1,7 +1,8 @@
-import { Tabs, Modal } from 'antd'
+import { Tabs } from 'antd'
 import React, { useState, useRef } from 'react'
 import CategoryTrainingReport from '../../components/Header/Category/CategoryTrainingReport'
 import SelectWithCheckboxes from '../../components/Admin/SelectWithCheckboxes/SelectWithCheckboxes'
+import ExportModal from './ExportModal'
 
 function TrainingReport() {
     const [showPopup, setShowPopup] = useState(false);
@@ -9,8 +10,6 @@ function TrainingReport() {
     const [selectedModules, setSelectedModules] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const buttonRef = useRef(null);
-
-    const moduleOptions = ['Module 1', 'Module 2', 'Module 3', 'Module 4', 'Module 5', 'Module 5', 'Module 5'];
 
     const handleExportClick = () => {
         setShowPopup(!showPopup);
@@ -55,72 +54,14 @@ function TrainingReport() {
                 </div>
             </div>
 
-            <Modal
-                open={showModal}
-                onCancel={() => setShowModal(false)}
-                title={
-                    <div className="text-2xl font-normal text-white">
-                        Export Schedule Tracker data
-                    </div>
-                }
-                footer={[
-                    <button 
-                        key="cancel"
-                        className="mr-5 px-4 py-2 border rounded"
-                        onClick={() => setShowModal(false)}
-                    >
-                        Cancel
-                    </button>,
-                    <button 
-                        key="submit"
-                        className="px-4 py-2 bg-blue-600 text-white rounded"
-                        onClick={() => {
-                            console.log('Selected modules:', selectedModules);
-                            setShowModal(false);
-                        }}
-                    >
-                        Submit
-                    </button>
-                ]}
-                width={600}
-                
-                styles={{
-                    content: {
-                        height: isDropdownOpen ? '520px' : '280px', // Expand when dropdown is open
-                        padding: 0,
-                        transition: 'height 0.5s ease', // Smooth transition
-                    },
-
-                    header: {
-                        background: '#6366f1', // Purple background
-                        padding: '16px 24px',
-                    },
-                    
-                 body: {
-                    padding: '16px 24px',
-                    },
-
-                    footer: {
-                        padding: '16px 24px',
-                    }
-
-                }}
-                classNames={{
-                    header: 'rounded-t-lg',
-                }}
-            >
-                <div className="mb-4">
-                    <label className="block mb-2">Module</label>
-                    <SelectWithCheckboxes
-                        options={moduleOptions}
-                        selectedState={selectedModules}
-                        setState={setSelectedModules}
-                        placeholder="Please select module"
-                        inputStyle={{ width: '100%' }}
-                        onDropdownVisibleChange={(visible) => setIsDropdownOpen(visible)} 
-                    />
-                </div>
-            </Modal>
+            <ExportModal 
+                showModal={showModal}
+                setShowModal={setShowModal}
+                selectedModules={selectedModules}
+                setSelectedModules={setSelectedModules}
+                isDropdownOpen={isDropdownOpen}
+                setIsDropdownOpen={setIsDropdownOpen}
+            />
 
             <Tabs defaultActiveKey='1' items={CategoryTrainingReport} />
         </div>

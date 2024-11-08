@@ -98,7 +98,7 @@ const ClassStatusPieChart = ({ data, ariaLabelledby }) => {
   return (
     <>
       {data && data.length > 0 ? (
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={320}>
           <PieChart>
             <Pie
               data={data}

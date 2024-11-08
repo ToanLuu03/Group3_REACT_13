@@ -21,7 +21,7 @@ import { instance } from "../instance";
 export const getAll = async (token) => {
   try {
     const response = await instance.get(
-      "trainer/get-all",
+      "v1/trainer/get-all",
       {
         headers: { Authorization: `Bearer ${token}` },
       }

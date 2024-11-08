@@ -4,9 +4,7 @@ import TraineeList from '../../../pages/TrainingReport/TraineeList/TraineeList'
 import Calender from '../../../pages/TrainingReport/Calender/Calender'
 import BOI from '../../../pages/TrainingReport/BOI/BOI'
 import Activities from '../../../pages/TrainingReport/Activities/Activities'
-import ScheduleTracker from '../../../pages/Trainer/TrainerManagement/ScheduleTracker/ScheduleTracker'
-import ScheduleTraining from '../../../pages/Trainer/TrainerManagement/ScheduleTracker/ScheduleTraining/ScheduleTraining'
-// import ScheduleTracker from '../../../pages/TrainingReport/ScheduleTracker/ScheduleTracker'
+import ScheduleTracker from '../../../pages/TrainingReport/ScheduleTracker/ScheduleTracker'
 
 const CategoryTrainingReport = [
     {
@@ -59,8 +57,8 @@ const CategoryTrainingReport = [
         label: "Schedule Tracker",
         children: (
             <div className=''>
-                {/* <ScheduleTracker />*/}
-                <ScheduleTraining />
+                <ScheduleTracker />
+                
 
             </div>
         )

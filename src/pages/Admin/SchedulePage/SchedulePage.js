@@ -359,7 +359,7 @@ const SchedulePage = () => {
             calendarRef={calendarRef}
           />
         </div>
-        <div className="w-fulllg:ml-2 lg:flex-1 h-[calc(100vh-240px)] min-w-[250px] max-xl:text-[12px] full-calendar">
+        <div className="w-full lg:ml-2 lg:flex-1 h-[calc(100vh-240px)] min-w-[250px] max-xl:text-[12px] full-calendar">
           <FullCalendar
             ref={calendarRef}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}

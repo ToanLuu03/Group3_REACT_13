@@ -23,7 +23,7 @@ const trainerTypes = ["EXTERNAL", "INTERNAL", "STAFF"];
 const trainerStatus = ["AVAILABLE", "BUSY", "OUT", "ONSITE"];
 const trainerProfessionLevel = ["ADVANCE", "EXPERT", "STANDARD"];
 const trainerCertifications = ["ADVANCE", "BASIC", "NONE"];
-const trainerContributionTypes = ["TRAINER", "MENTER", "AUDITOR"];
+const trainerContributionTypes = ["TRAINER", "MENTOR", "AUDITOR"];
 
 const skillOptions = ["React", "Java", "C#", "DOT NET"];
 const levelOptions = [
@@ -52,7 +52,6 @@ const TrainerProfile = () => {
         const token = localStorage.getItem("token");
 
         const info = await fetchTrainerInfo(account, token);
-
         if (info?.generalInfo) {
           setTrainerInfo(info.generalInfo);
           setGeneralInfo([
@@ -147,14 +146,13 @@ const TrainerProfile = () => {
               key: "note",
             },
           ]);
-          setTempGeneralInfo(generalInfo)
+
         } else {
           setError("General information not available.");
         }
 
         if (info?.skills) {
           setSkills(info.skills);
-          setTempSkills(info.skills);
         }
       } catch (err) {
         setError("Error fetching trainer information");
@@ -165,6 +163,11 @@ const TrainerProfile = () => {
     getTrainerInfo();
   }, []);
 
+  useEffect(() => {
+    setTempGeneralInfo(generalInfo.map(item => ({ ...item }))); 
+    setTempSkills(skills.map(item => ({...item})));
+  }, [generalInfo])
+
   const handleChangeGeneral = (index, event) => {
     const newGeneralInfo = [...tempGeneralInfo];
     newGeneralInfo[index].value = event.target.value;
@@ -174,8 +177,8 @@ const TrainerProfile = () => {
   const handleEditClick = () => {
     setIsEditing(true);
     setActiveCollapse(["1", "2"]);
-    setTempSkills([...skills]);
-    setTempGeneralInfo([...generalInfo]);
+    setGeneralInfo([...tempGeneralInfo]);
+    setSkills([...tempSkills]);
   };
 
   const handleSaveClick = async () => {
@@ -211,7 +214,6 @@ const TrainerProfile = () => {
       setIsEditing(false);
       setSkills(tempSkills);
       setGeneralInfo(tempGeneralInfo)
-
       const updatedGeneralInfo = generalInfo.reduce((acc, curr) => {
         if (curr.key) {
           acc[curr.key] = curr.value;
@@ -253,8 +255,8 @@ const TrainerProfile = () => {
 
   const handleCancelClick = () => {
     setIsEditing(false);
-    setTempSkills([...skills]);
     setTempGeneralInfo([...generalInfo]);
+    setTempSkills([...skills]);
   };
 
   const handleAddSkill = () => {
@@ -382,16 +384,14 @@ const TrainerProfile = () => {
                 {tempGeneralInfo.map((item, index) => (
                   <div
                     key={index}
-                    className={`flex border ${
-                      item.label === "Note" ? "xl:col-span-2 lg:col-span-1" : ""
-                    }`}
+                    className={`flex border ${item.label === "Note" ? "xl:col-span-2 lg:col-span-1" : ""
+                      }`}
                   >
                     <div
-                      className={`${
-                        item.label === "Note"
-                          ? "2xl:w-[24.111%] xl:w-[24.333%]  max-xl:w-[65.333333%] max-sm:w-[64.555555%]"
-                          : "w-[40%]"
-                      } bg-gray-100 text-start h-full p-2 font-semibold`}
+                      className={`${item.label === "Note"
+                        ? "2xl:w-[24.111%] xl:w-[24.333%]  max-xl:w-[65.333333%] max-sm:w-[64.555555%]"
+                        : "w-[40%]"
+                        } bg-gray-100 text-start h-full p-2 font-semibold`}
                     >
                       {item.label}{" "}
                       {item.isRequired && (
@@ -399,9 +399,8 @@ const TrainerProfile = () => {
                       )}
                     </div>
                     <div
-                      className={`${
-                        item.label === "Note" ? "w-full" : "w-[60%]"
-                      } text-start flex items-center border-none mr-2 pl-2 font-normal`}
+                      className={`${item.label === "Note" ? "w-full" : "w-[60%]"
+                        } text-start flex items-center border-none mr-2 pl-2 font-normal`}
                     >
                       {isEditing ? (
                         item.label === "Account" ? (
@@ -536,9 +535,8 @@ const TrainerProfile = () => {
             </Panel>
           </Collapse>
           <div
-            className={`fixed bottom-0 left-0 ${
-              collapsed ? "md:left-0" : "md:left-64"
-            } right-0 bg-white p-4 flex flex-col md:flex-row justify-between border-t shadow-lg gap-2`}
+            className={`fixed bottom-0 left-0 ${collapsed ? "md:left-0" : "md:left-64"
+              } right-0 bg-white p-4 flex flex-col md:flex-row justify-between border-t shadow-lg gap-2`}
           >
             <Button
               type="default"

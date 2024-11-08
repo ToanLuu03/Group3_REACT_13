@@ -26,7 +26,7 @@ const DateRangePicker = ({
   };
 
   return (
-    <div className="flex">
+    <div className="flex max-xl:mt-5">
       <DatePicker
         value={startDate}
         placeholder={startPlaceholder}

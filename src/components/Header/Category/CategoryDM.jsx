@@ -81,10 +81,10 @@ const CategoryDM = () => {
         {activeFeedback === 0 && (
               <ClassTemplateDM onEditTemplate={handleEditTemplate} />
             )}
-        {activeFeedback === 1 && (
+            {activeFeedback === 1 && (
               <CustomTemplateDM onEditTemplate={handleEditTemplate} />
             )}
-        {activeFeedback === 2 && <FeedbackDM />}
+            {activeFeedback === 2 && <FeedbackDM />}
         {activeFeedback === 3 && <Schedule/>}
       </>
     )}
