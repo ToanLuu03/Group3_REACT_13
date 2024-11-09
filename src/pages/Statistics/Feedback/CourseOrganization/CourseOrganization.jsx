@@ -255,6 +255,7 @@ function CourseOrganization() {
                                                 onChange={selectedValues => handleSelectAll(classOptionModule, setClassModuleValue, selectedValues)}
                                                 maxTagCount={0}
                                             >
+                                                <Option value="all">Select All</Option>
                                                 {classOptionModule.map(option => (
                                                     <Option key={option} value={option}>{option}</Option>
                                                 ))}
