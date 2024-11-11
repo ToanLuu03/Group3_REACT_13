@@ -17,8 +17,12 @@ function ClassList() {
   const navigate = useNavigate();
 
   const [statusOptions, setStatusOptions] = useState([]);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
+    const role = localStorage.getItem("role");
+    setUserRole(role);
+
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -38,7 +42,6 @@ function ClassList() {
 
     fetchData();
   }, []);
-
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -88,15 +91,18 @@ function ClassList() {
       fixed: 'left',
 
       render: (text, record) => (
-        <Link
+         <Link
           onClick={async (e) => {
             e.preventDefault();
             try {
-              navigate(`/CLASS_ADMIN/class-management/training-report`, {
-                state: { classId: record.id }
+              const targetPath = userRole === 'TRAINER'
+                ? `/TRAINER/class-management/training-report`
+                : `/CLASS_ADMIN/class-management/training-report`;
+              navigate(targetPath, {
+                state: { classId: record.id },
               });
             } catch (error) {
-              console.error('Failed to fetch module details:', error);
+              console.error('Failed to navigate:', error);
             }
           }}
         >

@@ -7,7 +7,7 @@ const CustomTooltip = ({ active, payload }) => {
     return (
       <div className="bg-gray-200 text-gray-800 p-2 rounded shadow-md text-center">
         <p className="text-lg font-semibold">{name}</p>
-        
+        <p className="text-sm">{value}%</p>
       </div>
     );
   }
@@ -15,29 +15,35 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 const ReportStatus = ({ data, colors }) => {
-  // If data is empty, show a message or a placeholder percentage
+  // Handle case when data is missing or empty
   if (!data || data.length === 0) {
     return <p className="text-center text-lg">No report data available</p>;
   }
 
   // Calculate the "On going" percentage
-  const ongoingPercentage = data.find((item) => item.name === "On going")?.value || 0;
-
+  const ongoingData = data.find((item) => item.name === "On going");
+  const ongoingPercentage = ongoingData ? ongoingData.value : 0;
+  const fontSize = window.innerWidth < 768 ? "1.5rem" : "2.5rem";
+  const subFontSize = window.innerWidth < 768 ? "0.5rem" : "1rem";
+  
   return (
-    <div className="p-6">
+    <div>
       <h3 className="text-center text-lg font-semibold mb-4">Report Status</h3>
-      <ResponsiveContainer width="100%" height={500}>
+      <ResponsiveContainer
+        width="100%"
+        height={window.innerWidth < 768 ? 300 : 500} // Set responsive height
+      >
         <PieChart>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={130}
-            outerRadius={170}
+            innerRadius={window.innerWidth < 768 ? "50%" : "65%"} // Adjust inner radius for mobile
+            outerRadius={window.innerWidth < 768 ? "70%" : "80%"} // Adjust outer radius for mobile
             startAngle={90}
             endAngle={450}
             dataKey="value"
-            cornerRadius={100}
+            cornerRadius={10}
             paddingAngle={5}
           >
             {data.map((entry, index) => (
@@ -49,18 +55,20 @@ const ReportStatus = ({ data, colors }) => {
           <text
             x="50%"
             y="50%"
-            dy={8}
+            dy={0}
             textAnchor="middle"
-            className="text-3xl font-semibold text-gray-800"
+            fontSize={fontSize}
+            className="font-semibold text-gray-800"
           >
             {ongoingPercentage}%
           </text>
           <text
             x="50%"
-            y="45%"
+            y="50%"
+            dy={30} // Offset to place below the percentage text
             textAnchor="middle"
+            fontSize={subFontSize}
             fill="#4B5563"
-            className="text-xl bg-gray-200 px-2 pt-5 rounded-full"
           >
             On going
           </text>

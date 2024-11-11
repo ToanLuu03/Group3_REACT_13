@@ -31,23 +31,25 @@ const Filter = ({
   };
 
   return (
-    <div className="flex justify-center gap-6 mb-8">
-      {options.map((filterGroup) => (
-        <Select
-          key={filterGroup.name}
-          className="bg-white text-gray-600 text-lg shadow-sm w-1/5"
-          placeholder={filterGroup.name}
-          value={selectedValues[filterGroup.name]}
-          onChange={(value) => handleChange(filterGroup.name, value)}
-          allowClear
-        >
-          {filterGroup.options.map((option, idx) => (
-            <Select.Option key={idx} value={option}>
-              {option}
-            </Select.Option>
-          ))}
-        </Select>
-      ))}
+    <div className="flex justify-center mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-screen-md">
+        {options.map((filterGroup) => (
+          <Select
+            key={filterGroup.name}
+            className="bg-white text-gray-600 text-lg shadow-sm w-full"
+            placeholder={filterGroup.name}
+            value={selectedValues[filterGroup.name]}
+            onChange={(value) => handleChange(filterGroup.name, value)}
+            allowClear
+          >
+            {filterGroup.options.map((option, idx) => (
+              <Select.Option key={idx} value={option}>
+                {option}
+              </Select.Option>
+            ))}
+          </Select>
+        ))}
+      </div>
     </div>
   );
 };

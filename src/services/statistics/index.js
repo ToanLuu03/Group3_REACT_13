@@ -6,7 +6,6 @@ const statistics ={
             const response= await instance.get("/v3/statistic/module-statistic",{
                 headers:{
                     Authorization:`Bearer ${token}`,
-
                 }
             })
             return response

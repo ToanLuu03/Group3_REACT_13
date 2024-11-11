@@ -187,20 +187,28 @@ const Schedule = () => {
 
   // Custom date cell rendering with a notice for days with events
   const dateFullCellRender = (date) => {
+    const isToday = date.isSame(dayjs(), 'day');
     const hasEvent = hasEvents(date);
-    const isSelected = selectedDate && selectedDate.isSame(date, "day");
+    const isSelected = selectedDate && selectedDate.isSame(date, 'day');
+  
     return (
-      <div className={`relative h-6 w-7 rounded-lg ${isSelected ? 'bg-blue-500 text-white' : ''}`} onClick={() => onDateSelect(date)}>
+      <div
+        className={`relative h-6 w-7 rounded-lg ${
+         isToday ? 'bg-yellow-200 text-black' : isSelected ? 'bg-blue-500 text-white' :  ''
+        }`}
+        onClick={() => onDateSelect(date)}
+      >
         {date.date()}
         {hasEvent && (
           <Badge
             color="orange"
-            className=" absolute -top-2 right-1"
+            className="absolute -top-2 right-1"
           />
         )}
       </div>
     );
   };
+  
 
   return (
     <div className="p-4 relative">
@@ -283,6 +291,17 @@ const Schedule = () => {
                 left: "today",
                 center: "title",
                 right: "dayGridMonth,timeGridWeek,timeGridDay",
+              }}
+              views={{
+                dayGridMonth: {
+                  dayHeaderFormat: { weekday: "short" }, 
+              },
+                timeGridWeek: {
+                  dayHeaderFormat: { day: "2-digit", month: "2-digit" }, 
+                },
+                timeGridDay: {
+                  dayHeaderFormat: {  weekday: "long", day: "2-digit", month: "2-digit" }, 
+                },
               }}
               editable={true}
               allDaySlot={false}

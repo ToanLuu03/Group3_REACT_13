@@ -1,6 +1,8 @@
 import { Col, DatePicker, Divider, Form, Row, Select, Table, Typography, Button, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { get_Module_data, get_Trainer_data, Get_Evaluate_by_Module, Get_Evaluate_by_Trainer } from '../../../../api/AdminAPI/StatisticsFeedback';
+import './TrainerSection.css'
+import { all } from 'axios';
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -124,13 +126,20 @@ function TrainerSection() {
         if (!Array.isArray(values)) {
             values = [];
         }
-
         if (values.length === allOptions.length) {
             return <span>Select All</span>;
         }
 
-        return values.map(value => <span key={value}>{value}</span>);
-    };
+        if (values.length === 1)
+            return values[0].length > 40 ? values[0].slice(0, 40) + "..." : values[0];
+        else {
+            const textString = values.slice(0, 2).join(", ");
+
+            return textString.length > 17
+                ? textString.slice(0, 17) + "..."
+                : textString;
+        };
+    }
 
     const openFeedbackDetailsModule = (record, type) => {
         const feedbackList = type === "good" ? record.goodFeedbackList : record.badFeedbackList;
@@ -165,54 +174,43 @@ function TrainerSection() {
         {
             title: 'No.',
             key: 'index',
-            render: (_, __, index) => index + 1, // Display the index (serial number), starting from 1
-            width: '5%', // You can adjust the width of the serial number column as needed
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
+            render: (_, __, index) => index + 1,
+            width: '5%',
+            className: 'text-center font-semibold bg-gray-100 border border-gray-300',
         },
         {
             title: 'Trainer Name', dataIndex: 'trainerName', key: 'trainerName',
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
+            className: 'text-center font-semibold bg-gray-100 border border-gray-300',
         },
         {
             title: 'Class Code', dataIndex: 'classCode', key: 'classCode',
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
+            className: 'text-center font-semibold bg-gray-100 border border-gray-300',
         },
         {
             title: 'Module', dataIndex: 'moduleName', key: 'moduleName',
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
+            className: 'font-semibold bg-orange-200 border',
         },
         {
-            title: 'Good Feedbacks',
-            dataIndex: 'goodFeedbacks',
-            key: 'goodFeedbacks',
+            title: 'Good Feedbacks', dataIndex: 'goodFeedbacks', key: 'goodFeedbacks',
             render: (text, record) => (
                 <span style={{ cursor: 'pointer', color: 'green' }} onClick={() => openFeedbackDetailsModule(record, "good")}>
                     {text}
                 </span>
             ),
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
+            className: 'text-center font-semibold bg-gray-100 border border-gray-300',
         },
         {
-            title: 'Bad Feedbacks',
-            dataIndex: 'badFeedbacks',
-            key: 'badFeedbacks',
+            title: 'Bad Feedbacks', dataIndex: 'badFeedbacks', key: 'badFeedbacks',
             render: (text, record) => (
                 <span style={{ cursor: 'pointer', color: 'red' }} onClick={() => openFeedbackDetailsModule(record, "bad")}>
                     {text}
                 </span>
             ),
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
+            className: 'text-center font-semibold bg-gray-100 border border-gray-300',
         },
         {
             title: 'Average Rating', dataIndex: 'averageRating', key: 'averageRating',
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
+            className: 'text-center font-semibold bg-gray-100 border border-gray-300',
         },
     ];
     const columnsTrainer = [
@@ -231,7 +229,7 @@ function TrainerSection() {
         },
         {
             title: 'Module', dataIndex: 'moduleName', key: 'moduleName',
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
+            className: 'font-semibold bg-orange-200 border'
 
         },
         {
@@ -287,7 +285,6 @@ function TrainerSection() {
             }),
             width: '15%',
             className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
         },
         {
             title: 'Module',
@@ -298,8 +295,7 @@ function TrainerSection() {
                 props: { rowSpan: record.rowSpan }
             }),
             width: '30%',
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
+            className: 'font-semibold bg-orange-200 border'
         },
         {
             title: `Reason for ${selectedFeedback?.feedbackType || ''} Feedbacks`, // Use optional chaining here
@@ -315,7 +311,7 @@ function TrainerSection() {
     return (
         <div>
             <Form layout="vertical">
-                <Row gutter={16}>
+                <Row gutter={[16, 16]}>
                     <Col xs={24} md={6}>
                         <Form.Item label="Track By" required tooltip="This field is required">
                             <Select
@@ -361,6 +357,7 @@ function TrainerSection() {
                                                 value={trainerValue}
                                                 onChange={selectedValues => handleSelectAll(trainerOptions, setTrainerValue, selectedValues)}
                                                 maxTagCount={0}
+                                                className="w-14 h-[32px]"
                                                 tagRender={() => tagRender({ values: trainerValue, allOptions: trainerOptions })}
                                             >
                                                 <Option value="all">Select All</Option>
@@ -402,6 +399,7 @@ function TrainerSection() {
                                                 value={ClassValue}
                                                 onChange={(selectedValues) => handleSelectAll(classOptions, setClassValue, selectedValues)}
                                                 maxTagCount={0}
+                                                className="w-14 h-[32px]"
                                                 tagRender={() => tagRender({ values: ClassValue, allOptions: classOptions })}
                                             >
                                                 <Option value="all">Select All</Option>
@@ -438,7 +436,9 @@ function TrainerSection() {
                                 </Text>
                             </div>
                         </div>
-                        <Table columns={columnsModule} dataSource={evaluationData} rowKey="trainerName" />
+                        <Table className="custom-header-table" // Apply custom styles only to this table
+                            columns={columnsModule} dataSource={evaluationData} rowKey="trainerName"
+                        />
                     </div>
                 )}
 
@@ -454,6 +454,7 @@ function TrainerSection() {
                         </Title>
                         <Table
                             columns={feedbackColumns}
+                            className="custom-header-table"
                             dataSource={selectedFeedback.feedbackData}
                             rowKey="key"
                             pagination={false}
@@ -489,7 +490,7 @@ function TrainerSection() {
                                     </Text>
                                 </div>
                             </div>
-                            <Table columns={columnsTrainer} dataSource={trainerData} rowKey="trainerName" />
+                            <Table className="custom-header-table" columns={columnsTrainer} dataSource={trainerData} rowKey="trainerName" />
                         </div>
                     </>
                 )}
@@ -505,6 +506,7 @@ function TrainerSection() {
                         </Title>
                         <Table
                             columns={feedbackColumns}
+                            className="custom-header-table"
                             dataSource={selectedFeedback.feedbackData}
                             rowKey="key"
                             pagination={false}

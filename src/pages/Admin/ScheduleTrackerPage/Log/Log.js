@@ -348,28 +348,33 @@ function Log() {
                 )}
 
                 {/* Search Input - Only show when dateRange is selected */}
+
                 {dateRange && (
-                    <div className="flex-shrink-0 w-full max-w-[200px]">
-                        <div className="flex gap-1 pb-1">
-                            <label className="text-base sm:text-lg font-medium">Search</label>
+                    <div>
+                        <div className="flex-shrink-0 w-full max-w-[200px]">
+                            <div className="flex gap-1 pb-1">
+                                <label className="text-base sm:text-lg font-medium">Search</label>
+                            </div>
+                            <Input
+                                placeholder="Search..."
+                                className="w-full"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
                         </div>
-                        <Input
-                            placeholder="Search..."
-                            className="w-full"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+
+
+                        {/* Selected Information - Updated layout */}
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2 mb-5 px-2 sm:px-8">
+                            <div className="text-sm sm:text-[14px] font-[700]">Class: <span className="date">{selectedClass || 'N/A'}</span></div>
+                            <div className="text-sm sm:text-[14px] font-[700]">Module: <span className="date">{selectedModule || 'N/A'}</span></div>
+                            <div className="text-sm sm:text-[14px] font-[700]">Start Date: <span className="date">{dateRange ? dateRange[0].format('DD/MM/YYYY') : 'N/A'}</span></div>
+                            <div className="text-sm sm:text-[14px] font-[700]">End Date: <span className="date">{dateRange ? dateRange[1].format('DD/MM/YYYY') : 'N/A'}</span></div>
+                        </div>
                     </div>
                 )}
             </div>
 
-            {/* Selected Information - Updated layout */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2 mb-5 px-2 sm:px-8">
-                <div className="text-sm sm:text-[14px] font-[700]">Class: <span className="date">{selectedClass || 'N/A'}</span></div>
-                <div className="text-sm sm:text-[14px] font-[700]">Module: <span className="date">{selectedModule || 'N/A'}</span></div>
-                <div className="text-sm sm:text-[14px] font-[700]">Start Date: <span className="date">{dateRange ? dateRange[0].format('DD/MM/YYYY') : 'N/A'}</span></div>
-                <div className="text-sm sm:text-[14px] font-[700]">End Date: <span className="date">{dateRange ? dateRange[1].format('DD/MM/YYYY') : 'N/A'}</span></div>
-            </div>
 
             {/* Add loading state */}
             {loading && (
@@ -383,7 +388,7 @@ function Log() {
                 <Table
                     dataSource={filteredLogs}
                     columns={columns}
-                  
+
                     pagination={{ pageSize: 4 }}
                     size="middle"
                     scroll={{

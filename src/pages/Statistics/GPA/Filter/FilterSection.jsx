@@ -130,7 +130,6 @@ const FilterSection = ({ data, onFilterChange }) => {
           Trainer <img src={Star} className="h-[10px] mt-1" alt="required" />
         </label>
         <Select
-          mode="multiple"
           showSearch
           placeholder="Select Trainer"
           className="w-52"

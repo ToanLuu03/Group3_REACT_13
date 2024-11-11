@@ -2,20 +2,23 @@ import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const DeliveryType = ({ data, colors }) => (
-  <div className="p-6">
-    <h3 className="text-center text-lg font-semibold mb-4">Delivery Type Distribution</h3>
-    <ResponsiveContainer width="100%" height={500}>
+  <div >
+    <h3 className="text-center text-lg font-semibold ">Delivery Type Distribution</h3>
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+      minHeight={300} // Set minimum height for better responsiveness
+      maxHeight={500} // Limit max height on larger screens
+    >
       <PieChart>
         <Pie
           data={data}
           cx="50%"
           cy="50%"
-          outerRadius={200}
+          outerRadius={window.innerWidth < 768 ? "70%" : "80%"} // Scaled radius for mobile and larger screens
           fill="#8884d8"
           dataKey="value"
-          className="font-medium text-2xl"
-          label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-            // Position label inside each slice
+          label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
             const RADIAN = Math.PI / 180;
             const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
             const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -28,13 +31,16 @@ const DeliveryType = ({ data, colors }) => (
                 fill="white"
                 textAnchor="middle"
                 dominantBaseline="central"
-                className="font-medium text-lg"
+                style={{
+                  fontSize: window.innerWidth < 768 ? "12px" : "16px", // Smaller font on mobile
+                  fontWeight: "500",
+                }}
               >
                 {`${(percent * 100).toFixed(0)}%`}
               </text>
             );
           }}
-          labelLine={false} // Disable label line
+          labelLine={false}
         >
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
@@ -49,7 +55,7 @@ const DeliveryType = ({ data, colors }) => (
               return (
                 <div className="bg-gray-200 p-2 shadow-md rounded text-gray-800">
                   <p className="font-semibold">{name}</p>
-                  
+                  <p>{`Value: ${value}`}</p>
                 </div>
               );
             }

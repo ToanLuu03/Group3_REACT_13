@@ -54,7 +54,7 @@ const FeedBack = () => {
     courseOrganization: [
       { question: "Materials distributed are appropriate and helpful.", rating: 75 },
       { question: "Course structure is clear.", rating: 80 },
-      { question: "Course schedule is well-organized.", rating: 85 }, // New addition
+      { question: "Course schedule is well-organized.", rating: 85 },
       { question: "The course materials are easy to follow.", rating: 90 }, // New addition
       { question: "The course environment promotes interaction.", rating: 88 }, // New addition
       { question: "The course pace is appropriate.", rating: 92 }, // New addition

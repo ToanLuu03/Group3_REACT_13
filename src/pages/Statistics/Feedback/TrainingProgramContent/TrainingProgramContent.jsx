@@ -1,12 +1,4 @@
-import {
-  Col,
-  DatePicker,
-  Form,
-  InputNumber,
-  notification,
-  Row,
-  Select,
-} from "antd";
+import { DatePicker, InputNumber, notification, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import {
   get_Module_data,
@@ -20,11 +12,9 @@ const { Option } = Select;
 function TrainingProgramContent() {
   const [moduleOptions, setModuleOptions] = useState([]);
   const [moduleValue, setModuleValue] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [moduleData, setModuleData] = useState([]);
   const [filteredModuleData, setFilteredModuleData] = useState([]);
   const [moduleDetailData, setModuleDetailData] = useState(null);
-  const [selectedModuleName, setSelectedModuleName] = useState("");
   const [goodFeedbackList, setGoodFeedbackList] = useState(null);
   const [badFeedbackList, setBadFeedbackList] = useState(null);
   const [minAverage, setMinAverage] = useState(0);
@@ -47,8 +37,6 @@ function TrainingProgramContent() {
           description: "Failed to fetch module data. Please try again later.",
           duration: 3,
         });
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -77,7 +65,6 @@ function TrainingProgramContent() {
   };
 
   const handleModuleClick = async (moduleName) => {
-    setSelectedModuleName(moduleName);
     handleCloseDetailTable();
     const response = await getStatisticsByModuleName(moduleName);
 
@@ -115,7 +102,6 @@ function TrainingProgramContent() {
         });
       }, 500);
     } else {
-      setSelectedModuleName(moduleName);
       const updatedFeedbackList = feedbackList.map((feedback) => ({
         ...feedback,
         moduleName,
@@ -134,7 +120,6 @@ function TrainingProgramContent() {
         });
       }, 500);
     } else {
-      setSelectedModuleName(moduleName);
       const updatedFeedbackList = feedbackList.map((feedback) => ({
         ...feedback,
         moduleName,
@@ -145,7 +130,6 @@ function TrainingProgramContent() {
 
   const handleCloseDetailTable = () => {
     setModuleDetailData(null);
-    setSelectedModuleName("");
   };
 
   const handleCloseGoodFeedbackTable = () => {
@@ -181,7 +165,7 @@ function TrainingProgramContent() {
         setModuleValue([]);
         setModuleData([]);
         setSelectDisabled(true);
-        setTimeout(() => setSelectDisabled(false), 300);
+        setTimeout(() => setSelectDisabled(false), 500);
         handleCloseDetailTable();
         handleCloseBadFeedbackTable();
         handleCloseGoodFeedbackTable();
@@ -189,11 +173,13 @@ function TrainingProgramContent() {
         setModuleValue(moduleOptions);
         fetchModuleData(moduleOptions);
         setSelectDisabled(true);
-        setTimeout(() => setSelectDisabled(false), 300);
+        setTimeout(() => setSelectDisabled(false), 500);
       }
     } else {
       setModuleValue(selectedValues);
-      fetchModuleData(selectedValues);
+      if (!selectedValues.length === 0) {
+        fetchModuleData(selectedValues);
+      }
     }
   };
 
@@ -215,12 +201,12 @@ function TrainingProgramContent() {
     }
 
     if (values.length === 1)
-      return values[0].length > 40 ? values[0].slice(0, 40) + "..." : values[0];
+      return values[0].length > 30 ? values[0].slice(0, 30) + "..." : values[0];
     else {
       const textString = values.slice(0, 3).join(", ");
 
-      return textString.length > 40
-        ? textString.slice(0, 40) + "..."
+      return textString.length > 30
+        ? textString.slice(0, 30) + "..."
         : textString;
     }
   };
@@ -287,7 +273,7 @@ function TrainingProgramContent() {
       </div>
 
       {filteredModuleData.length > 0 && (
-        <div className="overflow-x-auto mt-4 max-h-[275px] overflow-y-auto [&::-webkit-scrollbar]:w-2  [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-gray-100">
+        <div className="mt-4 max-h-[275px] overflow-x-auto overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-gray-300">
           <table className="w-[1050px] mx-auto bg-white border-2 border-blue-600 ">
             <thead className=" bg-blue-300 italic">
               <tr>

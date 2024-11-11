@@ -77,11 +77,16 @@ import Topic from "../pages/Admin/ContentManagement/Topic/Topic";
 import Reports from "../pages/Admin/Reports/Reports";
 import Faqs from "../pages/Admin/Faqs/Faqs";
 import TraineeManagement from "../pages/TrainerManger/TraineeManagement/TraineeManagement";
+import ErrorPage from "../pages/ErrorPage/ErrorPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
+  },
+  {
+    path: "*",
+    element: <ErrorPage />,
   },
   {
     path: "/CLASS_ADMIN",
@@ -172,6 +177,10 @@ export const router = createBrowserRouter([
         path: "/CLASS_ADMIN/faqs",
         element: <Faqs />,
       },
+      {
+        path: "*",
+        element: <ErrorPage />,
+      },
     ],
   },
 
@@ -185,9 +194,19 @@ export const router = createBrowserRouter([
       { path: "logwork", element: <LogWorkTrainer /> },
       { path: "content-management", element: <ContentManagementTrainer /> },
       { path: "faqs", element: <FAQTrainer /> },
+      { path: "class-management/class-list", element:  <ClassList /> },
+      { path: "class-management/training-report", element:  <TrainingReport /> },
+      { path: "class-management/tracker-admin", element:  <ScheduleTrackerPage   /> },
+      { path: "class-management/in-progress", element: <InProgressClass /> },
+      {path:  "class-management/checkpoint", element: <Checkpoint /> },
+      { path: "class-management/schedule-tracker", element:  <ScheduleTrackerPage   /> },
       {
         path: "trainer-confirmation/:className",
         element: <ClassDetail />,
+      },
+      {
+        path: "*",
+        element: <ErrorPage />,
       },
     ],
   },
@@ -211,6 +230,10 @@ export const router = createBrowserRouter([
         element: <ConfigCheckpointDealineDM />,
       },
       { path: "faqs", element: <FAQDM /> },
+      {
+        path: "*",
+        element: <ErrorPage />,
+      },
 
     ],
   },
@@ -276,6 +299,10 @@ export const router = createBrowserRouter([
         path: "/TRAINER_MANAGER/content-management/topic",
         element: <Topic />,
       },
+      {
+        path: "*",
+        element: <ErrorPage />,
+      },
     ],
   },
   {
@@ -285,6 +312,10 @@ export const router = createBrowserRouter([
       { path: "", element: <FeedbackLink /> },
       { path: "feedback-form", element: <FeedbackForm /> },
       { path: "feedback-success", element: <FeedbackSuccess /> },
+      {
+        path: "*",
+        element: <ErrorPage />,
+      },
     ],
   },
 ]);

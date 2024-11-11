@@ -1,6 +1,7 @@
 import { Col, DatePicker, Divider, Form, Row, Select, Table, Typography, Button, notification } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { Get_Course_by_Module, get_Technical_data } from '../../../../api/AdminAPI/StatisticsFeedback';
+import './CourseOrganization.css'
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { Title } = Typography;  // Correct import
@@ -113,52 +114,29 @@ function CourseOrganization() {
             });
         }
     };
+    const tagRender = ({ values = [], allOptions }) => {
+        if (!Array.isArray(values)) {
+            values = [];
+        }
+        if (values.length === allOptions.length) {
+            return <span>Select All</span>;
+        }
+
+        if (values.length === 1)
+            return values[0].length > 40 ? values[0].slice(0, 40) + "..." : values[0];
+        else {
+            const textString = values.slice(0, 2).join(", ");
+
+            return textString.length > 17
+                ? textString.slice(0, 17) + "..."
+                : textString;
+        };
+    }
     const feedbackColumnsModule = [
-        {
-            title: 'Class Admin',
-            dataIndex: 'admin',
-            key: 'admin',
-            render: (_, record) => ({
-                children: record.trainerName,
-                props: { rowSpan: record.rowSpan }
-            }),
-            width: '20%',
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
-        },
-        {
-            title: 'Class Code',
-            dataIndex: 'classCode',
-            key: 'classCode',
-            render: (_, record) => ({
-                children: record.classCode,
-                props: { rowSpan: record.rowSpan }
-            }),
-            width: '15%',
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
-        },
-        {
-            title: 'Module',
-            dataIndex: 'moduleName',
-            key: 'moduleName',
-            render: (_, record) => ({
-                children: record.moduleName,
-                props: { rowSpan: record.rowSpan }
-            }),
-            width: '30%',
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
-        },
-        {
-            title: `Reason for ${selectedFeedback?.feedbackType || ''} Feedbacks`, // Use optional chaining here
-            dataIndex: 'reason',
-            key: 'reason',
-            width: '50%',
-            render: (text) => <div style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word' }}>{text}</div>,
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300', // Center align and bold for header
-
-        },
+        { title: 'Class Admin', dataIndex: 'admin', key: 'admin', width: '20%' },
+        { title: 'Class Code', dataIndex: 'classCode', key: 'classCode', width: '15%' },
+        { title: 'Module', dataIndex: 'moduleName', key: 'moduleName', width: '30%' },
+        { title: `Reason for ${selectedFeedback?.feedbackType || ''} Feedbacks`, dataIndex: 'reason', key: 'reason', width: '50%', align: 'center' },
     ];
     const columnsByModule = [
         {
@@ -251,9 +229,13 @@ function CourseOrganization() {
                                         <Form.Item label="Class" required tooltip="This field is required">
                                             <Select
                                                 placeholder="Select Class"
+                                                mode='multiple'
                                                 value={classModuleValue}
                                                 onChange={selectedValues => handleSelectAll(classOptionModule, setClassModuleValue, selectedValues)}
                                                 maxTagCount={0}
+                                                className="w-14 h-[32px]"
+                                                tagRender={() => tagRender({ values: classModuleValue, allOptions: classOptionModule })}
+                                            // tagRender={() => tagRender({ value: classModuleValue, allOption: classOptionModule })}
                                             >
                                                 <Option value="all">Select All</Option>
                                                 {classOptionModule.map(option => (
@@ -271,7 +253,7 @@ function CourseOrganization() {
                 {trackByValue === "Evaluate Class Admin by Module" && classModuleValue.length > 0 && technicalValue.length > 0 && (
                     <>
                         <div className="bg-white rounded-lg shadow-md">
-                            <Table columns={columnsByModule} dataSource={moduleData} rowKey="trainerName" pagination={false}
+                            <Table columns={columnsByModule} dataSource={moduleData} rowKey="trainerName" pagination={false} className="custom-header-table"
                             />
                         </div>
                     </>
@@ -288,6 +270,7 @@ function CourseOrganization() {
                         </Title>
                         <Table
                             columns={feedbackColumnsModule}
+                            className="custom-header-table"
                             dataSource={selectedFeedback.feedbackData}
                             rowKey="key"
                             pagination={false}
