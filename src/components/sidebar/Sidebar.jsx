@@ -65,7 +65,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
       <Menu.Item
         key="profile"
         icon={<CgProfile style={{ fontSize: '1.6rem' }} />}
-        onClick={() => navigate('/TRAINER/profile')}
+        onClick={() => navigate(`/${role}/profile`)}
       >
         Profile
       </Menu.Item>

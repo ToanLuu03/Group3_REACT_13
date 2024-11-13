@@ -4,14 +4,14 @@ const API_BASE_URL = 'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsit
 
 
 export const fetchDataGpa = () => {
-  const accountUsername = localStorage.getItem('username'); // Get username from local storage
+  const trainerAccount = localStorage.getItem('trainerAccount'); // Get username from local storage
 
-  return axios.get(`${API_BASE_URL}/${accountUsername}`);
+  return axios.get(`${API_BASE_URL}/${trainerAccount}`);
 };
 
 export const fetchDataFeedback = () => {
-    return axios.get('https://66d92d3e4ad2f6b8ed53a5e5.mockapi.io/api/feedbackData');
-  };
+  return axios.get('https://66d92d3e4ad2f6b8ed53a5e5.mockapi.io/api/feedbackData');
+};
 
 
 // Add more API calls as needed

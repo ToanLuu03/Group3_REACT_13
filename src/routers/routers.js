@@ -185,6 +185,7 @@ export const router = createBrowserRouter([
         path: "*",
         element: <ErrorPage />,
       },
+      { path: "profile", element: <Profile /> },
     ],
   },
 
@@ -239,6 +240,7 @@ export const router = createBrowserRouter([
         path: "*",
         element: <ErrorPage />,
       },
+      { path: "profile", element: <Profile /> },
 
     ],
   },
@@ -308,6 +310,7 @@ export const router = createBrowserRouter([
         path: "*",
         element: <ErrorPage />,
       },
+      { path: "profile", element: <Profile /> },
     ],
   },
   {
@@ -335,6 +338,7 @@ export const router = createBrowserRouter([
         path: "*",
         element: <ErrorPage />,
       },
+      { path: "profile", element: <Profile /> },
     ],
   },
 ]);

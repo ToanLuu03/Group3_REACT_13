@@ -7,7 +7,6 @@ import { Row, Col, Grid, Typography } from "antd"; // Import Ant Design's Grid c
 import './PortalPages.css';
 
 const { RangePicker } = DatePicker;
-const { Text } = Typography;
 
 const PortalPage = () => {
     
@@ -15,7 +14,6 @@ const PortalPage = () => {
     const [dateRange, setDateRange] = useState([null, null]);
     const [selectedTopics, setSelectedTopics] = useState([]);
     const [selectedGpaClasses, setSelectedGpaClasses] = useState([]);
-    const [activeTab, setActiveTab] = useState('1');
     const { useBreakpoint } = Grid;
     const screens = useBreakpoint(); 
 

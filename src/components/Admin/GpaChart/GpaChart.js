@@ -11,7 +11,7 @@ const GpaChart = ({ selectedTopics, selectedClasses, dateRange }) => {
     const dispatch = useDispatch();
     const { gpaData, loading, error } = useSelector((state) => state.portal);
 
-    console.log("gpadata:", gpaData);
+    // console.log("gpadata:", gpaData);
 
     // Local state for pagination
     const [pagination, setPagination] = useState({
@@ -23,27 +23,27 @@ const GpaChart = ({ selectedTopics, selectedClasses, dateRange }) => {
     useEffect(() => {
         dispatch(fetchGpaDataStart());
     }, [dispatch]);
-const filteredGpaData = useMemo(() => {
-    if (!dateRange[0] || !dateRange[1]) {
-        return [];
-    }
-    
-    return gpaData.data.filter(item => {
-        const itemYear = new Date(item.endDate).getFullYear();
-        const isTopicSelected = selectedTopics.length === 0 || selectedTopics.includes(item.moduleName);
-        const isClassSelected = selectedClasses.length === 0 || selectedClasses.includes(item.className);
-        const isInDateRange = itemYear >= dateRange[0].year() && itemYear <= dateRange[1].year();
+    const filteredGpaData = useMemo(() => {
+        if (!dateRange[0] || !dateRange[1]) {
+            return [];
+        }
 
-        return isTopicSelected && isClassSelected && isInDateRange;
-    });
-}, [gpaData, selectedTopics, selectedClasses, dateRange]);
+        return gpaData.data.filter(item => {
+            const itemYear = new Date(item.endDate).getFullYear();
+            const isTopicSelected = selectedTopics.length === 0 || selectedTopics.includes(item.moduleName);
+            const isClassSelected = selectedClasses.length === 0 || selectedClasses.includes(item.className);
+            const isInDateRange = itemYear >= dateRange[0].year() && itemYear <= dateRange[1].year();
+
+            return isTopicSelected && isClassSelected && isInDateRange;
+        });
+    }, [gpaData, selectedTopics, selectedClasses, dateRange]);
 
     const groupedGpaData = useMemo(() => {
         const grouped = {};
         filteredGpaData.forEach(item => {
             const itemYear = new Date(item.endDate).getFullYear();
             const key = `${item.moduleName} (${item.className})`;
-            
+
             if (!grouped[key]) {
                 grouped[key] = { topicClass: key, '2022': 0, '2023': 0, '2024': 0 };
             }
@@ -58,7 +58,7 @@ const filteredGpaData = useMemo(() => {
             title: 'Class',
             dataIndex: 'class',
             key: 'class',
-            
+
         },
         {
             title: 'Module',
@@ -87,15 +87,15 @@ const filteredGpaData = useMemo(() => {
 
     if (loading) {
         return <Spin size="large" />;
-      }
-    
-      if (error) {
+    }
+
+    if (error) {
         return <div>Error: {error}</div>;
-      }
-    
-    
+    }
+
+
     return (
-        
+
         <div className="chart-container">
             <div className="legend-container">
                 {Object.keys(colorMap).map(year => (
@@ -106,39 +106,39 @@ const filteredGpaData = useMemo(() => {
                 ))}
             </div>
             <div style={{ overflowX: 'auto' }}>
-        <div style={{ width: groupedGpaData.length === 1 ? "100%" : `${groupedGpaData.length * 560}px` }}>
-            <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={groupedGpaData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="topicClass" />
-                    <YAxis domain={[0, 10]} ticks={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} />
-                    <Tooltip />
-                    {Object.keys(colorMap).map((year) => (
-                        <Bar key={year} dataKey={year} fill={colorMap[year]} name={year}  barSize={groupedGpaData.length === 1 ? 70 : 50} // Adjust bar size when 1 column
-                        >
-                            <LabelList dataKey={year} position="top" />
-                        </Bar>
-                    ))}
-                </BarChart>
-            </ResponsiveContainer>
-        </div>
-    </div>
+                <div style={{ width: groupedGpaData.length === 1 ? "100%" : `${groupedGpaData.length * 560}px` }}>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <BarChart data={groupedGpaData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="topicClass" />
+                            <YAxis domain={[0, 10]} ticks={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} />
+                            <Tooltip />
+                            {Object.keys(colorMap).map((year) => (
+                                <Bar key={year} dataKey={year} fill={colorMap[year]} name={year} barSize={groupedGpaData.length === 1 ? 70 : 50} // Adjust bar size when 1 column
+                                >
+                                    <LabelList dataKey={year} position="top" />
+                                </Bar>
+                            ))}
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
 
             <div className="table-title">
                 <p>GPA Table</p>
             </div>
 
-<div className="table-con"> 
-            <Table
-             bordered
-            columns={columns}
-            dataSource={tableData}
-            pagination={pagination}
-            onChange={newPagination => setPagination(newPagination)}
-            scroll={{ x: true }} 
-        />
-        </div>
-            
+            <div className="table-con">
+                <Table
+                    bordered
+                    columns={columns}
+                    dataSource={tableData}
+                    pagination={pagination}
+                    onChange={newPagination => setPagination(newPagination)}
+                    scroll={{ x: true }}
+                />
+            </div>
+
         </div>
     );
 };

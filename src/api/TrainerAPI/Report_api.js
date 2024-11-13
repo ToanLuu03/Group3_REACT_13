@@ -44,7 +44,7 @@ export const createReport = async (reportData) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error creating report:', error);
-        throw new Error('Failed to create report');
+        // console.error('Error creating report:', error);
+        throw error;
     }
 };

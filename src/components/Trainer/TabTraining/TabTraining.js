@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Select, DatePicker, Table, Input } from 'antd';
+import { Select, DatePicker, Table, Input, notification } from 'antd';
 import './TabTraining.css';
 import { Modal, Button } from 'antd';
 import ReportModal from './ReportModal'; // Import the new ReportModal componeqsqs
@@ -40,7 +40,7 @@ const TabTraining = () => {
                         topic: topicName,
                         contentName: content.contentName,
                         contentId: content.contentId,
-                        
+
                     }));
 
                     setSelectedContentNames(prevContent => [...prevContent, ...contentNames]);
@@ -58,7 +58,7 @@ const TabTraining = () => {
             const newContent = prevContent.filter(c => c.contentId !== contentId);
             const remainingTopics = [...new Set(newContent.map(c => c.topic))];
             setSelectedTopics(remainingTopics);
-            
+
             return newContent;
         });
     };
@@ -123,14 +123,20 @@ const TabTraining = () => {
             const response = await createReport(reportData);  // Send the report data
             console.log('Report created successfully:', response);
             setIsModalVisible(false);  // Close the modal
-            toast.success('Report created successfully!'); 
+            toast.success('Report created successfully!');
             setSelectedTopics([]);
             setSelectedContentNames([]);
 
         } catch (error) {
-            console.error('Error creating report:', error);
-            console.error('Report Data:', reportData);
-            toast.error('Failed to create report. Please try again.');
+            // console.error('Error creating report:', error);
+            // console.error('Report Data:', reportData);
+            // toast.error('Failed to create report. Please try again.');
+            notification.error({
+                message: error.response.data.message,
+                // description:
+                //     "There was an issue fetching the trainer info. Please try again later.",
+                duration: 3,
+            });
         }
     };
     const handleCancel = () => {
@@ -498,14 +504,14 @@ const TabTraining = () => {
                     </Button>
 
                     <ReportModal
-            visible={isModalVisible}
-            onOk={handleOk}
-            onCancel={handleCancel}
-            selectedContentNames={selectedContentNames}
-            showReason={showReason}
-            onModalDateChange={handleModalDateChange}
-            onRemoveContent={handleRemoveContent}  // Add this new prop
-        />
+                        visible={isModalVisible}
+                        onOk={handleOk}
+                        onCancel={handleCancel}
+                        selectedContentNames={selectedContentNames}
+                        showReason={showReason}
+                        onModalDateChange={handleModalDateChange}
+                        onRemoveContent={handleRemoveContent}  // Add this new prop
+                    />
                 </div>
             )}
         </div>

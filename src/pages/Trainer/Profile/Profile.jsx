@@ -65,21 +65,6 @@ const TrainerProfile = () => {
             <button className="bg-[#5750DF] text-white hover:bg-blue-600 px-2 py-1 md:px-4 md:py-2 rounded-full">
               Export
             </button>
-            {isEditing ? (
-              <button
-                onClick={handleCancelEdit}
-                className="bg-gray-300 text-gray-700 px-2 py-1 md:px-4 md:py-2 rounded-full"
-              >
-                Cancel
-              </button>
-            ) : (
-              <button
-                onClick={handleUpdateClick}
-                className="bg-[#5750DF] text-white hover:bg-blue-600 px-2 py-1 md:px-4 md:py-2 rounded-full"
-              >
-                Update
-              </button>
-            )}
           </div>
         </div>
       </div>
@@ -89,9 +74,8 @@ const TrainerProfile = () => {
           <button
             key={index}
             onClick={() => setActiveCategory(index)}
-            className={`mr-4 ${
-              activeCategory === index ? "text-purple-500" : ""
-            }`}
+            className={`mr-4 ${activeCategory === index ? "text-purple-500" : ""
+              }`}
           >
             {category.name}
           </button>

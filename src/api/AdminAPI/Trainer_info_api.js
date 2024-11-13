@@ -52,8 +52,8 @@ export const fetchMasterData = async (token) => {
         );
         return response.data.data;
     } catch (error) {
-        console.error('Error fetch master data:', error.message);
-        throw new Error('Failed to fetch master data');
+        // console.error('Error fetch master data:', error.message);
+        throw error;
     }
 };
 
@@ -66,8 +66,8 @@ export const fetchTrainerInfoV2 = async (account, token) => {
         });
         return response.data.data.trainerInfo;
     } catch (error) {
-        console.error('Error fetching trainer info:', error.message);
-        throw new Error('Failed to fetch trainer info');
+        // console.error('Error fetching trainer info:', error.message);
+        throw error;
     }
 };
 
@@ -86,14 +86,14 @@ export const updateTrainerInfoV2 = async (account, updatedData, token) => {
 
         return response.data;
     } catch (error) {
-        console.error('Error updating trainer info:', error.message);
-        throw new Error('Failed to update trainer info');
+        // console.error('Error updating trainer info:', error.message);
+        throw error;
     }
 };
 
 export const uploadAvatar = async (file, token) => {
     const formData = new FormData();
-    formData.append("image", file); 
+    formData.append("image", file);
 
     try {
         const response = await axios.post(
@@ -107,9 +107,9 @@ export const uploadAvatar = async (file, token) => {
                 },
             }
         );
-        return response.data; 
+        return response.data;
     } catch (error) {
-        console.error("Error uploading avatar:", error.response ? error.response.data : error.message);
-        throw new Error("Failed to upload avatar");
+        // console.error("Error uploading avatar:", error.response ? error.response.data : error.message);
+        throw error;
     }
 };
