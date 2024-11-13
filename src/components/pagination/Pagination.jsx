@@ -12,9 +12,9 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange, onPag
   };
 
   return (
-    <div className="flex items-center gap-4  mt-4">
+    <div className="flex md:flex-row items-center gap-4 mt-4">
       {/* Items per Page Dropdown on the left */}
-      <div className="flex items-center">
+      <div className="flex items-center mb-2 md:mb-0">
         <span className="mr-2">Items per page:</span>
         <select
           value={itemsPerPage}
@@ -28,37 +28,35 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange, onPag
       </div>
 
       {/* Page Numbers */}
-      <div>
-          {currentPage} - {totalPages} of {totalPages}
-        </div>
+      <div className="text-center mb-2 md:mb-0">
+        {currentPage} - {totalPages} of {totalPages}
+      </div>
 
       {/* Pagination Controls */}
-      <div className="flex items-center ">
+      <div className="flex items-center gap-1">
         {/* First Page Button */}
         <button
           onClick={() => handlePageChange(1)}
           disabled={currentPage === 1}
-          className="px-3 py-2  hover:bg-gray-100"
+          className="px-2 py-2 hover:bg-gray-100 disabled:opacity-50"
         >
-        <MdSkipPrevious />
+          <MdSkipPrevious />
         </button>
 
         {/* Previous Button */}
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-3 py-2  hover:bg-gray-100"
+          className="px-2 py-2 hover:bg-gray-100 disabled:opacity-50"
         >
           <GrFormPrevious />
         </button>
-
-        
 
         {/* Next Button */}
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-2  hover:bg-gray-100"
+          className="px-2 py-2 hover:bg-gray-100 disabled:opacity-50"
         >
           <MdOutlineNavigateNext />
         </button>
@@ -67,9 +65,9 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange, onPag
         <button
           onClick={() => handlePageChange(totalPages)}
           disabled={currentPage === totalPages}
-          className="px-3 py-2  hover:bg-gray-100"
+          className="px-2 py-2 hover:bg-gray-100 disabled:opacity-50"
         >
-         <MdSkipNext />
+          <MdSkipNext />
         </button>
       </div>
     </div>

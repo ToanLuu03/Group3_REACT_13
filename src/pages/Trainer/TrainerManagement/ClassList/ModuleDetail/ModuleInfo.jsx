@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { fetchModuleData } from "../../../../../services/moduleInfo"; 
+import { Spin } from "antd";
 
 const ModuleInfo = ({ moduleData, onBackClick }) => {
   const [data, setData] = useState(null);
@@ -25,16 +26,21 @@ console.log(moduleData.id)
     }
   }, [moduleData, token]);
 
-  if (loading) {
-    return <p className="text-base sm:text-lg">Loading module details...</p>;
-  }
 
   if (error) {
     return <p className="text-base sm:text-lg">Error: {error}</p>;
   }
 
   if (!data) {
-    return <p className="text-base sm:text-lg">Select a module to see details</p>;
+    return (
+      <div className="p-4 relative">
+      {loading && (
+        <div className="fixed inset-0 z-50 bg-gray-200 bg-opacity-75 flex justify-center items-center">
+          <Spin size="large" tip="Loading..." />
+        </div>
+      )}
+    </div>
+    )
   }
 
   const getStatusBadge = (status) => {
@@ -53,7 +59,8 @@ console.log(moduleData.id)
   };
 
   return (
-    <div className="w-full p-4 sm:p-6 bg-white rounded-lg shadow-md flex flex-col">
+   
+    <>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
         <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-gray-800">
           Module Detail: {data.name}
@@ -167,7 +174,7 @@ console.log(moduleData.id)
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

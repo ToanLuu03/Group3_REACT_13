@@ -63,8 +63,8 @@ export const Get_Evaluate_by_Module = async ({ module, trainerAccount }) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error fetching evaluation by module:", error.response || error.message);
-    return { success: false, message: error.message };
+    // console.error("Error fetching evaluation by module:", error.response || error.message);
+    throw error;
   }
 };
 export const Get_Evaluate_by_Trainer = async ({ classCode, trainerAccount }) => {
@@ -116,7 +116,23 @@ export const get_Technical_data = async () => {
     throw new Error("Failed to fetch feedback Data");
   }
 };
-
+// Fetch class options by trainer
+export const get_ClassAdmin_by_Trainer = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/class-admin',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    ); // Replace with actual endpoint
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching class admin by trainer data:", error);
+    throw error;
+  }
+};
 
 export const Get_Course_by_Module = async ({ classCode }) => {
   try {
@@ -148,7 +164,7 @@ export const Get_Course_by_Module = async ({ classCode }) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching evaluation by module:", error.response || error.message);
-    return { success: false, message: error.message };
+    throw error;
   }
 };
 
@@ -194,5 +210,36 @@ export const getStatisticsByModuleName = async (moduleName) => {
   } catch (error) {
     console.error("Error fetching data by module name:", error);
     return { success: false, message: "Failed to fetch data by module name." };
+  }
+};
+export const Get_Admin_by_ClassName = async ({ classAdmin, classNames }) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(
+      'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/statistic/class-admin/by-class-names',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          classAdmin: encodeURIComponent(classAdmin),
+          classNames: classNames.map(classNames => encodeURIComponent(classNames)),
+        },
+        paramsSerializer: params => {
+          return Object.entries(params)
+            .map(([key, value]) => {
+              if (Array.isArray(value)) {
+                return value.map(val => `${key}=${val}`).join('&');
+              }
+              return `${key}=${value}`;
+            })
+            .join('&');
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching evaluation by module:", error.response || error.message);
+    throw error;
   }
 };

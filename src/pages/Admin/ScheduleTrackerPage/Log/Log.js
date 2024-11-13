@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { DatePicker, Input, Table, Spin } from "antd";
 import { SelectBox } from "../../../../components/Admin/Selectbox/SelectBox";
 import { FaStarOfLife } from "react-icons/fa6";
-import { fetchDataLog, fetchDataClass, fetchModules, searchLogs } from "../../../../api/ScheduleTracker_api";
+import { fetchDataLog, fetchDataClass, searchLogs } from "../../../../api/ScheduleTracker_api";
 import moment from 'moment';
 
 const { RangePicker } = DatePicker;
@@ -21,10 +21,6 @@ function Log() {
     const [moduleOptions, setModuleOptions] = useState([]);
     const [fullData, setFullData] = useState([]);
     const [loading, setLoading] = useState(false);
-
-    const handleDateChange = (dates) => {
-        setSelectedDate(dates);
-    }
 
     // Fetch classes and prepare data when component mounts
     useEffect(() => {
@@ -77,37 +73,18 @@ function Log() {
     const columns = [
         {
             title: () => <div className="text-center font-bold">Topic</div>,
-            dataIndex: 'className',
-            key: 'topic',
-            fixed: 'left',
-            className: 'w-[200px] text-center',
-            render: (value, _, index) => {
-                const previousRecord = index > 0 ? logData[index - 1].className : null;
-                const currentClassName = logData[index].className;
-
-                let rowSpan = 1;
-                if (currentClassName === previousRecord) {
-                    rowSpan = 0;
-                } else {
-                    let count = 1;
-                    while (index + count < logData.length && currentClassName === logData[index + count].className) {
-                        count++;
-                    }
-                    rowSpan = count;
-                }
-
-                return {
-                    children: <span className="text-center">{value || 'No data'}</span>,
-                    props: { rowSpan },
-                };
-            },
-        },
-        {
-            title: () => <div className="text-center font-bold">Contents</div>,
             dataIndex: 'moduleName',
             key: 'content',
             fixed: 'left',
-            width: 300,
+            className: 'w-[200px] sm:w-[300px] text-center',
+        },
+        {
+            title: () => <div className="text-center font-bold">Contents</div>,
+            dataIndex: 'className',
+            key: 'topic',
+            fixed: 'left',
+            width: 150,
+            responsive: ['md'],
             className: 'text-center',
         },
         {
@@ -115,32 +92,13 @@ function Log() {
             dataIndex: 'trainerId',
             key: 'trainer',
             className: 'text-center',
-            render: (value, _, index) => {
-                const previousRecord = index > 0 ? logData[index - 1].trainerId : null;
-                const currentTrainerId = logData[index].trainerId;
-
-                let rowSpan = 1;
-                if (currentTrainerId === previousRecord) {
-                    rowSpan = 0;
-                } else {
-                    let count = 1;
-                    while (index + count < logData.length && currentTrainerId === logData[index + count].trainerId) {
-                        count++;
-                    }
-                    rowSpan = count;
-                }
-
-                return {
-                    children: value || 'N/A',
-                    props: { rowSpan },
-                };
-            },
+            responsive: ['lg'],
         },
         {
             title: () => <div className="text-center font-bold">Changed Content</div>,
             dataIndex: 'changedContent',
             key: 'changedContent',
-            className: 'text-center',
+            className: 'text-center min-w-[120px]',
             render: (text) => {
                 const contentMap = {
                     "Update actual date": "Update Actual Date",
@@ -157,7 +115,8 @@ function Log() {
             title: () => <div className="text-center font-bold">Old Value</div>,
             dataIndex: 'oldValue',
             key: 'oldValue',
-            className: 'text-center',
+            className: 'text-center min-w-[100px]',
+            responsive: ['sm'],
             render: (text) => {
                 if (text && moment(text, moment.ISO_8601, true).isValid()) {
                     return moment(text).format('YYYY-MM-DD');
@@ -169,7 +128,8 @@ function Log() {
             title: () => <div className="text-center font-bold">New Value</div>,
             dataIndex: 'newValue',
             key: 'newValue',
-            className: 'text-center',
+            className: 'text-center min-w-[100px]',
+            responsive: ['sm'],
             render: (text) => {
                 if (text && moment(text, moment.ISO_8601, true).isValid()) {
                     return moment(text).format('YYYY-MM-DD');
@@ -181,7 +141,7 @@ function Log() {
             title: () => <div className="text-center font-bold">Date Change</div>,
             dataIndex: 'changedDate',
             key: 'dateChange',
-            className: 'text-center',
+            className: 'text-center min-w-[100px]',
             render: (text) => {
                 if (text && moment(text, moment.ISO_8601, true).isValid()) {
                     return moment(text).format('YYYY-MM-DD');
@@ -350,53 +310,57 @@ function Log() {
                 {/* Search Input - Only show when dateRange is selected */}
 
                 {dateRange && (
-                    <div>
-                        <div className="flex-shrink-0 w-full max-w-[200px]">
-                            <div className="flex gap-1 pb-1">
-                                <label className="text-base sm:text-lg font-medium">Search</label>
-                            </div>
-                            <Input
-                                placeholder="Search..."
-                                className="w-full"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                    <div className="flex-shrink-0 w-full max-w-[200px]">
+                        <div className="flex gap-1 pb-1">
+                            <label className="text-base sm:text-lg font-medium">Search</label>
                         </div>
-
-
-                        {/* Selected Information - Updated layout */}
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2 mb-5 px-2 sm:px-8">
-                            <div className="text-sm sm:text-[14px] font-[700]">Class: <span className="date">{selectedClass || 'N/A'}</span></div>
-                            <div className="text-sm sm:text-[14px] font-[700]">Module: <span className="date">{selectedModule || 'N/A'}</span></div>
-                            <div className="text-sm sm:text-[14px] font-[700]">Start Date: <span className="date">{dateRange ? dateRange[0].format('DD/MM/YYYY') : 'N/A'}</span></div>
-                            <div className="text-sm sm:text-[14px] font-[700]">End Date: <span className="date">{dateRange ? dateRange[1].format('DD/MM/YYYY') : 'N/A'}</span></div>
-                        </div>
+                        <Input
+                            placeholder="Search..."
+                            className="w-full"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
                     </div>
                 )}
             </div>
 
+            {dateRange && (
+
+                < div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2 mb-5 px-2 sm:px-8">
+                    <div className="text-sm sm:text-[14px] font-[700]">Class: <span className="date">{selectedClass || 'N/A'}</span></div>
+                    <div className="text-sm sm:text-[14px] font-[700]">Module: <span className="date">{selectedModule || 'N/A'}</span></div>
+                    <div className="text-sm sm:text-[14px] font-[700]">Start Date: <span className="date">{dateRange ? dateRange[0].format('DD/MM/YYYY') : 'N/A'}</span></div>
+                    <div className="text-sm sm:text-[14px] font-[700]">End Date: <span className="date">{dateRange ? dateRange[1].format('DD/MM/YYYY') : 'N/A'}</span></div>
+                </div>
+
+            )}
 
             {/* Add loading state */}
-            {loading && (
-                <div className="flex justify-center my-4">
-                    <Spin />
-                </div>
-            )}
+            {
+                loading && (
+                    <div className="flex justify-center my-4">
+                        <Spin />
+                    </div>
+                )
+            }
 
             {/* Display logs with existing table structure */}
-            {dateRange && (
-                <Table
-                    dataSource={filteredLogs}
-                    columns={columns}
-
-                    pagination={{ pageSize: 4 }}
-                    size="middle"
-                    scroll={{
-                        x: 'calc(700px + 100%)',
-                    }}
-                />
-            )}
-        </div>
+            {
+                dateRange && (
+                    <div className="overflow-x-auto">
+                        <Table
+                            dataSource={filteredLogs}
+                            columns={columns}
+                            pagination={{ pageSize: 4 }}
+                            size="middle"
+                            scroll={{
+                                x: true,
+                            }}
+                        />
+                    </div>
+                )
+            }
+        </div >
     );
 }
 

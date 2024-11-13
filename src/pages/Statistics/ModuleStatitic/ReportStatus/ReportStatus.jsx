@@ -7,7 +7,7 @@ const CustomTooltip = ({ active, payload }) => {
     return (
       <div className="bg-gray-200 text-gray-800 p-2 rounded shadow-md text-center">
         <p className="text-lg font-semibold">{name}</p>
-        <p className="text-sm">{value}%</p>
+    
       </div>
     );
   }
@@ -23,7 +23,7 @@ const ReportStatus = ({ data, colors }) => {
   // Calculate the "On going" percentage
   const ongoingData = data.find((item) => item.name === "On going");
   const ongoingPercentage = ongoingData ? ongoingData.value : 0;
-  const fontSize = window.innerWidth < 768 ? "1.5rem" : "2.5rem";
+  const fontSize = window.innerWidth < 768 ? "1.5rem" : "2.2rem";
   const subFontSize = window.innerWidth < 768 ? "0.5rem" : "1rem";
   
   return (
@@ -31,15 +31,16 @@ const ReportStatus = ({ data, colors }) => {
       <h3 className="text-center text-lg font-semibold mb-4">Report Status</h3>
       <ResponsiveContainer
         width="100%"
-        height={window.innerWidth < 768 ? 300 : 500} // Set responsive height
+        minHeight={200} // Match minHeight with DeliveryType component
+        maxHeight={400} // Match maxHeight with DeliveryType component
       >
         <PieChart>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={window.innerWidth < 768 ? "50%" : "65%"} // Adjust inner radius for mobile
-            outerRadius={window.innerWidth < 768 ? "70%" : "80%"} // Adjust outer radius for mobile
+            innerRadius={window.innerWidth < 768 ? "50%" : "65%"}
+            outerRadius={window.innerWidth < 768 ? "70%" : "80%"}
             startAngle={90}
             endAngle={450}
             dataKey="value"
@@ -65,7 +66,7 @@ const ReportStatus = ({ data, colors }) => {
           <text
             x="50%"
             y="50%"
-            dy={30} // Offset to place below the percentage text
+            dy={30}
             textAnchor="middle"
             fontSize={subFontSize}
             fill="#4B5563"

@@ -107,15 +107,15 @@ const FeedbackLink = () => {
             onSubmit={isOtpSent ? handleOtpSubmit : handleEmailSubmit}
             className="flex flex-col items-center"
           >
-            <label className="justify-start text-sm text-gray-600 mb-1">
+            <span className="justify-start pr-[37%] text-sm text-[#454545] mb-1">
               Mail
-            </label>
+            </span>
             <input
               type="email"
               placeholder="Enter your email"
               required
               onChange={(e) => setEmail(e.target.value)}
-              className="w-[372px] px-4 py-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              className="w-[372px] px-4 py-2 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             />
             {/* Hiển thị phần nhập OTP khi OTP được gửi */}
             {isOtpSent && (

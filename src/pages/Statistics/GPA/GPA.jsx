@@ -50,35 +50,35 @@ const GPA = () => {
     );
   });
 
-  const isFiltersSelected =
-    selectedFilters.trainers.length > 0 &&
-    selectedFilters.classes.length > 0 &&
-    selectedFilters.modules.length > 0 &&
-    selectedFilters.years.length > 0;
-
-  if (loading) {
-    return (
-      <div className="flex justify-start items-center">
-        <Spin size="large" />
-      </div>
-    );
-  }
+  // Check if all filters are selected
+  const areAllFiltersSelected =
+    selectedFilters.trainers.length &&
+    selectedFilters.classes.length &&
+    selectedFilters.modules.length &&
+    selectedFilters.years.length;
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="bg-white rounded p-4">
-        <FilterSection data={data} onFilterChange={handleFilterChange} />
-      </div>
-      {isFiltersSelected && (
-        <div className="flex justify-center flex-col items-center">
-          <div className="bg-white rounded p-4 mt-6 w-[1480px] items-center">
-            <GPAChart data={filteredData} />
-          </div>
-          <div className="bg-white rounded p-4 mt-6 w-full">
-            <GPATable data={filteredData} />
-          </div>
+    <div className="p-4 relative">
+      {loading && (
+        <div className="fixed inset-0 z-50 bg-gray-200 bg-opacity-75 flex justify-center items-center">
+          <Spin size="large" tip="Loading..." />
         </div>
       )}
+      <div className="justify-items-center mr-5">
+        <FilterSection data={data} onFilterChange={handleFilterChange} />
+        <br />
+         {areAllFiltersSelected ? (
+          <>
+            <div className="justify-items-center w-[85vw] md:w-[60vw] lg:w-[70vw]">
+              <GPAChart data={filteredData} />
+            </div>
+            <div className="bg-white p-4 mt-6 w-[85vw] md:w-[60vw] lg:w-[60vw]">
+              <GPATable data={filteredData} />
+            </div>
+          </>
+        ) : ""}
+        
+      </div>
     </div>
   );
 };

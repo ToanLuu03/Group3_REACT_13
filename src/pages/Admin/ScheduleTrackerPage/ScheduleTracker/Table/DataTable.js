@@ -1,6 +1,7 @@
 import { Table } from 'antd';
 import moment from 'moment';
 import './DataTable.css';
+import MergedCell from '../../../../../components/Admin/MergedCell/MergedCell';
 
 const DataTable = ({ data }) => {
 
@@ -11,153 +12,137 @@ const DataTable = ({ data }) => {
 
   const columns = [
     {
-      title: 'Topic',
-      dataIndex: 'topicName',
-      key: 'topicName',
-      fixed: 'left',
-      className: 'w-[200px] ',
-      render: (text) => <span className="text-center">{text}</span>,
-    },
-    {
-      title: 'Contents',
+      title: () => <div className="text-center">Topic</div>,
       dataIndex: 'moduleName',
       key: 'moduleName',
       fixed: 'left',
-      className: 'w-[200px]',
+      className: 'w-[150px] sm:w-[200px]',
+      responsive: ['xs'],
+      render: (value, _, index) => MergedCell({
+        value,
+        data,
+        index,
+        fieldName: 'moduleName',
+        className: 'text-center'
+      })
+    },
+    {
+      title: () => <div className="text-center">Contents</div>,
+      dataIndex: 'topicName',
+      key: 'topicName',
+      fixed: 'left',
+      className: 'w-[150px] sm:w-[200px]',
+      responsive: ['sm'],
       render: (text) => <span>{text}</span>,
     },
     {
       title: 'Trainer/ Class Admin',
       dataIndex: 'trainerId',
       key: 'trainerId',
-      className: 'text-center',
-      render: (value, _, index) => {
-        const previousRecord = index > 0 ? data[index - 1].trainerId : null;
-        const currentTrainerId = data[index].trainerId;
-
-        let rowSpan = 1;
-        if (currentTrainerId === previousRecord) {
-          rowSpan = 0;
-        } else {
-          let count = 1;
-          while (index + count < data.length && currentTrainerId === data[index + count].trainerId) {
-            count++;
-          }
-          rowSpan = count;
-        }
-
-        return {
-          children: value || 'No data',
-          props: { rowSpan },
-        };
-      },
+      align: "center",
+      responsive: ['md'],
+      render: (value, _, index) => MergedCell({
+        value: value || 'No data',
+        data,
+        index,
+        fieldName: 'trainerId'
+      })
     },
     {
       title: 'Delivery Type',
       dataIndex: 'contentDeliveryType',
       key: 'contentDeliveryType',
-      className: 'text-center',
+      align: "center",
+      responsive: ['lg'],
     },
     {
       title: 'Training Format',
       dataIndex: 'contentTrainingFormat',
       key: 'contentTrainingFormat',
-      className: 'text-center',
-
+      align: "center",
+      responsive: ['lg'],
     },
     {
       title: 'Schedule Date',
       dataIndex: 'contentPlannedDate',
       key: 'contentPlannedDate',
-      className: 'text-center',
+      align: "center",
+      responsive: ['sm'],
       render: (value, _, index) => {
-        const previousRecord = index > 0 ? data[index - 1].contentPlannedDate : null;
-        const currentDate = data[index].contentPlannedDate;
-
-        let rowSpan = 1;
-        if (moment(currentDate).format('YYYY-MM-DD') === moment(previousRecord).format('YYYY-MM-DD')) {
-          rowSpan = 0;
-        } else {
-          let count = 1;
-          while (
-            index + count < data.length && 
-            moment(currentDate).format('YYYY-MM-DD') === moment(data[index + count].contentPlannedDate).format('YYYY-MM-DD')
-          ) {
-            count++;
-          }
-          rowSpan = count;
-        }
-
-        return {
-          children: moment(value).format('YYYY-MM-DD'),
-          props: { rowSpan },
-        };
-      },
+        const formattedValue = moment(value).format('YYYY-MM-DD');
+        const formattedData = data.map(item => ({
+          ...item,
+          contentPlannedDate: moment(item.contentPlannedDate).format('YYYY-MM-DD')
+        }));
+        
+        return MergedCell({
+          value: formattedValue,
+          data: formattedData,
+          index,
+          fieldName: 'contentPlannedDate'
+        });
+      }
     },
     {
       title: 'Actual Date',
       dataIndex: 'reportActualDate',
       key: 'reportActualDate',
-      className: 'text-center',
+      align: "center",
+      responsive: ['md'],
       render: (value, _, index) => {
-        const previousRecord = index > 0 ? data[index - 1].reportActualDate : null;
-        const currentDate = data[index].reportActualDate;
-
-        let rowSpan = 1;
-        if (moment(currentDate).format('YYYY-MM-DD') === moment(previousRecord).format('YYYY-MM-DD')) {
-          rowSpan = 0;
-        } else {
-          let count = 1;
-          while (
-            index + count < data.length && 
-            moment(currentDate).format('YYYY-MM-DD') === moment(data[index + count].reportActualDate).format('YYYY-MM-DD')
-          ) {
-            count++;
-          }
-          rowSpan = count;
-        }
-
-        return {
-          children: moment(value).format('YYYY-MM-DD'),
-          props: { rowSpan },
-        };
-      },
+        const formattedValue = moment(value).format('YYYY-MM-DD');
+        const formattedData = data.map(item => ({
+          ...item,
+          reportActualDate: moment(item.reportActualDate).format('YYYY-MM-DD')
+        }));
+        
+        return MergedCell({
+          value: formattedValue,
+          data: formattedData,
+          index,
+          fieldName: 'reportActualDate'
+        });
+      }
     },
     {
       title: 'Duration (hour)',
       dataIndex: 'reportDuration',
       key: 'reportDuration',
-      className: 'text-center',
+      align: "center",
+      responsive: ['lg'],
     },
     {
       title: 'Note',
       dataIndex: 'reportNote',
       key: 'reportNote',
-      className: 'text-center',
+      align: "center",
+      responsive: ['xl'],
     },
     {
       title: 'Mismatch Reason',
       dataIndex: 'reportReason',
       key: 'reportReason',
-      className: 'text-center',
+      align: "center",
+      responsive: ['xl'],
     },
     {
       title: 'Status',
       dataIndex: 'contentIsDone',
       key: 'contentIsDone',
-      className: 'text-center items-center',
+      align: "center",
+      responsive: ['md'],
       render: (value) => (value ? 'Reported' : 'On going'),
     },
   ];
 
   return (
-    <>
+    <div className="overflow-x-auto">
       {data.length > 0 && (
-        <div className="flex flex-wrap gap-4 md:gap-8 mb-6 ml-4 md:ml-8">
-          <div className="text-[14px] md:text-[16px] font-[700]">Class: <span className="date">{Classes}</span></div>
-          <div className="text-[14px] md:text-[16px] font-[700]">Module: <span className="date">{Module}</span></div>
-          <div className="text-[14px] md:text-[16px] font-[700]">Start Date: <span className="date">{startDate}</span></div>
-          <div className="text-[14px] md:text-[16px] font-[700]">End Date: <span className="date">{endDate}</span></div>
+        <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 md:gap-8 mb-4 sm:mb-6 ml-2 sm:ml-4 md:ml-8">
+          <div className="text-[12px] sm:text-[14px] md:text-[16px] font-[700]">Class: <span className="date">{Classes}</span></div>
+          <div className="text-[12px] sm:text-[14px] md:text-[16px] font-[700]">Module: <span className="date">{Module}</span></div>
+          <div className="text-[12px] sm:text-[14px] md:text-[16px] font-[700]">Start Date: <span className="date">{startDate}</span></div>
+          <div className="text-[12px] sm:text-[14px] md:text-[16px] font-[700]">End Date: <span className="date">{endDate}</span></div>
         </div>
       )}
 
@@ -169,13 +154,16 @@ const DataTable = ({ data }) => {
           rowKey={(record, index) => index}
           bordered
           size="middle"
-          pagination={{ pageSize: 4 }}
+          pagination={{ 
+            pageSize: 4,
+            responsive: true,
+          }}
           scroll={{
-            x: 'calc(700px + 100%)',
+            x: true
           }}
         />
       </div>
-    </>
+    </div>
   );
 };
 

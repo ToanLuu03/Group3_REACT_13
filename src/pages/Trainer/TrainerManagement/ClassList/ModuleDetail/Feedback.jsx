@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Rate, Collapse, Progress, Button, Modal } from 'antd';
-import { fetchFeedbackData } from '../../../../../services/feedback/feedback'; 
+import { Collapse, Progress, Button, Modal, Spin } from 'antd';
+import { fetchFeedbackData } from '../../../../../services/feedback/feedback';
 
 const { Panel } = Collapse;
 
@@ -11,7 +11,8 @@ const Feedback = ({ moduleData, onBackClick }) => {
   const [ratingCounts, setRatingCounts] = useState({});
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentReason, setCurrentReason] = useState('');
-  const feedbackRef = useRef(null); // To reference the feedback section
+  const feedbackRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,7 +23,6 @@ const Feedback = ({ moduleData, onBackClick }) => {
         setFeedbackData(feedbacks);
         setAverageRating(feedbackResponse.averageRating);
 
-        // Count the number of feedbacks per rating
         const counts = feedbacks.reduce((acc, feedback) => {
           const roundedRating = Math.round(feedback.averageRating);
           acc[roundedRating] = (acc[roundedRating] || 0) + 1;
@@ -33,6 +33,7 @@ const Feedback = ({ moduleData, onBackClick }) => {
       } catch (error) {
         console.error('Error fetching data:', error);
       }
+      setIsLoading(false);
     };
 
     fetchData();
@@ -60,75 +61,138 @@ const Feedback = ({ moduleData, onBackClick }) => {
     setIsModalVisible(false);
   };
 
-  return (
-    <div className="p-4 sm:p-6 w-full mx-auto bg-white rounded-lg shadow-md" ref={feedbackRef}>
-      {/* Header Section */}
-      <div className="text-center mb-4">
-        <h2 className="text-xl sm:text-2xl font-bold">Average</h2>
-        <Rate value={Math.round(averageRating)} disabled />
-        <div className="text-3xl sm:text-4xl font-bold">{averageRating.toFixed(1)}</div>
-      </div>
+  const sortedData = [...filteredData].sort((a, b) => b.averageRating - a.averageRating);
 
-      {/* Rating Filter Section */}
-      <div className="grid grid-cols-2 sm:flex sm:justify-center sm:space-x-4 gap-2 sm:gap-0 mb-6">
-        {['All', 5, 4, 3, 2, 1].map((rating) => (
-          <div key={rating} className="text-center">
-            <Button
-              type={selectedRating === rating ? 'primary' : 'default'}
-              onClick={() => filterFeedback(rating)}
-              className="w-full sm:w-auto"
-            >
-              {rating === 'All' ? 'All' : `${rating} ★`} ({rating === 'All' ? feedbackData.length : (ratingCounts[rating] || 0)})
-            </Button>
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-50 bg-gray-200 bg-opacity-75 flex justify-center items-center">
+          <Spin size="large" tip="Loading..." />
+        </div>
+    );
+  }
+
+  return (
+    <div ref={feedbackRef}>
+      <div className='w-fit shadow-lg rounded-lg'>
+        <div className="flex items-center w-fit space-x-4 p-4">
+    {/* Average Rating Section */}
+    <div className="flex flex-col items-center">
+      <span className="text-2xl font-bold mx-3">Average</span>
+        <div className="flex items-center space-x-1">
+          <span className="text-3xl font-bold mt-3">{averageRating.toFixed(1)}</span>
+            <span className="text-yellow-400 text-3xl mt-3">★</span>
+        </div>
+    </div>
+
+  {/* Rating Distribution with Progress Bars */}
+  <div className="flex flex-col space-y-1 w-fit">
+    {[...Array(5)].map((_, i) => {
+      const ratingCount = ratingCounts[5 - i] || 0;
+      const totalVotes = feedbackData.length;
+      console.log(totalVotes)
+      const percentage = totalVotes > 0 ? (ratingCount / totalVotes) * 100 : 0;
+
+      return (
+        <div key={i} className="flex items-center">
+          <div className="flex gap-2">
+            {[...Array(5)].map((_, j) => (
+              <span
+                key={j}
+                className={`text-2xl ${
+                  j < 5 - i ? 'text-yellow-400' : 'text-gray-300'
+                }`}
+              >
+                ★
+              </span>
+            ))}
           </div>
+          {/* Replace custom progress bar with antd Progress component */}
+          <Progress
+            percent={percentage}
+            showInfo={false}
+            strokeColor="#FFD700" // Yellow color for the filled part
+            trailColor="#D3D3D3" // Gray color for the background
+            strokeWidth={8} // Thickness of the bar
+            className="ml-3 w-[10vw]"
+          />
+          <span className="ml-2 text-gray-500">{ratingCount}</span>
+        </div>
+      );
+    })}
+  </div>
+</div>
+
+
+
+      {/* Updated Filter Section */}
+      <div className="flex items-center space-x-2 p-4 w-fit border-t-gray-200 border-t-2">
+        <span className="text-gray-400 font-bold text-2xl">Filter:</span>
+        {['All', 5, 4, 3, 2, 1].map((rating) => (
+          <button
+            key={rating}
+            onClick={() => filterFeedback(rating)}
+            className={`flex items-center justify-center min-w-9 w-[4vw] h-9 px-3 py-1 rounded-xl sm:rounded-xl md:rounded-xl lg:rounded-full border ${
+              selectedRating === rating
+                ? 'border-blue-500 text-blue-500'
+                : 'border-gray-300 text-gray-600'
+            }`}
+          >
+            {rating === 'All' ? (
+              'All'
+            ) : (
+              <span className="flex items-center space-x-1">
+                <span>{rating}</span>
+                <span className="text-yellow-400 text-2xl pb-1">★</span>
+              </span>
+            )}
+          </button>
         ))}
       </div>
-
+    </div>
+        <br/>
       {/* Feedback Section */}
-      {filteredData.map((feedback, index) => (
-        <Collapse
-          key={index}
-          defaultActiveKey={['0']}
-          className="mb-4"
-          expandIconPosition="end"
-        >
+      
+      {sortedData.map((feedback, index) => (
+        <Collapse key={index} defaultActiveKey={['0']} className="mb-4" expandIconPosition="end">
           <Panel
             header={
-              <div className="flex items-center">
-                <Rate value={Math.round(feedback.averageRating)} disabled />
-                <span className="ml-2">Module's feedback: {feedback.moduleFeedback}</span>
+              <div className="flex items-start space-x-2">
+                {/* Display rating with a star icon */}
+                 <span className="flex items-center text-xl font-bold">
+                  {Math.round(feedback.averageRating)}
+                <span className="text-yellow-400 ml-1">★</span>
+                </span>
+
+                {/* Display feedback messages */}
+                <div className="flex flex-col">
+                  <p className="text-gray-800">Module's feedback: {feedback.moduleFeedback}</p>
+                  <p className="text-gray-800">Trainer's feedback: {feedback.trainerFeedback}</p>
+                </div>
               </div>
-            }
-            key={index}
-          >
-            <p>Trainer's feedback: {feedback.trainerFeedback}</p>
-            {feedback.feedbackQuestion.map((category, catIndex) => (
-              <div key={catIndex}>
-                <h3 className="font-semibold mt-4">{category.questionTypeName}</h3>
-                {category.feedbackResponse.map((detail, detailIndex) => (
-                  <div
-                    key={detailIndex}
-                    className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-2"
-                  >
-                    <span className="flex-1">{detail.question}</span>
-                    <div className="flex flex-row items-center space-x-2">
-                      {/* Progress Bar */}
-                      <Progress
-                        percent={(Number(detail.rating) / 5) * 100}
-                        showInfo={false}
-                        strokeColor="#1890ff"
-                        className="w-full sm:w-80"
-                      />
-                      {/* Detail Button */}
-                      <Button onClick={() => showModal(detail.reason)}>Detail</Button>
-                    </div>
-                  </div>
-                ))}
+
+        
+      }
+      key={index}
+    >
+      {feedback.feedbackQuestion.map((category, catIndex) => (
+        <div key={catIndex}>
+          <h3 className="bg-gray-200 rounded text-center lg:mx-10 mt-4 p-1">{category.questionTypeName}</h3>
+          {category.feedbackResponse.map((detail, detailIndex) => (
+            <div key={detailIndex} className="flex flex-col sm:flex-row items-start sm:items-center justify-between lg:mx-10 mt-2">
+              <span className="flex-1">{detail.question}</span>
+              <div className="flex flex-row items-center space-x-2">
+                <Progress percent={(Number(detail.rating) / 5) * 100} showInfo={false} strokeColor="#1890ff" className="w-[57vw] md:w-[25vw] lg:w-[25vw] lg:mr-6" />
+                <Button onClick={() => showModal(detail.reason)}>Detail</Button>
               </div>
-            ))}
-          </Panel>
-        </Collapse>
+            </div>
+          ))}
+        </div>
       ))}
+    </Panel>
+  </Collapse>
+))}
+
+
 
       {/* Modal for showing the reason */}
       <Modal
@@ -136,8 +200,8 @@ const Feedback = ({ moduleData, onBackClick }) => {
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
-        getContainer={feedbackRef.current} // Set the container to the feedback section
-        centered // Center the modal
+        getContainer={feedbackRef.current}
+        centered
       >
         <p>{currentReason}</p>
       </Modal>

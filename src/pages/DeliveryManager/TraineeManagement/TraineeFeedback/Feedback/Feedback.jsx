@@ -115,8 +115,8 @@ const Feedback = () => {
             </div>
           </div>
           {/* CV Template Section */}
-          <div className="mt-6 mx-auto p-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 lg:gap-x-20 lg:gap-y-12 gap-4">
+          <div className="mt-6 mb-10 mx-auto p-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 lg:gap-y-12 gap-5 gap-y-10">
               {displayedData.map((item, index) => (
                 <CVTemplate
                   key={index}
@@ -132,6 +132,7 @@ const Feedback = () => {
             </div>
           </div>
           {/* Pagination Component */}
+          <div className="fixed bottom-0 pb-4 bg-white w-full pr-8 border-t border-gray-300">
           <Pagination
             totalItems={data.length}
             itemsPerPage={itemsPerPage}
@@ -139,6 +140,8 @@ const Feedback = () => {
             onPageChange={handlePageChange}
             onPageSizeChange={handlePageSizeChange}
           />
+          </div>
+          
         </>
       )}
     </div>

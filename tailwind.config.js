@@ -8,7 +8,10 @@ module.exports = {
       colors:{
         antBgContainer: '#ffffff',
         customRed: '#FF0000',
-      }
+      },
+      fontSize: {
+        base: '14px',
+      },
     },
   },
   plugins: [],

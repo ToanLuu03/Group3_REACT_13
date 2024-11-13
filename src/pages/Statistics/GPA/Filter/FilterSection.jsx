@@ -11,7 +11,6 @@ const FilterSection = ({ data, onFilterChange }) => {
   const [selectedTrainers, setSelectedTrainers] = useState([]);
   const [selectedYears, setSelectedYears] = useState([]);
 
-  // Filter data based on selected trainers
   const filteredData = useMemo(() => {
     if (selectedTrainers.length === 0) return data;
     return data.filter((item) =>
@@ -19,20 +18,13 @@ const FilterSection = ({ data, onFilterChange }) => {
     );
   }, [data, selectedTrainers]);
 
-  // Dynamically generate class and module options based on filtered data
-  const classOptions = Array.from(
-    new Set(filteredData.map((item) => item.className))
-  );
-  const moduleOptions = Array.from(
-    new Set(filteredData.map((item) => item.moduleName))
-  );
-  const trainerOptions = Array.from(
-    new Set(data.map((item) => item.trainerAccount))
-  );
+  const classOptions = Array.from(new Set(filteredData.map((item) => item.className)));
+  const moduleOptions = Array.from(new Set(filteredData.map((item) => item.moduleName)));
+  const trainerOptions = Array.from(new Set(data.map((item) => item.trainerAccount)));
 
   const handleTrainerChange = (selectedValues) => {
     setSelectedTrainers(selectedValues);
-    setSelectedClasses([]); // Reset classes and modules when trainer changes
+    setSelectedClasses([]);
     setSelectedModules([]);
     onFilterChange({
       trainers: selectedValues,
@@ -99,8 +91,7 @@ const FilterSection = ({ data, onFilterChange }) => {
   };
 
   const handleSelectAllClasses = () => {
-    const allClassesSelected =
-      selectedClasses.length === classOptions.length ? [] : classOptions;
+    const allClassesSelected = selectedClasses.length === classOptions.length ? [] : classOptions;
     setSelectedClasses(allClassesSelected);
     onFilterChange({
       trainers: selectedTrainers,
@@ -111,8 +102,7 @@ const FilterSection = ({ data, onFilterChange }) => {
   };
 
   const handleSelectAllModules = () => {
-    const allModulesSelected =
-      selectedModules.length === moduleOptions.length ? [] : moduleOptions;
+    const allModulesSelected = selectedModules.length === moduleOptions.length ? [] : moduleOptions;
     setSelectedModules(allModulesSelected);
     onFilterChange({
       trainers: selectedTrainers,
@@ -123,18 +113,18 @@ const FilterSection = ({ data, onFilterChange }) => {
   };
 
   return (
-    <div className="flex gap-4 p-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
       {/* Trainer Options Section */}
-      <div>
-        <label className="font-semibold flex gap-2">
-          Trainer <img src={Star} className="h-[10px] mt-1" alt="required" />
+      <div className="flex flex-col">
+        <label className="font-semibold flex gap-1 items-center">
+          Trainer <img src={Star} className="h-2" alt="required" />
         </label>
         <Select
           showSearch
           placeholder="Select Trainer"
-          className="w-52"
+          className="w-full"
           optionFilterProp="children"
-          maxTagCount={2}
+          maxTagCount="responsive"
           onChange={handleTrainerChange}
           value={selectedTrainers}
         >
@@ -147,16 +137,17 @@ const FilterSection = ({ data, onFilterChange }) => {
       </div>
 
       {/* Class Options Section */}
-      <div>
-        <label className="font-semibold flex gap-2">
-          Class <img src={Star} className="h-[10px] mt-1" alt="required" />
+      <div className="flex flex-col">
+        <label className="font-semibold flex gap-1 items-center">
+          Class <img src={Star} className="h-2" alt="required" />
         </label>
         <Select
           mode="multiple"
           value={selectedClasses}
           onChange={handleClassChange}
           placeholder="Select Class"
-          className="w-52"
+          maxTagCount="responsive"
+          className="w-full"
           dropdownRender={() => (
             <div>
               <div className="p-2">
@@ -164,23 +155,21 @@ const FilterSection = ({ data, onFilterChange }) => {
                   onChange={handleSelectAllClasses}
                   checked={selectedClasses.length === classOptions.length}
                   indeterminate={
-                    selectedClasses.length > 0 &&
-                    selectedClasses.length < classOptions.length
+                    selectedClasses.length > 0 && selectedClasses.length < classOptions.length
                   }
                 >
                   Select All
                 </Checkbox>
               </div>
-              <div className="p-2">
+              <div className="p-2 space-y-2">
                 {classOptions.map((className) => (
-                  <div key={className} className="flex items-center mb-2">
-                    <Checkbox
-                      checked={selectedClasses.includes(className)}
-                      onChange={() => handleClassCheckboxChange(className)}
-                    >
-                      {className}
-                    </Checkbox>
-                  </div>
+                  <Checkbox
+                    key={className}
+                    checked={selectedClasses.includes(className)}
+                    onChange={() => handleClassCheckboxChange(className)}
+                  >
+                    {className}
+                  </Checkbox>
                 ))}
               </div>
             </div>
@@ -189,16 +178,17 @@ const FilterSection = ({ data, onFilterChange }) => {
       </div>
 
       {/* Module Options Section */}
-      <div>
-        <label className="font-semibold flex gap-2">
-          Module <img src={Star} className="h-[10px] mt-1" alt="required" />
+      <div className="flex flex-col">
+        <label className="font-semibold flex gap-1 items-center">
+          Module <img src={Star} className="h-2" alt="required" />
         </label>
         <Select
           mode="multiple"
           value={selectedModules}
           onChange={handleModuleChange}
           placeholder="Select Module"
-          className="w-52"
+          maxTagCount="responsive"
+          className="w-full"
           dropdownRender={() => (
             <div>
               <div className="p-2">
@@ -206,23 +196,21 @@ const FilterSection = ({ data, onFilterChange }) => {
                   onChange={handleSelectAllModules}
                   checked={selectedModules.length === moduleOptions.length}
                   indeterminate={
-                    selectedModules.length > 0 &&
-                    selectedModules.length < moduleOptions.length
+                    selectedModules.length > 0 && selectedModules.length < moduleOptions.length
                   }
                 >
                   Select All
                 </Checkbox>
               </div>
-              <div className="p-2">
+              <div className="p-2 space-y-2">
                 {moduleOptions.map((moduleName) => (
-                  <div key={moduleName} className="flex items-center mb-2">
-                    <Checkbox
-                      checked={selectedModules.includes(moduleName)}
-                      onChange={() => handleModuleCheckboxChange(moduleName)}
-                    >
-                      {moduleName}
-                    </Checkbox>
-                  </div>
+                  <Checkbox
+                    key={moduleName}
+                    checked={selectedModules.includes(moduleName)}
+                    onChange={() => handleModuleCheckboxChange(moduleName)}
+                  >
+                    {moduleName}
+                  </Checkbox>
                 ))}
               </div>
             </div>
@@ -231,13 +219,13 @@ const FilterSection = ({ data, onFilterChange }) => {
       </div>
 
       {/* Year Picker Section */}
-      <div>
-        <label className="font-semibold flex gap-2">
-          Year <img src={Star} className="h-[10px] mt-1" alt="required" />
+      <div className="flex flex-col">
+        <label className="font-semibold flex gap-1 items-center">
+          Year <img src={Star} className="h-2" alt="required" />
         </label>
         <RangePicker
           picker="year"
-          style={{ height: "32px" }}
+          style={{ width: "100%" }}
           onChange={handleYearChange}
         />
       </div>

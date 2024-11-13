@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Select, Tag, message, Row, Col } from "antd";
+import { Button, Select, Tag, message, Row, Col, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import TrainerAPI from "../../../../services/trainer";
 import { toggleFetchFlag } from "../../../../features/trainerInfo/trainerSlice";
@@ -15,13 +15,12 @@ const GeneralInfo = ({ userInfoData = {} }) => {
   const [originalUserInfo, setOriginalUserInfo] = useState(userInfoData || {});
   const [cancleFlag, setCancleFlag] = useState(false);
   const dispatch = useDispatch();
-
   useEffect(() => {
     if (trainerData && trainerData.trainerInfo) {
       setUserInfo(trainerData.trainerInfo.generalInfo || []);
+      
     }
   }, [trainerData, cancleFlag]);
-
   const handleSaveClick = async () => {
     try {
       const response = await TrainerAPI.updateTrainerInfo(
@@ -140,6 +139,7 @@ const GeneralInfo = ({ userInfoData = {} }) => {
       ))}
     </div>
   );
+
 
   return (
     <div className="m-5">

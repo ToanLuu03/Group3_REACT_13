@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useOutletContext, useNavigate } from 'react-router-dom';
-import { Table, Input, Dropdown, Menu, Button, Checkbox, Tag, Select } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
-// import './TrainerList.css';
-import { fetchClasses } from '../../../api/AdminAPI/Trainer_list_api';
-import { PATH_NAME } from '../../../constants/pathName';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Table, Input, Dropdown, Menu, Button, Checkbox, Tag } from "antd";
+import { DownOutlined } from "@ant-design/icons";
+import { fetchClasses } from "../../../api/AdminAPI/Trainer_list_api";
 
 const { Search } = Input;
 
@@ -18,27 +15,35 @@ function TrainerList() {
   const [selectedSites, setSelectedSites] = useState([]);
   const [statusSelectAll, setStatusSelectAll] = useState(false);
   const [siteSelectAll, setSiteSelectAll] = useState(false);
-  const [statusSearchValue, setStatusSearchValue] = useState('');
+  const [statusSearchValue, setStatusSearchValue] = useState("");
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [siteDropdownVisible, setSiteDropdownVisible] = useState(false);
-  const [roleAdmin, setRoleAdmin] = useState('')
+  const [roleAdmin, setRoleAdmin] = useState("");
+  const [loading, setLoading] = useState(true); // State để hiển thị loading
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
-    setRoleAdmin(role)
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    setRoleAdmin(role);
     const getTrainers = async () => {
+      setLoading(true); // Bắt đầu hiển thị loading
       try {
         const data = await fetchClasses(token);
         setTrainers(data);
         setFilteredTrainers(data);
-        const statuses = [...new Set(data.map(trainer => trainer.status).filter(Boolean))];
-        const sites = [...new Set(data.map(trainer => trainer.site).filter(Boolean))];
+        const statuses = [
+          ...new Set(data.map((trainer) => trainer.status).filter(Boolean)),
+        ];
+        const sites = [
+          ...new Set(data.map((trainer) => trainer.site).filter(Boolean)),
+        ];
         setStatusOptions(statuses);
         setSiteOptions(sites);
       } catch (error) {
-        console.error(error)
+        console.error(error);
+      } finally {
+        setLoading(false); // Kết thúc loading
       }
     };
 
@@ -64,7 +69,9 @@ function TrainerList() {
   const filterTrainers = (statuses, sites) => {
     let filtered = trainers;
     if (statuses.length) {
-      filtered = filtered.filter((trainer) => statuses.includes(trainer.status));
+      filtered = filtered.filter((trainer) =>
+        statuses.includes(trainer.status)
+      );
     }
     if (sites.length) {
       filtered = filtered.filter((trainer) => sites.includes(trainer.site));
@@ -103,59 +110,99 @@ function TrainerList() {
   };
 
   const handleTrainerClick = (trainerId, account) => {
-    localStorage.setItem('trainerAccount', account);
+    localStorage.setItem("trainerAccount", account);
     navigate(`/${roleAdmin}/trainer-management`);
   };
 
   const columns = [
     {
-      title: 'No.',
-      dataIndex: 'id',
-      key: 'id',
+      title: "No.",
+      dataIndex: "id",
+      key: "id",
       render: (text, record, index) => index + 1,
-      align: 'center',
+      align: "center",
       width: 80,
     },
     {
-      title: 'Trainer Name',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Trainer Name",
+      dataIndex: "name",
+      key: "name",
       render: (text, record) => (
-        <span className='trainerList text-blue-600 cursor-pointer' onClick={() => handleTrainerClick(record.id, record.account)}>{text}</span>
+        <span
+          className="trainerList text-blue-600 cursor-pointer"
+          onClick={() => handleTrainerClick(record.id, record.account)}
+        >
+          {text}
+        </span>
       ),
-      align: 'center',
+      align: "center",
     },
-    { title: 'FPT Account', dataIndex: 'account', key: 'account', align: 'center' },
-    { title: 'Type', dataIndex: 'type', key: 'type', align: 'center' },
-    { title: 'Site', dataIndex: 'site', key: 'site', align: 'center', },
-    { title: 'Job Rank', dataIndex: 'jobRank', key: 'jobRank', align: 'center' },
-    { title: 'The Trainer Cert', dataIndex: 'trainTheTrainerCert', key: 'trainTheTrainerCert', align: 'center', },
-    { title: 'Professional Level', dataIndex: 'professionalLevel', key: 'professionalLevel', align: 'center', },
-    { title: 'Professional Index', dataIndex: 'professionalIndex', key: 'professionalIndex', align: 'center', },
     {
-      title: 'Status', dataIndex: 'status', key: 'status', fixed: 'right',
+      title: "FPT Account",
+      dataIndex: "account",
+      key: "account",
+      align: "center",
+    },
+    { title: "Type", dataIndex: "type", key: "type", align: "center" },
+    { title: "Site", dataIndex: "site", key: "site", align: "center" },
+    {
+      title: "Job Rank",
+      dataIndex: "jobRank",
+      key: "jobRank",
+      align: "center",
+    },
+    {
+      title: "The Trainer Cert",
+      dataIndex: "trainTheTrainerCert",
+      key: "trainTheTrainerCert",
+      align: "center",
+    },
+    {
+      title: "Professional Level",
+      dataIndex: "professionalLevel",
+      key: "professionalLevel",
+      align: "center",
+    },
+    {
+      title: "Professional Index",
+      dataIndex: "professionalIndex",
+      key: "professionalIndex",
+      align: "center",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      fixed: "right",
 
       render: (status) => {
-        let color = 'green';
-        if (status === 'BUSY') color = 'blue';
-        if (status === 'OUT') color = 'red';
-        if (status === 'ONSITE') color = 'green';
-        return <Tag color={color}>{status || 'N/A'}</Tag>;
+        let color = "green";
+        if (status === "BUSY") color = "blue";
+        if (status === "OUT") color = "red";
+        if (status === "ONSITE") color = "green";
+        return <Tag color={color}>{status || "N/A"}</Tag>;
       },
-      align: 'center',
+      align: "center",
     },
-    { title: 'Competence Index', dataIndex: 'trainingCompetenceIndex', key: 'trainingCompetenceIndex', align: 'center', },
-    { title: 'Taught Skills', dataIndex: 'taughtSkills', key: 'taughtSkills', align: 'center', },
-    { title: 'Email ', dataIndex: 'email', key: 'email', align: 'center', },
-    { title: 'Type', dataIndex: 'type', key: 'type', align: 'center', },
+    {
+      title: "Competence Index",
+      dataIndex: "trainingCompetenceIndex",
+      key: "trainingCompetenceIndex",
+      align: "center",
+    },
+    {
+      title: "Taught Skills",
+      dataIndex: "taughtSkills",
+      key: "taughtSkills",
+      align: "center",
+    },
+    { title: "Email ", dataIndex: "email", key: "email", align: "center" },
+    { title: "Type", dataIndex: "type", key: "type", align: "center" },
   ];
   const statusMenu = (
     <Menu>
       <Menu.Item>
-        <Input
-          placeholder="Search"
-          onChange={handleStatusSearchChange}
-        />
+        <Input placeholder="Search" onChange={handleStatusSearchChange} />
       </Menu.Item>
       <Menu.Item>
         <Checkbox onChange={handleStatusSelectAll} checked={statusSelectAll}>
@@ -165,8 +212,7 @@ function TrainerList() {
       <Checkbox.Group
         value={selectedStatuses}
         onChange={handleStatusChange}
-        style={{ display: 'block', width: '75%', }}
-
+        style={{ display: "block", width: "75%" }}
       >
         {filteredStatusOptions.map((status) => (
           <Menu.Item key={status}>
@@ -180,10 +226,7 @@ function TrainerList() {
   const siteMenu = (
     <Menu>
       <Menu.Item>
-        <Input
-          placeholder="Search"
-          onChange={handleStatusSearchChange}
-        />
+        <Input placeholder="Search" onChange={handleStatusSearchChange} />
       </Menu.Item>
       <Menu.Item>
         <Checkbox onChange={handleSiteSelectAll} checked={siteSelectAll}>
@@ -193,7 +236,7 @@ function TrainerList() {
       <Checkbox.Group
         value={selectedSites}
         onChange={handleSiteChange}
-        style={{ display: 'block' }}
+        style={{ display: "block" }}
       >
         {siteOptions.map((site) => (
           <Menu.Item key={site}>
@@ -204,71 +247,73 @@ function TrainerList() {
     </Menu>
   );
 
-
-
   return (
     <div>
-      <div className='mt-16 flex w-full justify-between'>
-        <h2 className=" font-semibold text-lg sm:text-xl md:text-2xl lg:text-3xl mb-2 sm:mb-0">Trainers List ({filteredTrainers.length}) </h2>
-        <Button type="primary" onClick={handleAddTrainer} className='bg-[#5750DF] rounded-full p-6 font-medium text-base'>
+      <div className="mt-16 flex w-full justify-between">
+        <h2 className=" font-semibold text-lg sm:text-xl md:text-2xl lg:text-3xl mb-2 sm:mb-0">
+          Trainers List ({filteredTrainers.length}){" "}
+        </h2>
+        <Button
+          type="primary"
+          onClick={handleAddTrainer}
+          className="bg-[#5750DF] rounded-full p-6 font-medium text-base"
+        >
           Add Trainer
         </Button>
       </div>
 
-      <div className='flex mb-4 gap-4'>
+      <div className="flex flex-wrap mb-4 gap-4">
         {/* Status Filter */}
-        <div className='col-2'>
-
-          <h4 className='text'>Status</h4>
+        <div className="flex flex-col sm:flex-col sm:w-auto w-full">
+          <h4 className="text mb-2 sm:mb-0">Status</h4>
           <Dropdown
-            style={{ width: 150 }}
+            style={{ width: "100%" }}
             overlay={statusMenu}
-            trigger={['click']}
+            trigger={["click"]}
             visible={dropdownVisible}
             onVisibleChange={(flag) => setDropdownVisible(flag)}
           >
-            <Button className='button w-[200px] justify-end'>
+            <Button className="button w-full sm:w-[200px] justify-end">
               <DownOutlined />
             </Button>
           </Dropdown>
         </div>
 
-        {/* Site Filter */}
-        <div className='col-2'>
-          <h4 className='text'>Site</h4>
+        <div className="flex flex-col sm:flex-col sm:w-auto w-full">
+          <h4 className="text mb-2 sm:mb-0">Site</h4>
           <Dropdown
             overlay={siteMenu}
-            trigger={['click']}
+            trigger={["click"]}
             visible={siteDropdownVisible}
             onVisibleChange={(flag) => setSiteDropdownVisible(flag)}
           >
-            <Button className='button w-[200px] justify-end'>
+            <Button className="button w-full sm:w-[200px] justify-end">
               <DownOutlined />
             </Button>
           </Dropdown>
         </div>
 
-        {/* Search */}
-        <div className='col-3'>
-          <h4 className='text '> Search</h4>
+        <div className="flex flex-col sm:flex-col sm:w-auto w-full">
+          <h4 className="text mb-2 sm:mb-0">Search</h4>
           <Search
             placeholder="Search by name"
             onSearch={handleSearch}
-            className="custom-search w-[300px]"
+            className="custom-search w-full sm:w-[300px]"
           />
         </div>
       </div>
 
       {/* Trainers Table */}
       <Table
-        className='custom-table'
+        className="custom-table"
         columns={columns}
         dataSource={filteredTrainers}
         rowKey="id"
-        pagination={{ pageSize: 6 }}
+        // pagination={{ pageSize: 6 }}
+        loading={loading} // Loading indicator
         bordered
         scroll={{
-          x: 'calc(700px + 100%)',
+          x: "calc(700px + 100%)",
         }}
       />
     </div>

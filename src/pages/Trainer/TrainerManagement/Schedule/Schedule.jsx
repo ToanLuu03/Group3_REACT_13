@@ -46,11 +46,11 @@ const Schedule = () => {
     }
   };
 
-  const fetchEvents = async (trainerAccount) => {
+  const fetchEvents = async (trainerAccount, token) => {
     try {
       const [scheduleResponse, freeTimeResponse] = await Promise.all([
-        fetchTrainerSchedule(trainerAccount),
-        fetchTrainerFreeTime(trainerAccount),
+        fetchTrainerSchedule(trainerAccount, token),
+        fetchTrainerFreeTime(trainerAccount, token),
       ]);
 
       const scheduleData = scheduleResponse.data.data.flatMap((item) => {
@@ -124,7 +124,7 @@ const Schedule = () => {
     setLoading(true);
     const trainer = await fetchTrainerInfo();
     if (trainer) {
-      await fetchEvents(trainer.account);
+      await fetchEvents(trainer.account, token);
     } else {
       setLoading(false);
     }
@@ -213,7 +213,7 @@ const Schedule = () => {
   return (
     <div className="p-4 relative">
       {loading && (
-        <div className="fixed inset-0 z-50 bg-white bg-opacity-75 flex justify-center items-center">
+        <div className="fixed inset-0 z-50 bg-gray-200 bg-opacity-75 flex justify-center items-center">
           <Spin size="large" tip="Loading..." />
         </div>
       )}
@@ -321,6 +321,7 @@ const Schedule = () => {
         {selectedEvent && (
           <ScheduleModal isVisible={isModalVisible} event={selectedEvent} onClose={handleCancel} />
         )}
+
 
         <FreeTimeModal
           isVisible={isFreeTimeModalVisible}

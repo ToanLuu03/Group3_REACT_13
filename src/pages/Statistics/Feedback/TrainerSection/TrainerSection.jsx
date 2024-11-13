@@ -2,7 +2,6 @@ import { Col, DatePicker, Divider, Form, Row, Select, Table, Typography, Button,
 import React, { useEffect, useState } from 'react';
 import { get_Module_data, get_Trainer_data, Get_Evaluate_by_Module, Get_Evaluate_by_Trainer } from '../../../../api/AdminAPI/StatisticsFeedback';
 import './TrainerSection.css'
-import { all } from 'axios';
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -89,7 +88,13 @@ function TrainerSection() {
                         setEvaluationData(response.data);
                     }
                 } catch (error) {
-                    console.error("Error fetching evaluation data:", error);
+                    // console.error("Error fetching evaluation data:", error);
+                    notification.error({
+                        message: error.response.data.message,
+                        // description: error.message || 'An error occurred',
+                        placement: 'topRight',
+                        duration: 3,
+                    });
                 }
             } else if (trackByValue === "Module Statistics by Trainer" && trainerModuleValue.length > 0 && ClassValue.length > 0) {
                 try {

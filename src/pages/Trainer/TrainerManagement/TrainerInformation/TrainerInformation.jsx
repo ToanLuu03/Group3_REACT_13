@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Button } from "antd";
+import { Button, Spin } from "antd";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import GeneralInfo from "./GeneralInfo";
 import ProfessionalSkills from "./ProfessionalSkills";
+import { useSelector } from "react-redux";
 
 const TrainerInformation = ({ selectedTrainer }) => {
+  const trainerData = useSelector((state) => state.trainer.trainerInfo);
   const [dropdownState, setDropdownState] = useState({
     generalInfo: false,
     skills: false,
@@ -13,6 +15,17 @@ const TrainerInformation = ({ selectedTrainer }) => {
   const toggleDropdown = (section) => {
     setDropdownState((prev) => ({ ...prev, [section]: !prev[section] }));
   };
+
+  // Check if `trainerData` is null, undefined, or an empty object
+  const isTrainerDataEmpty = !trainerData || Object.keys(trainerData).length === 0;
+
+  if (isTrainerDataEmpty) {
+    return (
+      <div className="fixed inset-0 z-50 bg-gray-200 bg-opacity-75 flex justify-center items-center">
+          <Spin size="large" tip="Loading..." />
+        </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4 md:p-3 lg:p-2">

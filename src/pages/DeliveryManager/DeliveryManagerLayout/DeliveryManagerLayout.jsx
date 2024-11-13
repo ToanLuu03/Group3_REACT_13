@@ -13,7 +13,7 @@ const DeliveryManagerLayout = () => {
       <div
         className={`transition-all duration-300 ${
           collapsed ? "ml-0" : "ml-[250px]"
-        } flex-grow p-4`}
+        } flex-grow p-4 overflow-x-auto`}
       >
         {/* Outlet renders the child route components */}
         <Outlet />

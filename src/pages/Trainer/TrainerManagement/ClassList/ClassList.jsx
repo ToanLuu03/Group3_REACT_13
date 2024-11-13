@@ -93,12 +93,17 @@ const ClassList = ({ onModuleClick }) => {
     }))
     .filter((classItem) => classItem.modules.length > 0);
 
-  if (loading)
-    return (
-      <div className="flex justify-center mt-20">
-        <Spin size="large" tip="Loading..." />
+    if (loading) {
+      return (
+        <div className="p-4 relative">
+        {loading && (
+          <div className="fixed inset-0 z-50 bg-gray-200 bg-opacity-75 flex justify-center items-center">
+            <Spin size="large" tip="Loading..." />
+          </div>
+        )}
       </div>
-    );
+      )
+    }
 
   return (
     <div className="px-3 relative max-h-screen flex flex-col">

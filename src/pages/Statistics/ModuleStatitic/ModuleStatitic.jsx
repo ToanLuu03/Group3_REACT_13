@@ -11,6 +11,7 @@ const DOUGHNUT_COLORS = ["#000", "#E5E7EB"];
 
 const ModuleStatistic = () => {
   const [dataTotal, setDataTotal] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [filterOptions, setFilterOptions] = useState({
     trainers: [],
     classes: [],
@@ -55,6 +56,8 @@ const ModuleStatistic = () => {
       if (error.name !== "AbortError") {
         console.error(error);
       }
+    } finally {
+      setIsLoading(false); // Stop loading after data is fetched
     }
   };
 
@@ -133,8 +136,8 @@ const ModuleStatistic = () => {
   }, [selectedTrainer, selectedClass, rawData]);
 
   return (
-    <div>
-      <Counter data={dataTotal} />
+    <div className="mb-24">
+      <Counter data={dataTotal} isLoading={isLoading} />
       <Filter
         options={[
           { name: "Trainer", options: filterOptions.trainers },

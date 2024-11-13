@@ -8,6 +8,8 @@ import FeedBack from './FeedBack/FeedBack';
 const TraineeFeedback = () => {
   const location = useLocation();
   const [activeKey, setActiveKey] = useState('1');
+  const [clonedTemplate, setClonedTemplate] = useState(null);
+  const [usedTemplate, setUsedTemplate] = useState(null); // To store the selected template
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -19,17 +21,23 @@ const TraineeFeedback = () => {
     {
       key: '1',
       label: "Class Template",
-      children: <ClassTemplate setActiveKey={setActiveKey} />,
+      children: (
+        <ClassTemplate 
+          setActiveKey={setActiveKey} 
+          setClonedTemplate={setClonedTemplate} 
+          sendFeedbackTemplate={setUsedTemplate}  // Pass setUsedTemplate as sendFeedbackTemplate
+        />
+      ),
     },
     {
       key: '2',
       label: "Custom Template",
-      children: <CustomTemplate setActiveKey={setActiveKey} />,
+      children: <CustomTemplate clonedTemplate={clonedTemplate} setActiveKey={setActiveKey} />,
     },
     {
       key: '3',
       label: "Feedback",
-      children: <FeedBack setActiveKey={setActiveKey} />,
+      children: <FeedBack usedTemplate={usedTemplate} setActiveKey={setActiveKey} />,
     },
   ];
 

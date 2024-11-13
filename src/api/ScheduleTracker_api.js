@@ -48,16 +48,16 @@ const extractData = (data, type = 'trainer') => {
   }
 
   return data.data.flatMap(item => {
-    const trainerId = type === 'class_admin' 
+    const trainerId = type === 'class_admin'
       ? (item?.trainerId || item?.classAdmin)
-      : type === 'trainer' 
-        ? item?.trainerId 
+      : type === 'trainer'
+        ? item?.trainerId
         : '';
 
     const classes = type === 'class' ? [item] : item?.classes || [];
 
-    return classes.flatMap(classItem => 
-      (classItem?.modules || []).flatMap(moduleItem => 
+    return classes.flatMap(classItem =>
+      (classItem?.modules || []).flatMap(moduleItem =>
         (moduleItem?.contents || []).map(content => ({
           trainerId: type === 'class' ? moduleItem?.trainerId : trainerId,
           ...extractBaseFields(moduleItem, classItem, content)
@@ -74,7 +74,7 @@ const ENDPOINTS = {
   CLASS: `${API_BASE}/v1/admin/schedule-tracker?option=CLASS`,
   CLASS_ADMIN: `${API_BASE}/v1/admin/schedule-tracker?option=CLASS_ADMIN`,
   LOGS: (classId, moduleId) => `${API_BASE}/v3/logs?classId=${classId}&moduleId=${moduleId}`,
-  SEARCH_LOGS: (classId, moduleId, startDate, endDate) => 
+  SEARCH_LOGS: (classId, moduleId, startDate, endDate) =>
     `${API_BASE}/v3/logs/search?classId=${classId}&moduleId=${moduleId}&startDate=${startDate}&endDate=${endDate}`
 };
 
@@ -99,12 +99,24 @@ export const fetchDataLog = async (classId, moduleId) => {
     console.warn('ClassId and ModuleId are required parameters');
     return [];
   }
-  
+
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    console.error('Authentication token not found - user is not logged in');
+    return [];
+  }
+
   const data = await makeApiRequest(
-    ENDPOINTS.LOGS(classId, moduleId), 
+    ENDPOINTS.LOGS(classId, moduleId),
     localStorage.getItem('token')
   );
-  
+
+  if (!data) {
+    console.error('Failed to fetch logs - Unauthorized access or server error');
+    return [];
+  }
+
   return (data?.success && data?.data) ? data.data : [];
 };
 
@@ -113,12 +125,12 @@ export const searchLogs = async (classId, moduleId, startDate, endDate) => {
     console.warn('All parameters (classId, moduleId, startDate, endDate) are required');
     return [];
   }
-  
+
   const data = await makeApiRequest(
     ENDPOINTS.SEARCH_LOGS(classId, moduleId, startDate, endDate),
     localStorage.getItem('token')
   );
-  
+
   return (data?.success && data?.data) ? data.data : [];
 };
 

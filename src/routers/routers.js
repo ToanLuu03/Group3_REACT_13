@@ -44,7 +44,7 @@ import SettingsDM from "../pages/DeliveryManager/Settings/Settings";
 import ConfigHolidayDM from "../pages/DeliveryManager/Settings/ConfigHoliday/ConfigHoliday";
 import ConfigSlotTimeDM from "../pages/DeliveryManager/Settings/ConfigSlotTime/ConfigSlotTime";
 import ConfigUnitPriceDM from "../pages/DeliveryManager/Settings/ConfigUnitPrice/ConfigUnitPrice";
-import ConfigCheckpointDealineDM from "../pages/DeliveryManager/Settings/ConfigCheckpointDeadline/ConfigCheckpointDeadline";
+import ConfigCheckpointDeadlineDM from "../pages/DeliveryManager/Settings/ConfigCheckpointDeadline/ConfigCheckpointDeadline";
 import FAQDM from "../pages/DeliveryManager/FAQ/FAQ";
 
 //trainer manager
@@ -77,7 +77,11 @@ import Topic from "../pages/Admin/ContentManagement/Topic/Topic";
 import Reports from "../pages/Admin/Reports/Reports";
 import Faqs from "../pages/Admin/Faqs/Faqs";
 import TraineeManagement from "../pages/TrainerManger/TraineeManagement/TraineeManagement";
+import Profile from "../pages/Trainer/Profile/Profile";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
+import FamsAdminLayout from "../pages/FamsAdmin/FamsAdminLayout/FamsAdminLayout";
+import ClassManagement from "../pages/FamsAdmin/ClassManagement/ClassManagement";
+import TrainerManagement from "../pages/FamsAdmin/TrainerManagement/TrainerManagement";
 
 export const router = createBrowserRouter([
   {
@@ -194,16 +198,17 @@ export const router = createBrowserRouter([
       { path: "logwork", element: <LogWorkTrainer /> },
       { path: "content-management", element: <ContentManagementTrainer /> },
       { path: "faqs", element: <FAQTrainer /> },
-      { path: "class-management/class-list", element:  <ClassList /> },
-      { path: "class-management/training-report", element:  <TrainingReport /> },
-      { path: "class-management/tracker-admin", element:  <ScheduleTrackerPage   /> },
+      { path: "class-management/class-list", element: <ClassList /> },
+      { path: "class-management/training-report", element: <TrainingReport /> },
+      { path: "class-management/tracker-admin", element: <ScheduleTrackerPage /> },
       { path: "class-management/in-progress", element: <InProgressClass /> },
-      {path:  "class-management/checkpoint", element: <Checkpoint /> },
-      { path: "class-management/schedule-tracker", element:  <ScheduleTrackerPage   /> },
+      { path: "class-management/checkpoint", element: <Checkpoint /> },
+      { path: "class-management/schedule-tracker", element: <ScheduleTrackerPage /> },
       {
         path: "trainer-confirmation/:className",
         element: <ClassDetail />,
       },
+      { path: "profile", element: <Profile /> },
       {
         path: "*",
         element: <ErrorPage />,
@@ -227,7 +232,7 @@ export const router = createBrowserRouter([
       { path: "settings/config-unit-price", element: <ConfigUnitPriceDM /> },
       {
         path: "settings/config-checkpoint-deadline",
-        element: <ConfigCheckpointDealineDM />,
+        element: <ConfigCheckpointDeadlineDM />,
       },
       { path: "faqs", element: <FAQDM /> },
       {
@@ -312,6 +317,20 @@ export const router = createBrowserRouter([
       { path: "", element: <FeedbackLink /> },
       { path: "feedback-form", element: <FeedbackForm /> },
       { path: "feedback-success", element: <FeedbackSuccess /> },
+      {
+        path: "*",
+        element: <ErrorPage />,
+      },
+    ],
+  },
+  {
+    path: "/FAMS_ADMIN",
+    element: <FamsAdminLayout />,
+    children: [
+      {
+        path: "Trainer-management",
+        element: <TrainerManagement />,
+      },
       {
         path: "*",
         element: <ErrorPage />,

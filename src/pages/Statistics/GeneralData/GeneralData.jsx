@@ -15,6 +15,7 @@ import {
 } from "../../../api/AdminAPI/GeneralData_api";
 import DateRangePicker from "./DateRangePicker/DateRangePicker";
 import TimeRangeButtons from "./TimeRangeButtons/TimeRangeButtons";
+import CountUp from "react-countup";
 
 const status = ["Enrolled", "Drop out", "Active", "Rejected"];
 
@@ -77,8 +78,10 @@ const GeneralData = () => {
       placement: "topRight",
     });
   };
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchOverviewData = async () => {
+    setIsLoading(true);
     try {
       const data = await fetchTechnicalManager(true, false, false);
       if (data && data.data) {
@@ -95,6 +98,7 @@ const GeneralData = () => {
     } catch (error) {
       openErrorNotification("Error loading overview data!");
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -642,15 +646,22 @@ const GeneralData = () => {
   const disableTimeRangeButtons = !isTechnicalChecked && !isStudentChecked;
 
   return (
-    <div className="h-[calc(100vh-179px)] px-5 overflow-auto [&::-webkit-scrollbar]:w-2  [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-gray-100">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mb-5">
+    <div className="h-[calc(100vh-179px)] p-4 overflow-auto [&::-webkit-scrollbar]:w-2  [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-gray-100">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
         {dataTotal.map((item, index) => (
           <div
             key={index}
             className="bg-blue-950 text-white text-lg rounded-xl flex items-center justify-around p-5 max-md:justify-between"
           >
             <div>
-              <p>{item.value}</p>
+              <p>
+              <CountUp
+                  start={isLoading ? 0 : null}
+                  end={isLoading ? 0 : item.value}
+                  duration={1}
+                  preserveValue
+                />
+              </p>
               {item.label}
             </div>
             <div className="size-12 rounded-full  bg-purple-900 flex justify-center items-center">

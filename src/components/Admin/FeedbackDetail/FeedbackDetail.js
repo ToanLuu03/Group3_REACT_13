@@ -49,10 +49,27 @@ const FeedbackDetail = ({ feedback, onBack }) => {
     };
   }, []);
 
+  // Check if feedback.content is an array before using .map()
+  const renderFeedbackContent = (content) => {
+    if (Array.isArray(content)) {
+      return content.map((item, index) => (
+        <div key={index} className="flex justify-between items-center mb-2">
+          <span>{item.question}</span>
+          <div className="flex items-center">
+            <Progress percent={item.rating} showInfo={false} strokeColor="#1890ff" style={{ width: "150px" }} />
+            <button onClick={showModal} className="ml-4 text-blue-500">Details</button>
+          </div>
+        </div>
+      ));
+    } else {
+      return <p>No content available.</p>; // Fallback if content is not an array
+    }
+  };
+
   return (
     <div className="p-6">
       {/* Class Name Dropdown */}
-      <div className=" mb-6 flex justify-end items-center">
+      <div className="mb-6 flex justify-end items-center">
         <label className="font-bold mr-4">Class Name:</label>
         <Select
           mode="multiple"
@@ -158,43 +175,19 @@ const FeedbackDetail = ({ feedback, onBack }) => {
             {/* Training Program & Content */}
             <div className="p-4 border border-gray-300 rounded mb-4">
               <h3 className="font-bold text-lg mb-2 text-center ">Training Program & Content</h3>
-              {feedback.content.map((item, index) => (
-                <div key={index} className="flex justify-between items-center mb-2">
-                  <span>{item.question}</span>
-                  <div className="flex items-center">
-                    <Progress percent={item.rating} showInfo={false} strokeColor="#1890ff" style={{ width: "150px" }} />
-                    <button onClick={showModal} className="ml-4 text-blue-500">Details</button>
-                  </div>
-                </div>
-              ))}
+              {renderFeedbackContent(feedback.content)}
             </div>
 
             {/* Trainer / Coach */}
             <div className="p-4 border border-gray-300 rounded mb-4">
               <h3 className="font-bold text-lg mb-2 text-center">Trainer / Coach</h3>
-              {feedback.trainerFeedbackItems.map((item, index) => (
-                <div key={index} className="flex justify-between items-center mb-2">
-                  <span>{item.question}</span>
-                  <div className="flex items-center">
-                    <Progress percent={item.rating} showInfo={false} strokeColor="#1890ff" style={{ width: "150px" }} />
-                    <button onClick={showModal} className="ml-4 text-blue-500">Details</button>
-                  </div>
-                </div>
-              ))}
+              {renderFeedbackContent(feedback.trainerFeedbackItems)}
             </div>
 
             {/* Course Organization */}
             <div className="p-4 border border-gray-300 rounded mb-4">
               <h3 className="font-bold text-lg mb-2 text-center">Course Organization</h3>
-              {feedback.courseOrganization.map((item, index) => (
-                <div key={index} className="flex justify-between items-center mb-2">
-                  <span>{item.question}</span>
-                  <div className="flex items-center">
-                    <Progress percent={item.rating} showInfo={false} strokeColor="#1890ff" style={{ width: "150px" }} />
-                    <button onClick={showModal} className="ml-4 text-blue-500">Details</button>
-                  </div>
-                </div>
-              ))}
+              {renderFeedbackContent(feedback.courseOrganization)}
             </div>
           </>
         )}
@@ -204,19 +197,8 @@ const FeedbackDetail = ({ feedback, onBack }) => {
         onClick={onBack}
         className="fixed bottom-3  text-blue-600 hover:text-blue-800 font-semibold py-1 px-3 rounded-lg border border-blue-500 hover:border-blue-700 transition-all duration-300 ease-in-out"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          className="w-5 h-5 mr-2"
-        >
-
-        </svg>
         ← Back to Feedback List
       </button>
-
-
 
       {/* Modal to show Problem details */}
       <Modal

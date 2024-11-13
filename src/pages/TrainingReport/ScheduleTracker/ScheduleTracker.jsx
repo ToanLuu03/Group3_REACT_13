@@ -126,8 +126,8 @@ const ScheduleTracker = ({ collapsed }) => {
   ]);
 
   useEffect(() => {
-    if(selectedModule){
-    setFilteredData(handleFiltering);
+    if (selectedModule) {
+      setFilteredData(handleFiltering);
     }
     console.log("Filtered Data:", filteredData);
     // setFilteredData(handleFiltering);
@@ -177,12 +177,12 @@ const ScheduleTracker = ({ collapsed }) => {
   }, [selectedModule, scheduleData]);
 
   const onModuleChange = (value) => {
-     console.log("Selected Module:", value);
-     setSelectedModule(value);
-     setSelectedDeliveryType(null);
-     setSelectedTrainingFormat(null);
-     setDateRange({ startDate: null, endDate: null });
-   };
+    console.log("Selected Module:", value);
+    setSelectedModule(value);
+    setSelectedDeliveryType(null);
+    setSelectedTrainingFormat(null);
+    setDateRange({ startDate: null, endDate: null });
+  };
 
   const handleReportClick = () => {
     const reportData = [...filteredData].filter(
@@ -217,13 +217,13 @@ const ScheduleTracker = ({ collapsed }) => {
       {/* Main container for the Selects and Inputs in one row */}
       <div className="flex flex-wrap w-full justify-between items-center">
         {/* Module Select */}
-        <div className="flex flex-col w-full sm:w-[48%] md:w-[19%] pt-3">
+        <div className="flex flex-col w-full sm:w-[48%] md:w-[19%] lg:w-[15%] pt-3">
           <h2 className="text-lg font-semibold mb-2">Module</h2>
           <SelectOptions options={moduleOptions} onChange={onModuleChange} />
         </div>
 
         {/* Delivery Type Select */}
-        <div className="flex flex-col w-full sm:w-[48%] md:w-[19%] pt-3">
+        <div className="flex flex-col w-full sm:w-[48%] md:w-[19%] lg:w-[15%] pt-3">
           <h2 className="text-lg font-semibold mb-2">Delivery Type</h2>
           <SelectOptions
             options={deliveryTypeOptions}
@@ -232,7 +232,7 @@ const ScheduleTracker = ({ collapsed }) => {
         </div>
 
         {/* Training Format Select */}
-        <div className="flex flex-col w-full sm:w-[48%] md:w-[19%] pt-3">
+        <div className="flex flex-col w-full sm:w-[48%] md:w-[19%] lg:w-[15%] pt-3">
           <h2 className="text-lg font-semibold mb-2">Training Format</h2>
           <SelectOptions
             options={trainingFormatOptions}
@@ -241,7 +241,7 @@ const ScheduleTracker = ({ collapsed }) => {
         </div>
 
         {/* Date Picker */}
-        <div className="flex flex-col w-full sm:w-[48%] md:w-[19%] pt-3">
+        <div className="flex flex-col w-full sm:w-[48%] md:w-[19%] lg:w-[15%] pt-3">
           <h2 className="text-lg font-semibold mb-2">Schedule Date</h2>
           <DatePicker
             onChange={onSingleDateChange}
@@ -256,7 +256,7 @@ const ScheduleTracker = ({ collapsed }) => {
         </div>
 
         {/* Search Input */}
-        <div className="flex flex-col w-full sm:w-[48%] md:w-[19%] px-1">
+        <div className="flex flex-col w-full sm:w-[48%] md:w-[19%] lg:w-[15%] px-1">
           <h2 className="text-lg font-semibold mb-2">Search</h2>
           <Input placeholder="Enter class code, class name" />
         </div>
@@ -294,7 +294,7 @@ const ScheduleTracker = ({ collapsed }) => {
         visible={isModalVisible}
         onClose={handleModalClose}
         onSubmit={() => setIsModalVisible(false)}
-        filteredData={[...filteredData]} 
+        filteredData={[...filteredData]}
         loading={loading}
         setLoading={setLoading}
       />

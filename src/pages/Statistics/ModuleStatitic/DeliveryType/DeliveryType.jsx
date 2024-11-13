@@ -7,8 +7,8 @@ const DeliveryType = ({ data, colors }) => (
     <ResponsiveContainer
       width="100%"
       height="100%"
-      minHeight={300} // Set minimum height for better responsiveness
-      maxHeight={500} // Limit max height on larger screens
+      minHeight={200} // Set minimum height for better responsiveness
+      maxHeight={400} // Limit max height on larger screens
     >
       <PieChart>
         <Pie

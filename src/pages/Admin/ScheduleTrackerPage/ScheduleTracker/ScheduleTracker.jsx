@@ -382,7 +382,7 @@ function ScheduleTracker() {
             <div className="w-full">
                 {/* Track by and Trainer on the same row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 ">
-                    <div className="col-span-1 pb-4">
+                    <div className="col-span-1">
                         <div className="flex gap-1 pb-1">
                             <FaStarOfLife className="text-red-600 w-[7px]  pt-2 " />
                             <strong className="text-lg font-medium">Track by:</strong> <br />

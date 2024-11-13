@@ -38,14 +38,14 @@ const CategoryDM = () => {
   const showAddNewTemplate = [0, 1, 2, 3].includes(activeFeedback);
 
   return (
-<div className="w-full border-gray-200">
+<div className="w-full mt-20 border-gray-200">
   <Title
     selectedModuleData={selectedModuleData}
     title={`${FeedbackTemplate[activeFeedback].name}`}
     showAddNewTemplate={showAddNewTemplate}
     onAddNewClick={handleAddNewTemplateClick}
   />
-  <div className="flex space-x-8 border-b-2 border-gray-200">
+  <div className="flex space-x-8 border-b-2 mt-5 border-gray-200">
     {FeedbackTemplate.map((tab, index) => (
       <button
         key={index}
@@ -63,19 +63,30 @@ const CategoryDM = () => {
       </button>
     ))}
   </div>
-  <div className="mt-3 px-4 md:px-6 lg:px-8 min-h-0">
+  <div className="mt-3 min-h-0">
     {showEditTemplate ? (
       <>
-        <EditTemplate />
-        <div className="fixed bottom-0 left-60 right-0 bg-white p-4 border-t border-gray-200 flex justify-between max-w-6xl mx-auto">
-          <Button type="default" onClick={handleBackToClassTemplate}>
-            Back to Class Template
-          </Button>
-          <Button type="primary" htmlType="submit">
-            Save
-          </Button>
-        </div>
-      </>
+  <EditTemplate />
+  <div className="sticky bottom-0 flex space-x-4 p-4 border-t border-gray-200 bg-white w-full justify-between">
+        <Button
+          type="default"
+          className="px-4 py-2"
+          onClick={handleBackToClassTemplate}
+        >
+          Back to Class Template
+        </Button>
+        <Button
+          type="primary"
+          className="px-4 py-2"
+          htmlType="submit"
+        >
+          Save
+        </Button>
+      </div>
+    
+
+</>
+
     ) : (
       <>
         {activeFeedback === 0 && (

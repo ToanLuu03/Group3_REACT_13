@@ -52,7 +52,7 @@ const HomePage = () => {
 
         // Gộp vai trò thành ADMIN nếu vai trò là FAMS_ADMIN, FA_MANAGER, hoặc CLASS_ADMIN
         const consolidatedRoles = rolesArray.map((role) =>
-          ["FAMS_ADMIN", "FA_MANAGER", "CLASS_ADMIN"].includes(role)
+          ["FA_MANAGER", "CLASS_ADMIN"].includes(role)
             ? "CLASS_ADMIN"
             : role
         );
@@ -90,6 +90,8 @@ const HomePage = () => {
       navigate("/TRAINER_MANAGER");
     } else if (role === "DELIVERY_MANAGER") {
       navigate("/DELIVERY_MANAGER");
+    } else if (role === "FAMS_ADMIN") {
+      navigate("/FAMS_ADMIN");
     }
   };
 

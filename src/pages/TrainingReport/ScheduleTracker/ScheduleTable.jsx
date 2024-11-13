@@ -24,7 +24,7 @@ const ScheduleTable = ({ filteredData, selectedModule, onCheckboxChange }) => {
   return (
     <div className="p-4 md:p-8">
       <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border-collapse">
+        <table className="min-w-full table-auto border-collapse hidden md:table">
           <thead>
             <tr>
               <th className="border p-2 text-left">Topics</th>
@@ -36,7 +36,7 @@ const ScheduleTable = ({ filteredData, selectedModule, onCheckboxChange }) => {
               <th className="border p-2 text-left">Actual Date</th>
               <th className="border p-2 text-left">Duration (hour)</th>
               <th className="border p-2 text-left">Note</th>
-              <th className="border p-2 text-left">Reason for mismatch - if any</th>
+              <th className="border p-2 text-left">Reason for mismatch</th>
               <th className="border p-2 text-left">Status</th>
               <th className="border p-2 text-left">Action</th>
             </tr>
@@ -76,7 +76,7 @@ const ScheduleTable = ({ filteredData, selectedModule, onCheckboxChange }) => {
                     <td className="text-center border px-4 py-2">{item.reason}</td>
                     <td className="text-center border px-4 py-2">{item.status}</td>
                     <td className="text-center border px-4 py-2">
-                      <button className=""><MdOutlineModeEdit /></button>
+                      <button><MdOutlineModeEdit /></button>
                     </td>
                   </tr>
                 ))}
@@ -84,6 +84,39 @@ const ScheduleTable = ({ filteredData, selectedModule, onCheckboxChange }) => {
             ))}
           </tbody>
         </table>
+
+        {/* Responsive view for smaller screens */}
+        <div className="md:hidden">
+          {Object.entries(groupedData).map(([topicName, items], index) => (
+            <div key={index} className="mb-4 border-b border-gray-300 pb-4">
+              <h3 className="text-lg font-semibold mb-2">{topicName}</h3>
+              {items.map((item, subIndex) => (
+                <div
+                  key={subIndex}
+                  className="flex flex-col bg-white shadow-md rounded-lg p-4 mb-4"
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <Checkbox onChange={handleCheckboxChange} />
+                    <button className="text-gray-500">
+                      <MdOutlineModeEdit />
+                    </button>
+                  </div>
+                  <div>
+                    <p><strong>Content:</strong> {item.contentName}</p>
+                    <p><strong>Delivery Type:</strong> {item.deliveryType}</p>
+                    <p><strong>Training Format:</strong> {item.trainingFormat}</p>
+                    <p><strong>Scheduled Date:</strong> {item.scheduledDate}</p>
+                    <p><strong>Actual Date:</strong> {item.actualDate}</p>
+                    <p><strong>Duration:</strong> {item.duration} hours</p>
+                    <p><strong>Note:</strong> {item.note}</p>
+                    <p><strong>Reason:</strong> {item.reason}</p>
+                    <p><strong>Status:</strong> {item.status}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

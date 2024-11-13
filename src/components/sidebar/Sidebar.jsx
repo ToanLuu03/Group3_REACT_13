@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, Layout, Menu, Dropdown } from 'antd';
 import { FaBell, FaUserCircle } from 'react-icons/fa';
+import { CgProfile } from "react-icons/cg";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import LogoFpt from '../../assets/image/logofpt.png';
 import TrainerConfirmation from '../../assets/image/trainerconfirmation.png';
@@ -38,7 +39,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
       setCollapsed(false); // Expand sidebar on larger screens
     }
   };
-   const handleLogout = () => {
+  const handleLogout = () => {
     // Clear the role in Redux store
     dispatch(clearRole());
 
@@ -62,6 +63,13 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
   const userMenu = (
     <Menu>
       <Menu.Item
+        key="profile"
+        icon={<CgProfile style={{ fontSize: '1.6rem' }} />}
+        onClick={() => navigate('/TRAINER/profile')}
+      >
+        Profile
+      </Menu.Item>
+      <Menu.Item
         key="logout"
         icon={<CiLogout style={{ fontSize: '1.6rem' }} />}
         onClick={handleLogout}
@@ -69,6 +77,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
       >
         Logout
       </Menu.Item>
+
     </Menu>
   );
   const menuItems = {
@@ -78,7 +87,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
         icon: <img src={TrainerConfirmation} width={25} alt="Class Management" />,
         label: 'Class Management',
         children: [
-          { key: '/CLASS_ADMIN/class-management/class-list', label: 'Class List'},
+          { key: '/CLASS_ADMIN/class-management/class-list', label: 'Class List' },
           { key: '/CLASS_ADMIN/class-management/in-progress', label: 'In Progress Class' },
           { key: '/CLASS_ADMIN/class-management/checkpoint', label: 'Checkpoint' },
           { key: '/CLASS_ADMIN/class-management/tracker-admin', label: 'Schedule Tracker' },
@@ -199,7 +208,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
         icon: <img src={TrainerConfirmation} width={25} alt="Class Management" />,
         label: 'Class Management',
         children: [
-          { key: '/TRAINER_MANAGER/class-management/class-list', label: 'Class List'},
+          { key: '/TRAINER_MANAGER/class-management/class-list', label: 'Class List' },
           { key: '/TRAINER_MANAGER/class-management/in-progress', label: 'In Progress Class' },
           { key: '/TRAINER_MANAGER/class-management/checkpoint', label: 'Checkpoint' },
           { key: '/TRAINER_MANAGER/class-management/schedule-tracker', label: 'Schedule Tracker' },
@@ -248,7 +257,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
         icon: <img src={TrainerConfirmation} width={25} alt="Class Management" />,
         label: 'Class Management',
         children: [
-          { key: '/TRAINER/class-management/class-list', label: 'Class List'},
+          { key: '/TRAINER/class-management/class-list', label: 'Class List' },
           { key: '/TRAINER/class-management/in-progress', label: 'In Progress Class' },
           { key: '/TRAINER/class-management/checkpoint', label: 'Checkpoint' },
           { key: '/TRAINER/class-management/schedule-tracker', label: 'Schedule Tracker' },
@@ -281,6 +290,58 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
         label: 'Trainer Management',
       },
     ],
+    FAMS_ADMIN: [
+      {
+        key: 'class-management',
+        icon: <img src={TrainerConfirmation} width={25} alt="Class Management" />,
+        label: 'Class Management',
+      },
+      {
+        key: 'trainee-management',
+        icon: <img src={TraineeManagement} width={25} alt="Trainee Management" />,
+        label: 'Trainee Management',
+      },
+      {
+        key: 'log-work',
+        icon: <img src={Logwork} width={25} alt="Log Work" />,
+        label: 'Log Works',
+      },
+      {
+        key: 'FAMS-Settings',
+        icon: <img src={faqs} width={25} alt="FAQs" />,
+        label: 'FAMS-Settings',
+      },
+      {
+        key: 'App-Code-config',
+        icon: <img src={TrainerManagement} width={25} alt="" />,
+        label: 'App Code Config',
+      },
+      {
+        key: 'Email-template',
+        icon: <img src={TrainerConfirmation} width={25} alt="Class Management" />,
+        label: 'Email template',
+      },
+      {
+        key: 'User-management',
+        icon: <img src={TraineeManagement} width={25} alt="Trainee Management" />,
+        label: 'User Management',
+      },
+      {
+        key: 'Scheduler-management',
+        icon: <img src={Logwork} width={25} alt="Log Work" />,
+        label: 'Scheduler Management',
+      },
+      {
+        key: 'Trainer-management',
+        icon: <img src={faqs} width={25} alt="FAQs" />,
+        label: 'Trainer Management',
+      },
+      {
+        key: 'faqs',
+        icon: <img src={faqs} width={25} alt="FAQs" />,
+        label: 'FAQs',
+      },
+    ]
   };
 
   return (
@@ -340,9 +401,9 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
               {/* Display username only on larger screens */}
               <span className="text-gray-700 hidden sm:block">{`Welcome ${username}`}</span>
 
-              <FaBell 
-              onClick={() => setIsNotificationOpen(true)}
-              className="text-xl text-red-500 cursor-pointer" />
+              <FaBell
+                onClick={() => setIsNotificationOpen(true)}
+                className="text-xl text-red-500 cursor-pointer" />
 
               {/* Dropdown for user menu */}
               <Dropdown
@@ -352,14 +413,15 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
                 onVisibleChange={(flag) => setDropdownVisible(flag)}
               >
                 <FaUserCircle className="text-2xl text-gray-700 cursor-pointer" />
+                
               </Dropdown>
             </div>
             {isNotificationOpen && (
-            <ModalNotification
-              isOpen={isNotificationOpen}
-              onClose={() => setIsNotificationOpen(false)}
-            />
-          )}
+              <ModalNotification
+                isOpen={isNotificationOpen}
+                onClose={() => setIsNotificationOpen(false)}
+              />
+            )}
           </Header>
 
           {/* The rest of your page content would go here */}
