@@ -5,7 +5,7 @@ const token = localStorage.getItem('token');
 export const fetchConfig = async () => {
 
   try {
-      const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v3/config-effort', {
+      const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v3/config-effort/get-all', {
           headers: {
               Authorization: `Bearer ${token}`
           }
