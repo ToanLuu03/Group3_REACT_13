@@ -163,7 +163,7 @@ export const Get_Course_by_Module = async ({ classCode }) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error fetching evaluation by module:", error.response || error.message);
+    // console.error("Error fetching evaluation by module:", error.response || error.message);
     throw error;
   }
 };

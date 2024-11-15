@@ -19,9 +19,9 @@ const ProfessionalSkills = ({ professionalSkills, isEditing, skillOptions, level
                 Professional Skills
             </h2>
             {professionalSkills.map((skill, index) => (
-                <div key={index} className="flex items-center mb-2 gap-5">
-                    <span className="w-6 h-4 bg-black rounded-full"></span>
-                    <div className="w-[198px] px-1">
+                <div key={index} className="flex items-center mb-2 gap-3">
+                    <span className="w-4 max-xl:w-[34px] mr-2 h-4 bg-black rounded-full"></span>
+                    <div className="w-[200px] max-2xl:w-[120px] max-xl:w-full px-1">
                         {isEditing ? (
                             <div className="mt-[10px]">
                                 <Select
@@ -45,7 +45,7 @@ const ProfessionalSkills = ({ professionalSkills, isEditing, skillOptions, level
                             <p>{skill.skill || "Not Available"}</p>
                         )}
                     </div>
-                    <div className="w-full px-1">
+                    <div className="w-[230px] max-2xl:w-[180px] max-xl:w-full px-1 xl:mx-auto">
                         {isEditing ? (
                             <div className="mt-[10px]">
                                 <Select
@@ -84,7 +84,7 @@ const ProfessionalSkills = ({ professionalSkills, isEditing, skillOptions, level
                 <Button
                     type="dashed"
                     onClick={handleAddNewSkill}
-                    className="w-full mt-4 flex items-center justify-center"
+                    className="w-[92%] mt-4 justify-self-center flex items-center"
                 >
                     <PlusOutlined /> Add New Skill
                 </Button>

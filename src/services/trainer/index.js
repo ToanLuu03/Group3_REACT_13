@@ -38,7 +38,7 @@ const TrainerAPI = {
         },
       });
       return response;
-    } catch (error) {}
+    } catch (error) { }
   },
   gettrainerInfo: async (token, username) => {
     try {
@@ -96,7 +96,8 @@ const TrainerAPI = {
       );
       return response;
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      throw error
     }
   },
   getTrainerProfile: async (token, username) => {

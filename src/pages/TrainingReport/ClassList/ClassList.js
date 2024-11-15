@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Table, Typography, Input, Select, Col, Row, DatePicker, Divider, Spin } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchClassList } from '../../../api/TrainingReportAPI/ClassList_api';
-import formatDate from '../../../utils/formatDate';
 
 const { Option } = Select;
 
@@ -91,7 +90,7 @@ function ClassList() {
       fixed: 'left',
 
       render: (text, record) => (
-         <Link
+        <Link
           onClick={async (e) => {
             e.preventDefault();
             try {
@@ -220,14 +219,15 @@ function ClassList() {
     <div className="pt-16 pr-5 h-[calc(100vh-80px)] overflow-x-hidden">
       <Typography.Title level={2}>Class List</Typography.Title>
       <Divider style={{ marginTop: "0px" }} />
-      <Row gutter={[100, 16]} className="mb-10">
-        <Col xs={24} sm={12} md={6} xl={6}>
+
+      <Row gutter={[8, 8]} justify="start">
+        <Col xs={24} sm={24} md={12} lg={6} xl={4}>
           <Typography.Title level={5}>Status</Typography.Title>
           <Select
             placeholder="Select status"
             onChange={(value) => setStatusFilter(value)}
-            style={{ width: '100%' }}
             allowClear
+            style={{ width: '100%', maxWidth: 200 }}
           >
             {statusOptions.map(status => (
               <Option key={status} value={status}>
@@ -237,41 +237,43 @@ function ClassList() {
           </Select>
         </Col>
 
-        <Col xs={24} sm={12} md={6} xl={6}>
+        <Col xs={24} sm={24} md={12} lg={6} xl={4}>
           <Typography.Title level={5}>Actual Start Date</Typography.Title>
           <DatePicker
-            onChange={(date) => setStartDate(date ? date.toDate() : null)} // Update start date state
-            style={{ width: '100%' }}
+            onChange={(date) => setStartDate(date ? date.toDate() : null)}
+            style={{ width: '100%', maxWidth: 200 }}
           />
         </Col>
-        <Col xs={24} sm={12} md={6} xl={6}>
+
+        <Col xs={24} sm={24} md={12} lg={6} xl={4}>
           <Typography.Title level={5}>Actual End Date</Typography.Title>
           <DatePicker
-            onChange={(date) => setEndDate(date ? date.toDate() : null)} // Update end date state
-            style={{ width: '100%' }}
+            onChange={(date) => setEndDate(date ? date.toDate() : null)}
+            style={{ width: '100%', maxWidth: 200 }}
           />
         </Col>
-        <Col xs={24} sm={12} md={6} xl={6}>
+
+        <Col xs={24} sm={24} md={12} lg={6} xl={4}>
           <Typography.Title level={5}>Class</Typography.Title>
           <Input
             placeholder="Search class, code class name"
             onChange={(e) => setClassSearch(e.target.value)}
             value={classSearch}
-            style={{ width: '100%', height: 32, marginRight: 16 }}
+            style={{ width: '100%', maxWidth: 200 }}
           />
         </Col>
       </Row>
 
+
       {/* Render Table with merged module data */}
       <Table
-        rowSelection={rowSelection}
         columns={columns}
         dataSource={filteredData}
         bordered
         pagination={false}
         scroll={{ x: true }}
-
       />
+
     </div>
   );
 }

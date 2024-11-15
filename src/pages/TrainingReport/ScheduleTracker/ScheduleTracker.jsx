@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { DatePicker, Input, message, Spin } from "antd";
+import { DatePicker, Input, message, notification, Spin } from "antd";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
@@ -8,6 +8,7 @@ import SelectOptions from "../../../components/portal/SelectOptions.jsx";
 import NoteModal from "./NoteModal.jsx";
 import ScheduleTable from "./ScheduleTable.jsx";
 import TrainerAPI from "../../../services/trainer/index.js";
+import { Title } from "chart.js";
 const ScheduleTracker = ({ collapsed }) => {
   dayjs.extend(isSameOrAfter);
   dayjs.extend(isSameOrBefore);
@@ -45,8 +46,14 @@ const ScheduleTracker = ({ collapsed }) => {
       }
       setScheduleData(data);
     } catch (error) {
-      console.error("Error fetching schedule data:", error);
-      setError("Failed to fetch schedule data");
+      // console.error("Error fetching schedule data:", error);
+      setError(error.response.data.message);
+      notification.error({
+        message: error.response.data.message,
+        // description: error.message || 'An error occurred',
+        placement: 'topRight',
+        duration: 3,
+      });
     } finally {
       setLoading(false);
     }

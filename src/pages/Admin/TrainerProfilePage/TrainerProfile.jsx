@@ -87,8 +87,8 @@ function TrainerProfile() {
                 setTrainerTypes(data.trainerTypes || []);
                 setContributionTypes(data.contributionTypes || []);
                 setSites(data.sites || []);
-                setJobRanks(data.jobRank || []);
-                setJobTitles(data.jobTitle || []);
+                setJobRanks([...new Set(data.jobRank || [])]);
+                setJobTitles([...new Set(data.jobTitle || [])]);
                 setProfessionalLevels(data.professionalLevel || []);
                 setTrainerCertifications(data.trainTheTrainerCert || []);
                 setSkillOptions(data.professionalSkill || []);
@@ -180,8 +180,6 @@ function TrainerProfile() {
             })),
         };
 
-        setIsEditing(false);
-        setShowSaveModal(false);
         try {
             await updateTrainerInfoV2(account, updatedData, token);
             setOriginalData({
@@ -205,6 +203,8 @@ function TrainerProfile() {
                     : "An unexpected error occurred.",
                 duration: 3,
             });
+        } finally {
+            setShowSaveModal(false); 
         }
     };
 
@@ -278,7 +278,7 @@ function TrainerProfile() {
     return (
         <div className="h-[calc(100vh - 300px)] m-5">
             <div className="h-full overflow-y-auto mb-10">
-                <div className="flex items-start p-4 mb-6">
+                <div className={`flex max-xl:flex-col items-start p-4 ${!isEditing ? "mb-[5.7px]" : ""} ${!isEditing ? "" : "max-xl:items-center max-xl:justify-center"}`}>
                     {isEditing ? (
                         <>
                             <input
@@ -289,32 +289,30 @@ function TrainerProfile() {
                                 id="avatar-upload"
                             />
                             <label htmlFor="avatar-upload">
-                                <div className="flex items-center mr-[14px] h-32 w-32 relative">
+                                <div className="flex items-center max-xl:justify-center mr-[14px] max-xl:mr-0 h-[134px] w-[134px] relative">
                                     <img
                                         src={generalInfo.avatar || "https://via.placeholder.com/100"}
                                         alt="Trainer Avatar"
-                                        className="h-32 w-32 rounded-full cursor-pointer"
+                                        className="h-[134px] w-[134px] rounded-full cursor-pointer"
                                     />
                                     <span className="text-2xl font-bold cursor-pointer absolute top-0 right-0 bg-slate-50 rounded-full w-8 h-8 flex items-center justify-center">
                                         <PlusOutlined className="text-xl" />
                                     </span>
-
                                 </div>
                             </label>
                         </>
                     ) : (
-                        <label htmlFor="avatar-upload">
-                            <div className="flex items-center mr-[14px] h-32 w-32">
+                        <label htmlFor="avatar-upload" className="flex max-xl:justify-center max-xl:w-full">
+                            <div className="flex items-center max-xl:justify-center mr-[14px] max-xl:mr-0 h-[134px] w-[134px]">
                                 <img
                                     src={generalInfo.avatar || "https://via.placeholder.com/100"}
                                     alt="Trainer Avatar"
-                                    className="h-32 w-32 rounded-full mr-8"
+                                    className="h-[134px] w-[134px] rounded-full mr-8 max-xl:mr-0"
                                 />
                             </div>
                         </label>
-                    )
-                    }
-                    <div className="flex flex-col w-full">
+                    )}
+                    <div className="flex flex-col w-full max-xl:items-center max-xl:text-center">
                         <h1 className="text-xl font-medium">
                             {isEditing ? (
                                 <input
@@ -323,16 +321,16 @@ function TrainerProfile() {
                                     onChange={(e) =>
                                         setGeneralInfo({ ...generalInfo, name: e.target.value })
                                     }
-                                    className="outline-none border-b-2"
+                                    className="outline-none border-b-2 max-xl:text-center"
                                 />
                             ) : (
                                 <div className="pb-[2px]">{generalInfo.name || "Full Name"}</div>
                             )}
                         </h1>
-                        <p className="text-gray-500">
+                        <p className="text-gray-500 italic mb-1">
                             {generalInfo.jobTitle} - {generalInfo.jobRank}
                         </p>
-                        <div className="flex-1">
+                        <div className="flex-1 max-xl:w-full max-xl:flex max-xl:justify-center">
                             {isEditing ? (
                                 <textarea
                                     value={generalInfo.description}
@@ -342,16 +340,19 @@ function TrainerProfile() {
                                             description: e.target.value,
                                         })
                                     }
-                                    className="outline-none border-none w-full h-20 bg-gray-200 p-1 resize-none"
+                                    className="outline-none border-none w-full h-20 bg-gray-200 p-1 resize-none max-xl:text-center"
                                 />
                             ) : (
-                                <p className="h-20 p-1 bg-gray-200">{generalInfo.description}</p>
+                                <p className="h-20 p-1 bg-gray-200 w-full max-xl:text-center">
+                                    {generalInfo.description}
+                                </p>
                             )}
                         </div>
                     </div>
                 </div>
-                <div className="flex max-2xl:block gap-6 w-full">
-                    <div className="flex-1">
+
+                <div className="flex max-xl:block gap-6 w-full">
+                    <div className="w-[50%] max-xl:w-full">
                         <PersonalInfo
                             personalInfo={personalInfo}
                             isEditing={isEditing}
@@ -373,7 +374,7 @@ function TrainerProfile() {
                         />
                     </div>
 
-                    <div className="flex-1">
+                    <div className="w-[50%] max-xl:w-full">
                         <ProfessionalSkills
                             professionalSkills={professionalSkills}
                             isEditing={isEditing}

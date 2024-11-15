@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Form, DatePicker, TimePicker, Input, Typography, Divider, theme } from 'antd';
+import { Table, Button, Form, DatePicker, TimePicker, Input, Typography, Divider, theme, Row, Col, Space, Select } from 'antd';
 import { fetchConfig, createConfig } from '../../../../api/DM_API/ConfigPayDay_api';
+import { useOutletContext } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 export default function ConfigCheckpointDeadline() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [form] = Form.useForm();
   const [checkpointYear, setCheckpointYear] = useState(dayjs().year());
   const [checkpointMonth, setCheckpointMonth] = useState(dayjs().month() + 1);
   const [editedRows, setEditedRows] = useState(new Set());
-  const { token } = theme.useToken();
+  const [checkpointOptions, setCheckpointOptions] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [collapsed] = useOutletContext();
 
   const columns = [
     {
@@ -42,6 +45,7 @@ export default function ConfigCheckpointDeadline() {
         <DatePicker
           value={dayjs(record.deadline)}
           onChange={(date) => handleDateChange(record.id, date)}
+          disabled={loading}
         />
       ),
     },
@@ -51,9 +55,10 @@ export default function ConfigCheckpointDeadline() {
       key: 'time',
       render: (_, record) => (
         <TimePicker
-          value={dayjs(record.time, 'HH:mm:ss')}
+          value={record.time ? dayjs(record.time, 'HH:mm:ss') : null}
           format="HH:mm:ss"
           onChange={(time) => handleTimeChange(record.id, time)}
+          disabled={loading}
         />
       ),
     },
@@ -63,8 +68,9 @@ export default function ConfigCheckpointDeadline() {
       key: 'description',
       render: (_, record) => (
         <Input
-          value={record.description}
+          value={record.description || ''}
           onChange={(e) => handleDescriptionChange(record.id, e.target.value)}
+          disabled={loading}
         />
       ),
     },
@@ -92,32 +98,50 @@ export default function ConfigCheckpointDeadline() {
 
   const handleDateChange = (id, date) => {
     setEditedRows(prev => new Set(prev.add(id)));
-    setData(prevData =>
-      prevData.map(item =>
-        item.id === id ? { ...item, deadline: date?.format('YYYY-MM-DD') } : item
-      )
+    const newData = data.map(item =>
+      item.id === id ? { ...item, deadline: date?.format('YYYY-MM-DD') } : item
     );
+    setData(newData);
+    
+    // Update filteredData as well
+    const newFilteredData = newData.filter(item => {
+      const itemDate = dayjs(item.deadline);
+      return checkpointMonth 
+        ? itemDate.year() === checkpointYear && (itemDate.month() + 1) === checkpointMonth
+        : itemDate.year() === checkpointYear;
+    });
+    setFilteredData(newFilteredData);
   };
 
   const handleTimeChange = (id, time) => {
     setEditedRows(prev => new Set(prev.add(id)));
-    setData(prevData =>
-      prevData.map(item =>
-        item.id === id ? {
-          ...item,
-          time: time ? time.format('HH:mm') : null
-        } : item
-      )
+    const newData = data.map(item =>
+      item.id === id ? {
+        ...item,
+        time: time ? time.format('HH:mm:ss') : null
+      } : item
     );
+    setData(newData);
+    setFilteredData(newData.filter(item => {
+      const itemDate = dayjs(item.deadline);
+      return checkpointMonth 
+        ? itemDate.year() === checkpointYear && (itemDate.month() + 1) === checkpointMonth
+        : itemDate.year() === checkpointYear;
+    }));
   };
 
   const handleDescriptionChange = (id, description) => {
     setEditedRows(prev => new Set(prev.add(id)));
-    setData(prevData =>
-      prevData.map(item =>
-        item.id === id ? { ...item, description } : item
-      )
+    const newData = data.map(item =>
+      item.id === id ? { ...item, description } : item
     );
+    setData(newData);
+    setFilteredData(newData.filter(item => {
+      const itemDate = dayjs(item.deadline);
+      return checkpointMonth 
+        ? itemDate.year() === checkpointYear && (itemDate.month() + 1) === checkpointMonth
+        : itemDate.year() === checkpointYear;
+    }));
   };
 
   const handleSave = async () => {
@@ -143,8 +167,10 @@ export default function ConfigCheckpointDeadline() {
 
       const response = await fetchConfig();
       setData(response.data);
+      toast.success('Configuration saved successfully!');
     } catch (error) {
       console.error('Error saving configs:', error);
+       toast.error('Failed to save configuration. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -166,12 +192,67 @@ export default function ConfigCheckpointDeadline() {
     }
   };
 
+  const generateCheckpointOptions = () => {
+    const options = [];
+    const currentYear = dayjs().year();
+    
+    // Add "All Months" option
+    options.push({
+      value: `${currentYear}`,
+      label: `${currentYear}`
+    });
+
+    // Add individual months
+    for (let month = 12; month >= 1; month--) {
+      const date = dayjs(`${currentYear}-${month}-01`);
+      options.push({
+        value: `${currentYear}-${month}`,
+        label: date.format('MMMM YYYY')
+      });
+    }
+
+    return options;
+  };
+
+  const handleCheckpointChange = (value) => {
+    // Check if the value contains a hyphen (indicating year-month format)
+    if (value.includes('-')) {
+      const [year, month] = value.split('-');
+      setCheckpointYear(parseInt(year));
+      setCheckpointMonth(parseInt(month));
+      // Filter for specific month
+      const filtered = data.filter(item => {
+        const itemDate = dayjs(item.deadline);
+        return itemDate.year() === parseInt(year) && (itemDate.month() + 1) === parseInt(month);
+      });
+      setFilteredData(filtered);
+    } else {
+      // Handle year-only selection (All months)
+      const year = parseInt(value);
+      setCheckpointYear(year);
+      setCheckpointMonth(null);
+      // Filter for all months in the selected year
+      const filtered = data.filter(item => {
+        const itemDate = dayjs(item.deadline);
+        return itemDate.year() === year;
+      });
+      setFilteredData(filtered);
+    }
+  };
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       try {
         const response = await fetchConfig();
         setData(response.data);
+        // Initialize filteredData with current month/year data
+        const filtered = response.data.filter(item => {
+          const itemDate = dayjs(item.deadline);
+          return itemDate.year() === checkpointYear && (itemDate.month() + 1) === checkpointMonth;
+        });
+        setFilteredData(filtered);
+        setCheckpointOptions(generateCheckpointOptions());
       } catch (error) {
         console.error('Error loading config data:', error);
       } finally {
@@ -182,88 +263,116 @@ export default function ConfigCheckpointDeadline() {
     loadData();
   }, []);
 
-  // Function to format the checkpoint display
-  const getCheckpointDisplay = () => {
-    return dayjs()
-      .year(checkpointYear)
-      .month(checkpointMonth - 1)
-      .format('MMMM-YYYY');
-  };
 
   return (
     <div className='pt-16'>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography.Title level={2} style={{ margin: 0 }}>Config Effort Deadline</Typography.Title>
-        <Form layout="inline">
-          <Form.Item label="Checkpoint Period" style={{ marginBottom: 0 }}>
-            <Input
-              value={getCheckpointDisplay()}
-              readOnly
-              style={{ width: '200px' }}
-            />
-          </Form.Item>
-        </Form>
-      </div>
+      <Row gutter={[16, 16]} align="middle" justify="space-between">
+        <Col xs={24} sm={12}>
+          <Typography.Title level={2} style={{ margin: 0 }}>Config Effort Deadline</Typography.Title>
+        </Col>
+        <Col xs={24} sm={12}>
+          <Form layout="inline" style={{ justifyContent: 'flex-end' }}>
+            <Space wrap>
+              <Typography.Text strong>
+                Checkpoint Period : 
+              </Typography.Text>
+              <Select
+                value={checkpointMonth ? `${checkpointYear}-${checkpointMonth}` : `${checkpointYear}`}
+                onChange={handleCheckpointChange}
+                options={checkpointOptions}
+                style={{ width: '200px', marginBottom: '0px' }}
+              />
+            </Space>
+          </Form>
+        </Col>
+      </Row>
+
       <Divider style={{ marginTop: "24px", marginBottom: "36px" }} />
 
-      <Table
-        columns={columns}
-        dataSource={data}
-        loading={loading}
-        pagination={{
-          pageSize: 5,
-          total: data.length,
-          hideOnSinglePage: true
-        }}
-        rowKey="id"
-        rowClassName={(record) => {
-          if (editedRows.has(record.id)) return 'bg-[#FFCC0040]';
-          if (isDeadlineOverlapping(record)) return 'bg-[#F5CCCC]';
-          return '';
-        }}
-      />
+      <div style={{ overflowX: 'auto' }}>
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          loading={loading}
+          scroll={{ x: 'max-content' }}
+          rowKey="id"
+          rowClassName={(record) => {
+            if (editedRows.has(record.id)) return 'bg-[#FFCC0040]';
+            if (isDeadlineOverlapping(record)) return 'bg-[#F5CCCC]';
+            return '';
+          }}
+        />
+      </div>  
 
-      <div className=" mt-10 px-6 py-4 bg-white border-t border-gray-200 w-full overflow-x-auto">
-        <div className="flex justify-between items-center ">
-          {/* Legend/Key */}
-          <div className="flex items-center ">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 bg-[#FFCC0040] border border-[#D9D9D9]"></div>
-              <span>Edited</span>
-            </div>
-            <div className="flex items-center gap-2 ml-5">
-              <div className="w-5 h-5 bg-[#F5CCCC] border border-[#D9D9D9]"></div>
-              <span>Deadline Overlapping</span>
-            </div>
-          </div>
-
-          {/* Buttons */}
-          <div >
-            <Button
-              type="default"
-              onClick={handleCancel}
-              loading={loading}
-              className="w-24 p-2 rounded-[30px] mr-4"
-              style={{
-                backgroundColor: '#FFFFFF',
-                color: '#FF0000',
-                borderColor: '#D9D9D9'
-              }}
-            >
-              Cancel
-            </Button>
-
-            <Button
-              type="primary"
-              onClick={handleSave}
-              loading={loading}
-              className="w-24 p-2 rounded-[30px]"
-              style={{ backgroundColor: '#5144E4' }}
-            >
-              Save
-            </Button>
-          </div>
-        </div>
+      <div style={{
+        padding: '18px',
+        backgroundColor: '#fff',
+        borderTop: '1px solid #f0f0f0',
+        position: 'fixed',
+        bottom: 0,
+        right: 0,
+        left: collapsed ? 30 : 260, // Changed to use width instead of left
+        transition: 'all 0.2s', // Updated transition property
+      }}>
+        <Row gutter={[16, 16]} justify="space-between" align="middle">
+          <Col xs={24} sm={12}>
+            <Space wrap>
+              <Space style={{ marginRight: '36px' }}>
+                <div style={{ 
+                  width: 40, 
+                  height: 40, 
+                  backgroundColor: '#FFCC0040', 
+                  border: '1px solid #D9D9D9',
+                  marginRight: '8px',
+                  marginLeft: '8px'
+                }} />
+                <Typography.Text >Edited</Typography.Text>
+              </Space>
+              <Space>
+                <div style={{ 
+                  width: 40, 
+                  height: 40, 
+                  backgroundColor: '#F5CCCC', 
+                  border: '1px solid #D9D9D9',
+                  marginRight: '8px'
+                }} />
+                <Typography.Text>Deadline Overlapping</Typography.Text>
+              </Space>
+            </Space>
+          </Col>
+          <Col xs={24} sm={12} style={{ textAlign: 'right' }}>
+            <Space wrap>
+              <Button
+                type="default"
+                onClick={handleCancel}
+                loading={loading}
+                style={{
+                  width: 96,
+                  padding: 8,
+                  borderRadius: 30,
+                  backgroundColor: '#FFFFFF',
+                  color: '#FF0000',
+                  borderColor: '#D9D9D9'
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="primary"
+                onClick={handleSave}
+                loading={loading}
+                style={{
+                  width: 96,
+                  padding: 8,
+                  borderRadius: 30,
+                  backgroundColor: '#5144E4'
+                }}
+              >
+                Save
+              </Button>
+            </Space>
+          </Col>
+        </Row>
       </div>
     </div>
   );

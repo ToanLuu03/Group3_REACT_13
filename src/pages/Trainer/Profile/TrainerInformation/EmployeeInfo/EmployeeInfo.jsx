@@ -38,6 +38,7 @@ const EmployeeInfo = ({
                                         })
                                     }
                                     className="w-full"
+                                    style={{ marginBottom: 0 }}
                                 >
                                     {(item.label === "Site" ? sites :
                                         item.label === "Trainer Type" ? trainerTypes :

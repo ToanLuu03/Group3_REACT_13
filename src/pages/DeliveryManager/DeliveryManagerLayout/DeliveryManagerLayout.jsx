@@ -16,7 +16,7 @@ const DeliveryManagerLayout = () => {
         } flex-grow p-4 overflow-x-auto`}
       >
         {/* Outlet renders the child route components */}
-        <Outlet />
+        <Outlet context={[collapsed]}/>
       </div>
     </div>
   );

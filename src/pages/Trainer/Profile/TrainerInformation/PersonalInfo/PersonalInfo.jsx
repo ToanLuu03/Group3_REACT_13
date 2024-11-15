@@ -11,12 +11,12 @@ const PersonalInfo = ({ personalInfo, isEditing, generalInfo, setGeneralInfo }) 
                     <span>
                         <img
                             src={item.icon}
-                            className="size-[18px]"
+                            className="h-[18px] w-5"
                             alt={`${item.label} Icon`}
                         />
                     </span>
                     <div className="flex w-full">
-                        <div className="font-semibold w-40 px-1">{item.label}:</div>
+                        <div className="font-semibold w-32 px-1">{item.label}:</div>
                         {isEditing ? (
                             <div className="flex-1">
                                 <input

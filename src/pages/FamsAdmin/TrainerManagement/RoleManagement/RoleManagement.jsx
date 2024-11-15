@@ -23,7 +23,7 @@ const RoleManagement = () => {
   const [refreshFlag, setRefreshFlag] = useState(false);
   const [rolesOption, setRolesOption] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [roleValue, setRoleValue] = useState([]);
+  const [roleValue, setRoleValue] = useState([]); // Set 'all' as default value
   const [isModalAddVisible, setIsModalAddVisible] = useState(false);
   const [isModalEditVisible, setIsModalEditVisible] = useState(false); // ModalEdit visibility
   const [jobToEdit, setJobToEdit] = useState(null); // Job data for edit
@@ -94,15 +94,16 @@ const RoleManagement = () => {
     setSearchTerm(event.target.value);
   };
 
+
   const handleSelectAll = (selectedValues) => {
     if (selectedValues.includes('all')) {
       if (selectedValues.length === rolesOption.length + 1) {
-        setRoleValue([]);
+        setRoleValue([]); // Deselect all
       } else {
-        setRoleValue(rolesOption);
+        setRoleValue(rolesOption); // Select all options
       }
     } else {
-      setRoleValue(selectedValues);
+      setRoleValue(selectedValues); // Set selected roles
     }
   };
 
@@ -145,6 +146,7 @@ const RoleManagement = () => {
 
     return roleMatch && searchMatch;
   });
+
 
   const columns = [
     {
@@ -222,11 +224,11 @@ const RoleManagement = () => {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-2 sm:space-y-0">
         <div className="flex flex-col sm:flex-row sm:space-x-2 w-full sm:w-auto">
           <Select
+            className="w-full sm:w-[200px]"
             mode="multiple"
             placeholder="Select a role"
             onChange={handleSelectAll}
             value={roleValue}
-            style={{ width: 250, maxWidth: "100%" }} // Set fixed width for Select
             maxTagCount={0}
             tagRender={() => tagRender({ values: roleValue, allOptions: rolesOption })}
           >
@@ -238,9 +240,8 @@ const RoleManagement = () => {
             ))}
           </Select>
           <Input
-            className="h-[32px]"
-            placeholder="Search Role"
-            style={{ width: 250, maxWidth: "100%" }} // Set fixed width for Input
+            className="w-full sm:w-[300px] h-[30px]"
+            placeholder="Search by role or note"
             onChange={handleSearch}
             value={searchTerm}
           />
@@ -251,13 +252,15 @@ const RoleManagement = () => {
         </Button>
       </div>
 
-
-      <Table
-        columns={columns}
-        dataSource={filteredJobs}
-        rowKey="id"
-        pagination={{ pageSize: 5 }}
-      />
+      <div className="overflow-x-auto">
+        <Table
+          className="min-w-full"
+          columns={columns}
+          dataSource={filteredJobs}
+          rowKey="id"
+          pagination={{ pageSize: 5 }}
+        />
+      </div>
       {isModalAddVisible && (
         <ModalAdd
           visible={isModalAddVisible}

@@ -89,6 +89,8 @@ function TrainerSection() {
                     }
                 } catch (error) {
                     // console.error("Error fetching evaluation data:", error);
+                    setEvaluationData([]);
+
                     notification.error({
                         message: error.response.data.message,
                         // description: error.message || 'An error occurred',
@@ -441,7 +443,8 @@ function TrainerSection() {
                                 </Text>
                             </div>
                         </div>
-                        <Table className="custom-header-table" // Apply custom styles only to this table
+                        <Table className="custom-header-table" scroll={{ x: 'max-content' }}
+                            // Apply custom styles only to this table
                             columns={columnsModule} dataSource={evaluationData} rowKey="trainerName"
                         />
                     </div>
@@ -458,6 +461,7 @@ function TrainerSection() {
                             </Button>
                         </Title>
                         <Table
+                            scroll={{ x: 'max-content' }}
                             columns={feedbackColumns}
                             className="custom-header-table"
                             dataSource={selectedFeedback.feedbackData}
@@ -495,7 +499,8 @@ function TrainerSection() {
                                     </Text>
                                 </div>
                             </div>
-                            <Table className="custom-header-table" columns={columnsTrainer} dataSource={trainerData} rowKey="trainerName" />
+                            <Table scroll={{ x: 'max-content' }}
+                                className="custom-header-table" columns={columnsTrainer} dataSource={trainerData} rowKey="trainerName" />
                         </div>
                     </>
                 )}
@@ -515,6 +520,7 @@ function TrainerSection() {
                             dataSource={selectedFeedback.feedbackData}
                             rowKey="key"
                             pagination={false}
+                            scroll={{ x: 'max-content' }}
                         />
                     </div>
                 )}

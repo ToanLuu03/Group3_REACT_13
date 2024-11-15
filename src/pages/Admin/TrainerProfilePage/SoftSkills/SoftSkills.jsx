@@ -17,7 +17,7 @@ const SoftSkills = ({ softSkills, isEditing, softSkillOptions, setSoftSkills }) 
                 Soft Skills
             </h2>
             {softSkills.map((skill, index) => (
-                <div key={index} className="flex items-center mt-[10px] gap-5">
+                <div key={index} className="flex items-center mt-[10px] gap-5 w-full">
                     <span className="w-4 h-4 bg-black rounded-full"></span>
                     {isEditing ? (
                         <Select
@@ -54,7 +54,7 @@ const SoftSkills = ({ softSkills, isEditing, softSkillOptions, setSoftSkills }) 
                 <Button
                     type="dashed"
                     onClick={handleAddSoftSkill}
-                    className="w-full mt-4 flex items-center justify-center"
+                    className="w-[92%] mt-4 justify-self-center flex items-center"
                 >
                     <PlusOutlined /> Add New Soft Skill
                 </Button>

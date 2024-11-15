@@ -218,7 +218,16 @@ function CourseOrganization() {
             title: 'Class Admin',
             dataIndex: 'classAdmin',
             key: 'classAdmin',
-        }, { title: 'Class Code', dataIndex: 'classCode', key: 'classCode', width: '15%' },
+            render: (_, record) => ({
+                children: record.classAdmin,
+                props: { rowSpan: record.rowSpan }
+            }),
+        }, {
+            title: 'Class Code', dataIndex: 'classCode', key: 'classCode', width: '15%', render: (_, record) => ({
+                children: record.classCode,
+                props: { rowSpan: record.rowSpan }
+            }),
+        },
         { title: 'Module', dataIndex: 'moduleName', key: 'moduleName', width: '30%' },
         { title: `Reason for ${selectedFeedback?.feedbackType || ''} Feedbacks`, dataIndex: 'reason', key: 'reason', width: '50%', align: 'center' },
     ];
@@ -276,15 +285,6 @@ function CourseOrganization() {
             key: 'averageRating',
             className: 'text-center font-semibold bg-gray-100 border border-gray-300',
         },
-        {
-            title: 'Feedback Count', // New Column
-            dataIndex: 'feedbackCount',  // The key that you want to display in this column
-            key: 'feedbackCount',
-            render: (_, record) => (
-                <span>{record.goodFeedbacks + record.badFeedbacks}</span>  // Assuming the feedback count is the sum of good and bad feedbacks
-            ),
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300',
-        },
     ];
     const columnsByAdmin = [
         {
@@ -338,15 +338,6 @@ function CourseOrganization() {
             title: 'Average Rating',
             dataIndex: 'averageRating',
             key: 'averageRating',
-            className: 'text-center font-semibold bg-gray-100 border border-gray-300',
-        },
-        {
-            title: 'Feedback Count', // New Column
-            dataIndex: 'feedbackCount',  // The key that you want to display in this column
-            key: 'feedbackCount',
-            render: (_, record) => (
-                <span>{record.goodFeedbacks + record.badFeedbacks}</span>  // Assuming the feedback count is the sum of good and bad feedbacks
-            ),
             className: 'text-center font-semibold bg-gray-100 border border-gray-300',
         },
     ];
@@ -479,7 +470,8 @@ function CourseOrganization() {
                                     </Text>
                                 </div>
                             </div>
-                            <Table columns={columnsByModule} dataSource={moduleData} rowKey="trainerName" pagination={false} className="custom-header-table"
+                            <Table scroll={{ x: 'max-content' }}
+                                columns={columnsByModule} dataSource={moduleData} rowKey="trainerName" pagination={false} className="custom-header-table"
                             />
                         </div>
                     </>
@@ -496,6 +488,7 @@ function CourseOrganization() {
                         </Title>
                         <Table
                             columns={feedbackColumnsModule}
+                            scroll={{ x: 'max-content' }}
                             className="custom-header-table"
                             dataSource={selectedFeedback.feedbackData}
                             rowKey="key"
@@ -524,10 +517,11 @@ function CourseOrganization() {
                             </div>
                         </div>
                         <Table
+                            scroll={{ x: 'max-content' }}
                             columns={columnsByAdmin}
                             dataSource={adminData}
                             rowKey="classCode" // Adjusted rowKey for unique identification
-                            pagination={false}
+                            // pagination={false}
                             className="custom-header-table"
                         />
                     </div>
@@ -543,6 +537,7 @@ function CourseOrganization() {
                             </Button>
                         </Title>
                         <Table
+                            scroll={{ x: 'max-content' }}
                             columns={feedbackColumnsModule}
                             className="custom-header-table"
                             dataSource={selectedFeedback.feedbackData}

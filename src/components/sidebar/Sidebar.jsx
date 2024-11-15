@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, Layout, Menu, Dropdown } from 'antd';
 import { FaBell, FaUserCircle } from 'react-icons/fa';
@@ -308,7 +308,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
       },
       {
         key: 'FAMS-Settings',
-        icon: <img src={faqs} width={25} alt="FAQs" />,
+        icon: <img src={Setting} width={25} alt="FAQs" />,
         label: 'FAMS-Settings',
       },
       {
@@ -333,7 +333,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
       },
       {
         key: 'Trainer-management',
-        icon: <img src={faqs} width={25} alt="FAQs" />,
+        icon: <img src={TrainerManagement} width={25} alt="FAQs" />,
         label: 'Trainer Management',
       },
       {
@@ -413,7 +413,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
                 onVisibleChange={(flag) => setDropdownVisible(flag)}
               >
                 <FaUserCircle className="text-2xl text-gray-700 cursor-pointer" />
-                
+
               </Dropdown>
             </div>
             {isNotificationOpen && (
