@@ -17,6 +17,7 @@ import SoftSkills from "./SoftSkills/SoftSkills";
 import Certificates from "./Certificates/Certificates";
 import { CancelModal, SaveModal } from "./Modals/Modals";
 import { PlusOutlined } from "@ant-design/icons";
+import { Link, useOutletContext } from "react-router-dom";
 function TrainerInformation() {
   const [trainerTypes, setTrainerTypes] = useState([]);
   const [contributionTypes, setContributionTypes] = useState([]);
@@ -37,6 +38,9 @@ function TrainerInformation() {
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isTrainer, setIsTrainer] = useState(false);
+  const [roleBack, setRoleBack] = useState('');
+
+  const { collapsed } = useOutletContext();
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -51,7 +55,7 @@ function TrainerInformation() {
       const account = localStorage.getItem("username");
       const token = localStorage.getItem("token");
       const role = localStorage.getItem("role");
-
+      setRoleBack(role)
       try {
         if (role === "TRAINER") {
           setIsTrainer(false);
@@ -83,7 +87,6 @@ function TrainerInformation() {
 
     fetchTrainerData();
   }, [isTrainer]);
-
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
@@ -208,7 +211,7 @@ function TrainerInformation() {
           : "An unexpected error occurred.",
         duration: 3,
       });
-    }finally{
+    } finally {
       setShowSaveModal(false);
     }
   };
@@ -407,13 +410,24 @@ function TrainerInformation() {
       >
         <div className="">
           {!isEditing ? (
-            <Button
-              type="primary"
-              onClick={handleEditClick}
-              className=""
-            >
-              Update
-            </Button>
+
+            <div className={`fixed bottom-0 left-0 ${collapsed ? "md:left-0" : "md:left-64"
+              } right-0 bg-white p-4 flex flex-col md:flex-row justify-between border-t shadow-lg gap-2`}>
+              <Button
+                type="default"
+                className="w-full md:w-auto text-sm md:text-base order-last md:order-first"
+              >
+                <Link to={`/${roleBack}`}>Back to Home Page</Link>
+              </Button>
+              <Button
+                type="primary"
+                onClick={handleEditClick}
+                className=""
+              >
+                Update
+              </Button>
+
+            </div>
           ) : (
             <>
               <Button

@@ -89,7 +89,8 @@ function TrainerProfile() {
                 setSites(data.sites || []);
                 setJobRanks([...new Set(data.jobRank || [])]);
                 setJobTitles([...new Set(data.jobTitle || [])]);
-                setProfessionalLevels(data.professionalLevel || []);
+                // setProfessionalLevels(data.professionalLevel || []);
+                setProfessionalLevels([...new Set(data.professionalLevel || [])])
                 setTrainerCertifications(data.trainTheTrainerCert || []);
                 setSkillOptions(data.professionalSkill || []);
                 setLevelOptions(data.professionalSkillLevel || []);

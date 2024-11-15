@@ -100,6 +100,8 @@ function ClassList() {
               navigate(targetPath, {
                 state: { classId: record.id },
               });
+              localStorage.setItem('classcode', record.classCode);
+
             } catch (error) {
               console.error('Failed to navigate:', error);
             }
