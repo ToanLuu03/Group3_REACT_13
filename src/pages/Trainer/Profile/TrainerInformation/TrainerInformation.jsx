@@ -17,7 +17,7 @@ import SoftSkills from "./SoftSkills/SoftSkills";
 import Certificates from "./Certificates/Certificates";
 import { CancelModal, SaveModal } from "./Modals/Modals";
 import { PlusOutlined } from "@ant-design/icons";
-import { Link, useOutletContext } from "react-router-dom";
+import { Link } from "react-router-dom";
 function TrainerInformation() {
   const [trainerTypes, setTrainerTypes] = useState([]);
   const [contributionTypes, setContributionTypes] = useState([]);
@@ -40,7 +40,6 @@ function TrainerInformation() {
   const [isTrainer, setIsTrainer] = useState(false);
   const [roleBack, setRoleBack] = useState('');
 
-  const { collapsed } = useOutletContext();
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -405,29 +404,25 @@ function TrainerInformation() {
         </div>
       </div>
       <div
-        className={`fixed bottom-0 left-0"
-          } right-0 bg-white p-4 flex flex-col md:flex-row justify-between border-t shadow-lg gap-2`}
       >
-        <div className="">
+        <div>
           {!isEditing ? (
-
-            <div className={`fixed bottom-0 left-0 ${collapsed ? "md:left-0" : "md:left-64"
-              } right-0 bg-white p-4 flex flex-col md:flex-row justify-between border-t shadow-lg gap-2`}>
+            <div className="flex justify-between items-center mt-4">
               <Button
                 type="default"
-                className="w-full md:w-auto text-sm md:text-base order-last md:order-first"
+                className="text-gray-700 border-gray-300 hover:border-gray-400 hover:text-gray-800"
               >
-                <Link to={`/${roleBack}`}>Back to Home Page</Link>
+                <Link to={`/${roleBack}`} className="text-inherit">Back to Home Page</Link>
               </Button>
               <Button
                 type="primary"
                 onClick={handleEditClick}
-                className=""
+                className="ml-4 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 Update
               </Button>
-
             </div>
+
           ) : (
             <>
               <Button
