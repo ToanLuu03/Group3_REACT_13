@@ -15,11 +15,14 @@ function ClassList() {
   const [statusFilter, setStatusFilter] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [role, setRole] = useState('');
 
   const { moduleInfo, loading, error } = useSelector((state) => state.module);
 
   useEffect(() => {
     dispatch(fetchModuleInfoStart());
+    const role = localStorage.getItem('role');
+    setRole(role);
   }, [dispatch]);
 
   const classList = moduleInfo?.['trainerClassList'] || [];
@@ -54,7 +57,7 @@ function ClassList() {
             e.preventDefault();
             try {
               const moduleDetails = await fetchModuleDetail(record.id); // Fetch module details using the record ID
-              navigate(`/CLASS_ADMIN/trainer-management/module/info`, {
+              navigate(`/${role}/trainer-management/module/info`, {
                 state: { moduleData: moduleDetails.data }, // Pass the fetched module data to the next page
               });
             } catch (error) {
@@ -140,7 +143,7 @@ function ClassList() {
             onChange={(value) => setStatusFilter(value)}
             style={{ width: '100%' }}
           >
-            <Option  value="In Progress">
+            <Option value="In Progress">
               <Tag className="status-in-progress">In Progress</Tag>
             </Option>
             <Option value="Not Started">
@@ -162,11 +165,11 @@ function ClassList() {
             <Panel className="custom-panel" header={<span className="panel-header">{classData.class}</span>}>
               <div className="table-container">
                 <Table
-                bordered
+                  bordered
                   columns={columns}
                   dataSource={classData.modules}
                   pagination={false}
-                  scroll={{ x: true }} 
+                  scroll={{ x: true }}
                 />
               </div>
             </Panel>

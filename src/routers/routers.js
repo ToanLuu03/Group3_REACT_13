@@ -221,7 +221,10 @@ export const router = createBrowserRouter([
     element: <DeliveryManagerLayout />,
     children: [
       { path: "class-management", element: <ClassManagementDM /> },
-      { path: "trainer-management", element: <TrainerManagementDM /> },
+      { path: "trainer-management/module/info", element: <ModuleDetailsPageAD /> },
+      { path: "trainer-list", element: <TrainerList /> },
+      { path: "add-trainer", element: <AddTrainerPage /> },
+      { path: "trainer-management", element: <TrainerManagementPage /> },
       { path: "trainee-management/trainee-list", element: <TraineeListDM /> },
       { path: "trainee-management/feedback", element: <FeedbackDM /> },
       { path: "logwork", element: <LogWorksDM /> },

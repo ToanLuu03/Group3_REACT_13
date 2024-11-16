@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './ModuleDetailsPage.css';
 import { Divider, Col, Row, Tag, Descriptions, Tabs, Button, } from 'antd'; // Import Button from Ant Design
@@ -11,7 +11,11 @@ export default function ModuleDetailsPageAD() {
   const location = useLocation();
   const navigate = useNavigate();
   const moduleData = location.state?.moduleData;
-
+  const [role, setRole] = useState('');
+  useEffect(() => {
+    const role = localStorage.getItem('role');
+    setRole(role);
+  }, [role]);
   if (!moduleData) {
     return <div>No module data available</div>;
   }
@@ -66,7 +70,7 @@ export default function ModuleDetailsPageAD() {
             md: 2,
             lg: 2,
             xl: 2,
-            xxl:2,
+            xxl: 2,
           }} items={items} />
         </>
       )
@@ -79,13 +83,13 @@ export default function ModuleDetailsPageAD() {
   ];
 
   const handleBackToClassList = () => {
-    navigate('/CLASS_ADMIN/trainer-management', { state: { defaultActiveKey: '3' } });
+    navigate(`/${role}/trainer-management`, { state: { defaultActiveKey: '3' } });
   };
 
 
   return (
     <div className="module-details-container">
-      <Row gutter={[16, 16]} style={{ marginTop:'80px', marginBottom:'16px' }}> {/* Change to column layout */}
+      <Row gutter={[16, 16]} style={{ marginTop: '80px', marginBottom: '16px' }}> {/* Change to column layout */}
         <Col span={10}> {/* Use full width on mobile */}
           <div className='titleMenu'>Module Details: {moduleData.name}</div>
         </Col>

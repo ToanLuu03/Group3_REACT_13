@@ -31,10 +31,13 @@ const AddTrainerPage = () => {
 
   const [skills, setSkills] = useState([]);
   const [token, setToken] = useState('');
+  const [role, setRole] = useState('');
 
   // Fetch token if needed
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    setRole(role)
     if (storedToken) {
       setToken(storedToken);
     }
@@ -85,7 +88,7 @@ const AddTrainerPage = () => {
         placement: "topRight",
         duration: 3,
       });
-      navigate('/CLASS_ADMIN/trainer-list');
+      navigate(`/${role}/trainer-list`);
     } catch (error) {
       const extractedText = error.response.data.message.split(":")[1].trim();
       notification.error({
@@ -429,10 +432,10 @@ const AddTrainerPage = () => {
 
       <Space style={{ marginTop: '24px', justifyContent: 'space-between' }}>
         <div className="button-container">
-          <Button type="default" onClick={() => navigate('/CLASS_ADMIN/trainer-list')}>
+          <Button type="default" onClick={() => navigate(`/${role}/trainer-list`)}>
             Back to Trainers List
           </Button>
-          <Button type="default" onClick={() => navigate('/CLASS_ADMIN/trainer-list')} className="cancel-button">
+          <Button type="default" onClick={() => navigate(`/${role}/trainer-list`)} className="cancel-button">
             Cancel
           </Button>
           <Button type="primary" className="save-button" onClick={handleSave}>

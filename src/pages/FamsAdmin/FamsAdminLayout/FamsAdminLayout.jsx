@@ -16,7 +16,7 @@ function FamsAdminLayout() {
                     } flex-grow p-4`}
             >
                 {/* Outlet renders the child route components */}
-                <Outlet />
+                <Outlet context={{ collapsed }} />
             </div>
         </div>)
 }

@@ -1,5 +1,5 @@
 import { Button, notification, Spin } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   fetchMasterData,
   fetchTrainerInfoV2,
@@ -17,8 +17,10 @@ import SoftSkills from "./SoftSkills/SoftSkills";
 import Certificates from "./Certificates/Certificates";
 import { CancelModal, SaveModal } from "./Modals/Modals";
 import { PlusOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
-function TrainerInformation() {
+import { Link, useOutletContext } from "react-router-dom";
+import { MdOutlineModeEdit } from "react-icons/md";
+
+function TrainerInformation({ isEditing, setIsEditing }) {
   const [trainerTypes, setTrainerTypes] = useState([]);
   const [contributionTypes, setContributionTypes] = useState([]);
   const [sites, setSites] = useState([]);
@@ -33,19 +35,20 @@ function TrainerInformation() {
   const [softSkills, setSoftSkills] = useState([]);
   const [professionalSkills, setProfessionalSkills] = useState([]);
   const [certificates, setCertificates] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState(null);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isTrainer, setIsTrainer] = useState(false);
-  const [roleBack, setRoleBack] = useState('');
-
+  const [roleBack, setRoleBack] = useState("");
+  const { collapsed } = useOutletContext();
+  const inputRefs = useRef([]);
+  const textareaRefs = useRef([]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
@@ -54,7 +57,7 @@ function TrainerInformation() {
       const account = localStorage.getItem("username");
       const token = localStorage.getItem("token");
       const role = localStorage.getItem("role");
-      setRoleBack(role)
+      setRoleBack(role);
       try {
         if (role === "TRAINER") {
           setIsTrainer(false);
@@ -62,8 +65,12 @@ function TrainerInformation() {
           setIsTrainer(true);
         }
         const data = await fetchTrainerInfoV2(account, token);
-        const professionalSkills = data.skills.filter(skill => skill.type === "PROFESSIONAL");
-        const softSkills = data.skills.filter(skill => skill.type === "SOFTSKILL");
+        const professionalSkills = data.skills.filter(
+          (skill) => skill.type === "PROFESSIONAL"
+        );
+        const softSkills = data.skills.filter(
+          (skill) => skill.type === "SOFTSKILL"
+        );
         setGeneralInfo(data.generalInfo);
         setProfessionalSkills(professionalSkills);
         setSoftSkills(softSkills);
@@ -86,24 +93,44 @@ function TrainerInformation() {
 
     fetchTrainerData();
   }, [isTrainer]);
+
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       try {
         const data = await fetchMasterData(token);
-        setTrainerTypes(data.trainerTypes || []);
-        setContributionTypes(data.contributionTypes || []);
-        setSites(data.sites || []);
-        setJobRanks([...new Set(data.jobRank || [])]);
-        setJobTitles([...new Set(data.jobTitle || [])]);
-        setProfessionalLevels(data.professionalLevel || []);
-        setTrainerCertifications(data.trainTheTrainerCert || []);
-        setSkillOptions(data.professionalSkill || []);
-        setLevelOptions(data.professionalSkillLevel || []);
-        setSoftSkillOptions(data.softSkill || []);
+
+        const removeDuplicates = (arr) => {
+          if (!arr || !Array.isArray(arr)) return [];
+
+          const seen = new Set();
+          return arr
+            .map((item) => (item ? item.trim() : ""))
+            .filter((item) => {
+              const lowerCaseItem = item.toLowerCase();
+              if (seen.has(lowerCaseItem) || lowerCaseItem === "") {
+                return false;
+              }
+              seen.add(lowerCaseItem);
+              return true;
+            });
+        };
+
+        setTrainerTypes(removeDuplicates(data.trainerTypes) || []);
+        setContributionTypes(removeDuplicates(data.contributionTypes) || []);
+        setSites(removeDuplicates(data.sites) || []);
+        setJobRanks(removeDuplicates(data.jobRank) || []);
+        setJobTitles(removeDuplicates(data.jobTitle) || []);
+        setProfessionalLevels(removeDuplicates(data.professionalLevel) || []);
+        setTrainerCertifications(
+          removeDuplicates(data.trainTheTrainerCert) || []
+        );
+        setSkillOptions(removeDuplicates(data.professionalSkill) || []);
+        setLevelOptions(removeDuplicates(data.professionalSkillLevel) || []);
+        setSoftSkillOptions(removeDuplicates(data.softSkill) || []);
       } catch (error) {
         notification.error({
-          message: error.response.data.message,
+          message: "Error Fetching Data",
           description:
             "There was an issue fetching the trainer data. Please try again later.",
           duration: 3,
@@ -114,18 +141,24 @@ function TrainerInformation() {
     fetchData();
   }, []);
 
-  const handleEditClick = () => setIsEditing(true);
   const handleSaveClick = () => setShowSaveModal(true);
   const handleCancelClick = () => setShowCancelModal(true);
   const handleConfirmSave = async () => {
-    const invalidSoftSkills = softSkills.some((skill) => !skill.skill || skill.skill === null);
-    const invalidProfessionalSkills = professionalSkills.some((skill) => !skill.skill || skill.skill === null);
-    const invalidCertificates = certificates.some((cert) => !cert.name || !cert.url || !cert.date);
+    const invalidSoftSkills = softSkills.some(
+      (skill) => !skill.skill || skill.skill === null
+    );
+    const invalidProfessionalSkills = professionalSkills.some(
+      (skill) => !skill.skill || skill.skill === null
+    );
+    const invalidCertificates = certificates.some(
+      (cert) => !cert.name || !cert.url || !cert.date
+    );
 
     if (invalidProfessionalSkills) {
       notification.error({
         message: "Error Saving Data",
-        description: "All skills must have a valid name. Please check your entries.",
+        description:
+          "All skills must have a valid name. Please check your entries.",
         duration: 3,
       });
       setShowSaveModal(false);
@@ -135,17 +168,19 @@ function TrainerInformation() {
     if (invalidSoftSkills) {
       notification.error({
         message: "Error Saving Data",
-        description: "All soft skills must have a valid name. Please check your entries.",
+        description:
+          "All soft skills must have a valid name. Please check your entries.",
         duration: 3,
       });
-      setShowSaveModal(false)
+      setShowSaveModal(false);
       return;
     }
 
     if (invalidCertificates) {
       notification.error({
         message: "Error Saving Data",
-        description: "All certificates must have a name, a valid link and a select date. Please check your entries.",
+        description:
+          "All certificates must have a name, a valid link and a select date. Please check your entries.",
         duration: 3,
       });
       setShowSaveModal(false);
@@ -233,14 +268,17 @@ function TrainerInformation() {
       try {
         const response = await uploadAvatar(file, token);
         if (response.success) {
-          setGeneralInfo({ ...generalInfo, avatar: `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/images/${response.data.name}` });
+          setGeneralInfo({
+            ...generalInfo,
+            avatar: `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/images/${response.data.name}`,
+          });
           setTimeout(() => {
             notification.success({
               message: "Avatar Uploaded",
               description: "Your avatar has been uploaded successfully.",
               duration: 3,
             });
-          }, 1000)
+          }, 1000);
         }
       } catch (error) {
         notification.error({
@@ -261,31 +299,82 @@ function TrainerInformation() {
   }
 
   const personalInfo = [
-    { label: "Phone", field: "phone", value: generalInfo.phone, icon: Phone_icon },
-    { label: "Email", field: "email", value: generalInfo.email, icon: Email_icon },
-    { label: "Address", field: "address", value: generalInfo.address, icon: Address_icon },
-    { label: "National ID", field: "nationalId", value: generalInfo.nationalId, icon: National_icon },
+    {
+      label: "Phone",
+      field: "phone",
+      value: generalInfo.phone,
+      icon: Phone_icon,
+    },
+    {
+      label: "Email",
+      field: "email",
+      value: generalInfo.email,
+      icon: Email_icon,
+    },
+    {
+      label: "Address",
+      field: "address",
+      value: generalInfo.address,
+      icon: Address_icon,
+    },
+    {
+      label: "National ID",
+      field: "nationalId",
+      value: generalInfo.nationalId,
+      icon: National_icon,
+    },
   ];
 
   const employeeInfo = [
     { label: "Account", field: "account", value: generalInfo.account },
-    { label: "Employee ID", field: "employeeId", value: generalInfo.employeeId },
+    {
+      label: "Employee ID",
+      field: "employeeId",
+      value: generalInfo.employeeId,
+    },
     { label: "Site", field: "site", value: generalInfo.site },
     { label: "Trainer Type", field: "type", value: generalInfo.type },
-    { label: "Contribution Type", field: "educatorContributionType", value: generalInfo.educatorContributionType },
-    { label: "Trainer Rank", field: "trainerRank", value: generalInfo.trainerRank },
-    { label: "Professional Level", field: "professionalLevel", value: generalInfo.professionalLevel },
-    { label: "Train The Trainer Cert", field: "trainTheTrainerCert", value: generalInfo.trainTheTrainerCert },
-    { label: "Professional Index", field: "professionalIndex", value: generalInfo.professionalIndex },
-    { label: "Training Competency Index", field: "trainingCompetencyIndex", value: generalInfo.trainingCompetencyIndex },
+    {
+      label: "Contribution Type",
+      field: "educatorContributionType",
+      value: generalInfo.educatorContributionType,
+    },
+    {
+      label: "Trainer Rank",
+      field: "trainerRank",
+      value: generalInfo.trainerRank,
+    },
+    {
+      label: "Professional Level",
+      field: "professionalLevel",
+      value: generalInfo.professionalLevel,
+    },
+    {
+      label: "Train The Trainer Cert",
+      field: "trainTheTrainerCert",
+      value: generalInfo.trainTheTrainerCert,
+    },
+    {
+      label: "Professional Index",
+      field: "professionalIndex",
+      value: generalInfo.professionalIndex,
+    },
+    {
+      label: "Training Competency Index",
+      field: "trainingCompetencyIndex",
+      value: generalInfo.trainingCompetencyIndex,
+    },
     { label: "Job Title", field: "jobTitle", value: generalInfo.jobTitle },
     { label: "Job Rank", field: "jobRank", value: generalInfo.jobRank },
   ];
 
   return (
     <div className="h-[calc(100vh - 300px)] m-5">
-      <div className="h-full overflow-y-auto mb-10">
-        <div className={`flex max-xl:flex-col items-start p-4 ${!isEditing ? "mb-[5.7px]" : ""} ${!isEditing ? "" : "max-xl:items-center max-xl:justify-center"}`}>
+     <div className={`h-full overflow-y-auto mb-10 ${isEditing ? "max-md:mb-32" : ""}`}>
+        <div
+          className={`flex max-xl:flex-col items-start p-4 ${!isEditing ? "mb-[5.7px]" : ""
+            } ${!isEditing ? "" : "max-xl:items-center max-xl:justify-center"}`}
+        >
           {isEditing ? (
             <>
               <input
@@ -298,7 +387,9 @@ function TrainerInformation() {
               <label htmlFor="avatar-upload">
                 <div className="flex items-center max-xl:justify-center mr-[14px] max-xl:mr-0 h-[134px] w-[134px] relative">
                   <img
-                    src={generalInfo.avatar || "https://via.placeholder.com/100"}
+                    src={
+                      generalInfo.avatar || "https://via.placeholder.com/100"
+                    }
                     alt="Trainer Avatar"
                     className="h-[134px] w-[134px] rounded-full cursor-pointer"
                   />
@@ -309,7 +400,10 @@ function TrainerInformation() {
               </label>
             </>
           ) : (
-            <label htmlFor="avatar-upload" className="flex max-xl:justify-center max-xl:w-full">
+            <label
+              htmlFor="avatar-upload"
+              className="flex max-xl:justify-center max-xl:w-full"
+            >
               <div className="flex items-center max-xl:justify-center mr-[14px] max-xl:mr-0 h-[134px] w-[134px]">
                 <img
                   src={generalInfo.avatar || "https://via.placeholder.com/100"}
@@ -322,16 +416,26 @@ function TrainerInformation() {
           <div className="flex flex-col w-full max-xl:items-center max-xl:text-center">
             <h1 className="text-xl font-medium">
               {isEditing ? (
-                <input
-                  type="text"
-                  defaultValue={generalInfo.name || "Full Name"}
-                  onChange={(e) =>
-                    setGeneralInfo({ ...generalInfo, name: e.target.value })
-                  }
-                  className="outline-none border-b-2 max-xl:text-center"
-                />
+                <div className="flex">
+                  <input
+                    ref={(el) => (inputRefs.current = el)}
+                    type="text"
+                    defaultValue={generalInfo.name || "Full Name"}
+                    onChange={(e) =>
+                      setGeneralInfo({ ...generalInfo, name: e.target.value })
+                    }
+                    className="outline-none border-b-2 max-xl:text-center"
+                  />
+                  <span className="ml-2 text-gray-400 cursor-pointer text-xl place-self-end"
+                    onClick={() => inputRefs.current?.focus()}
+                  >
+                    <MdOutlineModeEdit />
+                  </span>
+                </div>
               ) : (
-                <div className="pb-[2px]">{generalInfo.name || "Full Name"}</div>
+                <div className="pb-[2px]">
+                  {generalInfo.name || "Full Name"}
+                </div>
               )}
             </h1>
             <p className="text-gray-500 italic mb-1">
@@ -339,16 +443,33 @@ function TrainerInformation() {
             </p>
             <div className="flex-1 max-xl:w-full max-xl:flex max-xl:justify-center">
               {isEditing ? (
-                <textarea
-                  value={generalInfo.description}
-                  onChange={(e) =>
-                    setGeneralInfo({
-                      ...generalInfo,
-                      description: e.target.value,
-                    })
-                  }
-                  className="outline-none border-none w-full h-20 bg-gray-200 p-1 resize-none max-xl:text-center"
-                />
+                <div className="flex">
+                  <textarea
+                    value={generalInfo.description}
+                    ref={(el) => (textareaRefs.current = el)}
+                    onChange={(e) =>
+                      setGeneralInfo({
+                        ...generalInfo,
+                        description: e.target.value,
+                      })
+                    }
+                    className="outline-none border-none w-full h-20 bg-gray-200 p-1 resize-none max-xl:text-center"
+                  />
+                  <span className="ml-2 text-gray-400 cursor-pointer text-xl place-self-end"
+                    onClick={() => {
+                      const textarea = textareaRefs.current;
+                      if (textarea) {
+                        textarea.focus();
+                        textarea.setSelectionRange(
+                          textarea.value.length,
+                          textarea.value.length
+                        );
+                      }
+                    }}
+                  >
+                    <MdOutlineModeEdit />
+                  </span>
+                </div>
               ) : (
                 <p className="h-20 p-1 bg-gray-200 w-full max-xl:text-center">
                   {generalInfo.description}
@@ -404,44 +525,39 @@ function TrainerInformation() {
         </div>
       </div>
       <div
+        className={`fixed bottom-0 left-0 ${collapsed ? "md:left-0" : "md:left-64"
+          } right-0 bg-white p-4 flex flex-col md:flex-row justify-between border-t shadow-lg gap-2`}
       >
-        <div>
-          {!isEditing ? (
-            <div className="flex justify-between items-center mt-4">
-              <Button
-                type="default"
-                className="text-gray-700 border-gray-300 hover:border-gray-400 hover:text-gray-800"
-              >
-                <Link to={`/${roleBack}`} className="text-inherit">Back to Home Page</Link>
-              </Button>
-              <Button
-                type="primary"
-                onClick={handleEditClick}
-                className="ml-4 bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Update
-              </Button>
-            </div>
+        <Button
+          type="default"
+          className="w-full md:w-auto text-sm md:text-base order-last md:order-first"
+        >
+          <Link to={`/${roleBack}`} className="text-inherit">
+            Back to Home Page
+          </Link>
+        </Button>
 
-          ) : (
+        <div className="flex gap-2 flex-col md:flex-row w-full md:w-auto justify-end">
+          {isEditing &&
             <>
               <Button
-                type="primary"
-                onClick={handleSaveClick}
-                className=""
-              >
-                Save changes
-              </Button>
-              <Button
                 onClick={handleCancelClick}
-                className=""
+                className="w-full md:w-auto text-sm md:text-base"
               >
                 Cancel
               </Button>
+              <Button
+                type="primary"
+                onClick={handleSaveClick}
+                className="w-full md:w-auto text-sm md:text-base"
+              >
+                Save changes
+              </Button>
             </>
-          )}
+          }
         </div>
       </div>
+
       <SaveModal
         showSaveModal={showSaveModal}
         handleConfirmSave={handleConfirmSave}
@@ -456,8 +572,5 @@ function TrainerInformation() {
     </div>
   );
 }
-
-
-
 
 export default TrainerInformation;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Input, InputNumber, Popconfirm, Spin } from "antd";
+import { Table, Button, Input, InputNumber, Popconfirm, Spin, notification } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import {
   fetchTrainerUnitPrices,
@@ -18,10 +18,13 @@ function TrainerUnitPricePage() {
   const [name, setName] = useState("");
   const [trainerId, setTrainerId] = useState("");
   const { collapsed } = useOutletContext();
+  const [role, setRole] = useState(''); // Default role can be 'admin', 'user', etc.
 
   const fetchData = async () => {
     const token = localStorage.getItem("token");
     const account = localStorage.getItem("trainerAccount");
+    const role = localStorage.getItem("role");
+    setRole(role)
     fetchTrainerUnitPrices(account, token)
       .then((data) => {
         if (data && data.data && Array.isArray(data.data.trainerUnitPrice)) {
@@ -83,7 +86,10 @@ function TrainerUnitPricePage() {
 
     try {
       const token = localStorage.getItem("token");
+      // Cập nhật dữ liệu
       await updateTrainerUnitPrices(dataToSave, token);
+
+      // Nếu có dữ liệu mới, thêm nó
       if (newRowData) {
         const newUnitData = {
           unitCode: newRowData.unitCode,
@@ -95,12 +101,27 @@ function TrainerUnitPricePage() {
         };
         await addTrainerUnitPrice([newUnitData], token);
       }
+
+      // Làm mới dữ liệu
       fetchData();
       setNewRowData(null);
+
+      // Thông báo thành công
+      notification.success({
+        message: "Save Successful",
+        description: "The data has been successfully saved.",
+      });
     } catch (error) {
       console.error("Error while updating:", error);
+
+      // Thông báo lỗi
+      notification.error({
+        message: "Save Failed",
+        description: "An error occurred while saving the data. Please try again.",
+      });
+    } finally {
+      setIsEditing(false); // Đảm bảo chế độ chỉnh sửa được tắt
     }
-    setIsEditing(false);
   };
 
   const handleCancelClick = () => {
@@ -114,8 +135,18 @@ function TrainerUnitPricePage() {
       const token = localStorage.getItem("token");
       await deleteTrainerUnitPrices([id], token);
       fetchData();
+      // Thông báo thành công
+      notification.success({
+        message: "Delete Successful",
+        description: "The trainer unit price has been deleted successfully.",
+      });
     } catch (error) {
       console.error("Error while deleting:", error);
+      // Thông báo lỗi
+      notification.error({
+        message: "Delete Failed",
+        description: "An error occurred while deleting. Please try again.",
+      });
     }
   };
 
@@ -134,7 +165,11 @@ function TrainerUnitPricePage() {
   };
 
   const columns = [
-    { title: "No", dataIndex: "id", key: "id" },
+    {
+      title: 'No.',
+      key: 'index',
+      render: (_, __, index) => index + 1,
+    },
     {
       title: "Unit Code",
       dataIndex: "unitCode",
@@ -269,7 +304,7 @@ function TrainerUnitPricePage() {
               type="default"
               className="w-full md:w-auto text-sm md:text-base order-last md:order-first"
             >
-              <Link to="/CLASS_ADMIN/trainer-list">Back to Trainers List</Link>
+              <Link to={`/${role}/trainer-list`}>Back to Trainers List</Link>
             </Button>
           </div>
         </>

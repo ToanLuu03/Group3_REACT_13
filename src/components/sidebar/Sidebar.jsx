@@ -152,7 +152,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
         label: 'Class Management',
       },
       {
-        key: '/DELIVERY_MANAGER/trainer-management',
+        key: '/DELIVERY_MANAGER/trainer-list',
         icon: <img src={TrainerManagement} width={25} alt="" />,
         label: 'Trainer Management',
       },

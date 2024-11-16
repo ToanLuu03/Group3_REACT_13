@@ -54,7 +54,7 @@ const SchedulePage = () => {
   const errorFreeTime = useSelector(
     (state) => state.schedule.error.getFreeTime
   );
-
+  const [role, setRole] = useState(''); // Default role can be 'admin', 'user', etc.
   const [visiblePopover, setVisiblePopover] = useState({});
   const calendarRef = useRef(null);
   const [currentDate, setCurrentDate] = useState(dayjs());
@@ -63,6 +63,8 @@ const SchedulePage = () => {
 
   useEffect(() => {
     if (calendarRef.current) {
+      const role = localStorage.getItem("role");
+      setRole(role);
       const calendarApi = calendarRef.current.getApi();
       if (calendarApi) {
         setTimeout(() => {
@@ -369,15 +371,14 @@ const SchedulePage = () => {
             eventContent={(arg) => {
               const { type, room, admin, isFreeTime } = arg.event.extendedProps;
               const eventClass = `h-full w-full rounded-md p-2 text-white text-center 
-                         ${
-                           type === "fresher"
-                             ? "bg-orange-400"
-                             : type === "intern"
-                             ? "bg-green-400"
-                             : type === "free_time"
-                             ? "bg-[#509ADF] bg-opacity-75"
-                             : ""
-                         }
+                         ${type === "fresher"
+                  ? "bg-orange-400"
+                  : type === "intern"
+                    ? "bg-green-400"
+                    : type === "free_time"
+                      ? "bg-[#509ADF] bg-opacity-75"
+                      : ""
+                }
                                      text-xs sm:text-sm lg:text-base`;
               return (
                 <Popover
@@ -441,13 +442,12 @@ const SchedulePage = () => {
                   )}
                   title={
                     <span
-                      className={`font-bold ${
-                        type === "fresher"
+                      className={`font-bold ${type === "fresher"
                           ? "text-orange-500"
                           : type === "intern"
-                          ? "text-green-500"
-                          : "text-[#509ADF]"
-                      }`}
+                            ? "text-green-500"
+                            : "text-[#509ADF]"
+                        }`}
                     >
                       {arg.event.title}
                     </span>
@@ -488,7 +488,7 @@ const SchedulePage = () => {
         </div>
       </div>
       <Button type="default" className="max-lg:w-full mt-2 mb-0">
-        <Link to="/CLASS_ADMIN/trainer-list">Back to Trainers List</Link>
+        <Link to={`/${role}/trainer-list`}>Back to Trainers List</Link>
       </Button>
     </div>
   );

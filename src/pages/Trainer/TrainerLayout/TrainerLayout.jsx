@@ -16,7 +16,7 @@ const TrainerLayout = () => {
         } flex-grow p-4 overflow-auto`}
       >
         {/* Outlet renders the child route components */}
-        <Outlet />
+        <Outlet context={{ collapsed }}/>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { Button, notification, Spin } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import {
     fetchMasterData,
     fetchTrainerInfoV2,
@@ -18,6 +18,7 @@ import SoftSkills from "./SoftSkills/SoftSkills";
 import Certificates from "./Certificates/Certificates";
 import { CancelModal, SaveModal } from "./Modals/Modals";
 import { PlusOutlined } from "@ant-design/icons";
+import { MdOutlineModeEdit } from "react-icons/md";
 function TrainerProfile() {
     const [trainerTypes, setTrainerTypes] = useState([]);
     const [contributionTypes, setContributionTypes] = useState([]);
@@ -38,6 +39,10 @@ function TrainerProfile() {
     const [originalData, setOriginalData] = useState(null);
     const [showSaveModal, setShowSaveModal] = useState(false);
     const [showCancelModal, setShowCancelModal] = useState(false);
+    const [role, setRole] = useState(''); // Default role can be 'admin', 'user', etc.
+
+    const inputRefs = useRef([]);
+    const textareaRefs = useRef([]);
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -51,7 +56,8 @@ function TrainerProfile() {
         const fetchTrainerData = async () => {
             const account = localStorage.getItem("trainerAccount");
             const token = localStorage.getItem("token");
-
+            const role = localStorage.getItem("role");
+            setRole(role)
             try {
                 const data = await fetchTrainerInfoV2(account, token);
                 const professionalSkills = data.skills.filter(skill => skill.type === "PROFESSIONAL");
@@ -84,22 +90,37 @@ function TrainerProfile() {
             const token = localStorage.getItem("token");
             try {
                 const data = await fetchMasterData(token);
-                setTrainerTypes(data.trainerTypes || []);
-                setContributionTypes(data.contributionTypes || []);
-                setSites(data.sites || []);
-                setJobRanks([...new Set(data.jobRank || [])]);
-                setJobTitles([...new Set(data.jobTitle || [])]);
-                // setProfessionalLevels(data.professionalLevel || []);
-                setProfessionalLevels([...new Set(data.professionalLevel || [])])
-                setTrainerCertifications(data.trainTheTrainerCert || []);
-                setSkillOptions(data.professionalSkill || []);
-                setLevelOptions(data.professionalSkillLevel || []);
-                setSoftSkillOptions(data.softSkill || []);
+
+                const removeDuplicates = (arr) => {
+                    if (!arr || !Array.isArray(arr)) return [];
+
+                    const seen = new Set();
+                    return arr
+                        .map(item => item ? item.trim() : '')
+                        .filter(item => {
+                            const lowerCaseItem = item.toLowerCase();
+                            if (seen.has(lowerCaseItem) || lowerCaseItem === "") {
+                                return false;
+                            }
+                            seen.add(lowerCaseItem);
+                            return true;
+                        });
+                };
+
+                setTrainerTypes(removeDuplicates(data.trainerTypes) || []);
+                setContributionTypes(removeDuplicates(data.contributionTypes) || []);
+                setSites(removeDuplicates(data.sites) || []);
+                setJobRanks(removeDuplicates(data.jobRank) || []);
+                setJobTitles(removeDuplicates(data.jobTitle) || []);
+                setProfessionalLevels(removeDuplicates(data.professionalLevel) || []);
+                setTrainerCertifications(removeDuplicates(data.trainTheTrainerCert) || []);
+                setSkillOptions(removeDuplicates(data.professionalSkill) || []);
+                setLevelOptions(removeDuplicates(data.professionalSkillLevel) || []);
+                setSoftSkillOptions(removeDuplicates(data.softSkill) || []);
             } catch (error) {
                 notification.error({
                     message: "Error Fetching Data",
-                    description:
-                        "There was an issue fetching the trainer data. Please try again later.",
+                    description: "There was an issue fetching the trainer data. Please try again later.",
                     duration: 3,
                 });
             }
@@ -205,7 +226,7 @@ function TrainerProfile() {
                 duration: 3,
             });
         } finally {
-            setShowSaveModal(false); 
+            setShowSaveModal(false);
         }
     };
 
@@ -278,7 +299,7 @@ function TrainerProfile() {
 
     return (
         <div className="h-[calc(100vh - 300px)] m-5">
-            <div className="h-full overflow-y-auto mb-10">
+            <div className={`h-full overflow-y-auto mb-10 ${isEditing ? "max-md:mb-28" : ""}`}>
                 <div className={`flex max-xl:flex-col items-start p-4 ${!isEditing ? "mb-[5.7px]" : ""} ${!isEditing ? "" : "max-xl:items-center max-xl:justify-center"}`}>
                     {isEditing ? (
                         <>
@@ -316,14 +337,22 @@ function TrainerProfile() {
                     <div className="flex flex-col w-full max-xl:items-center max-xl:text-center">
                         <h1 className="text-xl font-medium">
                             {isEditing ? (
-                                <input
-                                    type="text"
-                                    defaultValue={generalInfo.name || "Full Name"}
-                                    onChange={(e) =>
-                                        setGeneralInfo({ ...generalInfo, name: e.target.value })
-                                    }
-                                    className="outline-none border-b-2 max-xl:text-center"
-                                />
+                                <div className="flex">
+                                    <input
+                                        ref={(el) => (inputRefs.current = el)}
+                                        type="text"
+                                        defaultValue={generalInfo.name || "Full Name"}
+                                        onChange={(e) =>
+                                            setGeneralInfo({ ...generalInfo, name: e.target.value })
+                                        }
+                                        className="outline-none border-b-2 max-xl:text-center"
+                                    />
+                                    <span className="ml-2 text-gray-400 cursor-pointer text-xl place-self-end"
+                                        onClick={() => inputRefs.current?.focus()}
+                                    >
+                                        <MdOutlineModeEdit />
+                                    </span>
+                                </div>
                             ) : (
                                 <div className="pb-[2px]">{generalInfo.name || "Full Name"}</div>
                             )}
@@ -333,16 +362,33 @@ function TrainerProfile() {
                         </p>
                         <div className="flex-1 max-xl:w-full max-xl:flex max-xl:justify-center">
                             {isEditing ? (
-                                <textarea
-                                    value={generalInfo.description}
-                                    onChange={(e) =>
-                                        setGeneralInfo({
-                                            ...generalInfo,
-                                            description: e.target.value,
-                                        })
-                                    }
-                                    className="outline-none border-none w-full h-20 bg-gray-200 p-1 resize-none max-xl:text-center"
-                                />
+                                <div className="flex">
+                                    <textarea
+                                        value={generalInfo.description}
+                                        ref={(el) => (textareaRefs.current = el)}
+                                        onChange={(e) =>
+                                            setGeneralInfo({
+                                                ...generalInfo,
+                                                description: e.target.value,
+                                            })
+                                        }
+                                        className="outline-none border-none w-full h-20 bg-gray-200 p-1 resize-none max-xl:text-center"
+                                    />
+                                    <span className="ml-2 text-gray-400 cursor-pointer text-xl place-self-end"
+                                        onClick={() => {
+                                            const textarea = textareaRefs.current;
+                                            if (textarea) {
+                                                textarea.focus();
+                                                textarea.setSelectionRange(
+                                                    textarea.value.length,
+                                                    textarea.value.length
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        <MdOutlineModeEdit />
+                                    </span>
+                                </div>
                             ) : (
                                 <p className="h-20 p-1 bg-gray-200 w-full max-xl:text-center">
                                     {generalInfo.description}
@@ -405,10 +451,10 @@ function TrainerProfile() {
                     type="default"
                     className="w-full md:w-auto text-sm md:text-base order-last md:order-first"
                 >
-                    <Link to="/CLASS_ADMIN/trainer-list">Back to Trainers List</Link>
+                    <Link to={`/${role}/trainer-list`}>Back to Trainers List</Link>
                 </Button>
 
-                <div className="flex gap-4 flex-col md:flex-row w-full md:w-auto justify-end">
+                <div className="flex gap-2 flex-col md:flex-row w-full md:w-auto justify-end">
                     {!isEditing ? (
                         <Button
                             type="primary"
@@ -420,17 +466,17 @@ function TrainerProfile() {
                     ) : (
                         <>
                             <Button
+                                onClick={handleCancelClick}
+                                className="w-full md:w-auto text-sm md:text-base"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
                                 type="primary"
                                 onClick={handleSaveClick}
                                 className="w-full md:w-auto text-sm md:text-base"
                             >
                                 Save changes
-                            </Button>
-                            <Button
-                                onClick={handleCancelClick}
-                                className="max-md:mb-2 w-full md:w-auto text-sm md:text-base"
-                            >
-                                Cancel
                             </Button>
                         </>
                     )}

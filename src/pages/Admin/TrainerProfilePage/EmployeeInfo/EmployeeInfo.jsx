@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Select } from "antd";
+import { MdOutlineModeEdit } from "react-icons/md";
 
 const EmployeeInfo = ({
     employeeInfo,
@@ -14,6 +15,7 @@ const EmployeeInfo = ({
     professionalLevels,
     trainerCertifications,
 }) => {
+    const inputRefs = useRef([]);
     return (
         <div className=" p-4">
             <h2 className="font-medium uppercase text-lg text-center rounded-full border py-2 bg-gray-300 mb-4">
@@ -28,8 +30,9 @@ const EmployeeInfo = ({
                         {item.label === "Account" ? (
                             <div>{item.value || "Not Available"}</div>
                         ) : isEditing && ["Site", "Trainer Type", "Contribution Type", "Trainer Rank", "Professional Level", "Train The Trainer Cert", "Job Title", "Job Rank"].includes(item.label) ? (
-                            <div className="flex-1">
+                            <div className="flex-1 flex items-end">
                                 <Select
+                                    ref={(el) => (inputRefs.current[index] = el)}
                                     value={generalInfo[item.field]}
                                     onChange={(value) =>
                                         setGeneralInfo({
@@ -53,10 +56,16 @@ const EmployeeInfo = ({
                                         </Select.Option>
                                     ))}
                                 </Select>
+                                <span className="ml-2 text-gray-400 cursor-pointer text-xl"
+                                    onClick={() => inputRefs.current[index]?.focus()}
+                                >
+                                    <MdOutlineModeEdit />
+                                </span>
                             </div>
                         ) : isEditing ? (
-                            <div className="flex-1">
+                            <div className="flex-1 flex items-end">
                                 <input
+                                    ref={(el) => (inputRefs.current[index] = el)}
                                     type="text"
                                     value={generalInfo[item.field]}
                                     onChange={(e) =>
@@ -67,6 +76,11 @@ const EmployeeInfo = ({
                                     }
                                     className="outline-none border-b-2 w-full"
                                 />
+                                <span className="ml-2 text-gray-400 cursor-pointer text-xl"
+                                    onClick={() => inputRefs.current[index]?.focus()}
+                                >
+                                    <MdOutlineModeEdit />
+                                </span>
                             </div>
                         ) : (
                             <div>{item.value || "Not Available"}</div>

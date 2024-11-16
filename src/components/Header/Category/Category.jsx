@@ -45,7 +45,7 @@ const Category = ({ selectedTrainer }) => {
       { name: "Module Info", link: "/moduleinfo" },
       { name: "Feedback", link: "/feedback" },
     ]
-    : role === "CLASS_ADMIN"
+    : role === "CLASS_ADMIN" || role === "DELIVERY_MANAGER"
       ? [
         { name: "Trainer Information", link: "/trainer-information" },
         { name: "Trainer Unit Price", link: "/trainer-unit-price" },
@@ -104,7 +104,7 @@ const Category = ({ selectedTrainer }) => {
 
       {/* Responsive content */}
       <div className="mt-3 px-4 md:px-6 lg:px-8">
-        {role === "CLASS_ADMIN" ? (
+        {role === "CLASS_ADMIN" || "DELIVERY_MANAGER"? (
           <>
             {!showModuleInfo && activeCategory === 0 && (
               <TrainerProfile selectedTrainer={selectedTrainer} />

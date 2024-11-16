@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Input, DatePicker, notification } from "antd";
 import {
-    DeleteOutlined,
-    LinkOutlined,
     DownloadOutlined,
     PlusOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
+import { DeleteModal } from "../Modals/Modals";
+import { FaLink, FaTrashCan } from "react-icons/fa6";
 
 const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -14,45 +14,65 @@ const formatDate = (dateString) => {
 };
 
 const Certificates = ({ certificates, isEditing, setCertificates }) => {
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [certificateToDelete, setCertificateToDelete] = useState(null);
+
     const handleRemoveCertificate = (index) => {
+        setCertificateToDelete(index);
+        setShowDeleteModal(true);
+    };
+
+    const handleConfirmDelete = () => {
         const updatedCertificates = [...certificates];
-        updatedCertificates.splice(index, 1);
+        updatedCertificates.splice(certificateToDelete, 1);
         setCertificates(updatedCertificates);
+        setShowDeleteModal(false);
     };
 
     const handleAddNewCertificate = () => {
-        setCertificates([...certificates, { name: "", url: "", date: "" }]);
+        const newCertificate = { name: "", url: "", date: "" };
+
+        const isDuplicate = certificates.some(
+            (cert) =>
+                cert.name.toLowerCase() === newCertificate.name.toLowerCase() &&
+                cert.url === newCertificate.url
+        );
+
+        if (isDuplicate) {
+            notification.error({
+                message: "Duplicate Certificate",
+                description: "The certificate with this name and URL already exists.",
+                duration: 3,
+            });
+        } else {
+            setCertificates([...certificates, newCertificate]);
+        }
     };
 
     const handleEditCertificate = (index, field, value) => {
         const updatedCertificates = [...certificates];
         updatedCertificates[index][field] = value;
-        setCertificates(updatedCertificates);
-    };
 
-    const handleDownload = async (url) => {
-        try {
-            const response = await fetch(url);
-            const blob = await response.blob();
-            const urlBlob = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = urlBlob;
-            a.download = "certificate";
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(urlBlob);
-        } catch (error) {
+        const isDuplicate = updatedCertificates.some(
+            (cert, idx) =>
+                idx !== index &&
+                cert.name.toLowerCase() === updatedCertificates[index].name.toLowerCase() &&
+                cert.url === updatedCertificates[index].url
+        );
+
+        if (isDuplicate) {
             notification.error({
-                message: "Error Download Failed",
-                description: "Could not download the certificate. Please try again.",
+                message: "Duplicate Certificate",
+                description: "This certificate with the same name and URL already exists.",
                 duration: 3,
             });
+        } else {
+            setCertificates(updatedCertificates);
         }
     };
 
     return (
-        <div className="p-4">
+        <div className="p-4 mb-8">
             <h2 className="font-medium uppercase text-lg text-center rounded-full border py-2 bg-gray-300 mb-4">
                 Certificates
             </h2>
@@ -61,7 +81,7 @@ const Certificates = ({ certificates, isEditing, setCertificates }) => {
                     <div className="flex-1 flex flex-col gap-2">
                         <div className="flex items-center">
                             <div className="flex items-center gap-5 flex-1">
-                                <div className="w-4 h-4 bg-black rounded-full"></div>
+                                <span className={`w-4 ${isEditing ? "w-[18px]" : ""} h-4 bg-black rounded-full`}></span>
                                 {isEditing ? (
                                     <Input
                                         placeholder="Certification Name"
@@ -69,7 +89,7 @@ const Certificates = ({ certificates, isEditing, setCertificates }) => {
                                         onChange={(e) =>
                                             handleEditCertificate(index, "name", e.target.value)
                                         }
-                                        className="w-full max-md:w-40"
+                                        className="w-full max-sm:max-w-auto"
                                     />
                                 ) : (
                                     <div className="text-black font-semibold">{cert.name}</div>
@@ -77,6 +97,7 @@ const Certificates = ({ certificates, isEditing, setCertificates }) => {
                             </div>
                             {isEditing ? (
                                 <DatePicker
+                                    style={{ width: 120 }}
                                     placeholder="Select Date"
                                     value={cert.date ? moment(cert.date, "YYYY-MM-DD") : null}
                                     onChange={(date, dateString) =>
@@ -89,7 +110,7 @@ const Certificates = ({ certificates, isEditing, setCertificates }) => {
                             )}
                         </div>
                         <div className="flex items-center gap-5">
-                            <LinkOutlined className="w-5 h-5" />
+                            <FaLink className="w-5 h-5" />
                             {isEditing ? (
                                 <Input
                                     placeholder="Certification URL"
@@ -110,12 +131,12 @@ const Certificates = ({ certificates, isEditing, setCertificates }) => {
                                 </a>
                             )}
                             {!isEditing && (
-                                <p
-                                    onClick={() => handleDownload(cert.url)}
+                                <a
+                                    href={cert.url}
                                     className="text-gray-500 hover:text-black cursor-pointer"
                                 >
                                     <DownloadOutlined className="w-5 h-5" />
-                                </p>
+                                </a>
                             )}
                         </div>
                     </div>
@@ -126,7 +147,7 @@ const Certificates = ({ certificates, isEditing, setCertificates }) => {
                                 className="text-red-500 font-medium"
                                 onClick={() => handleRemoveCertificate(index)}
                             >
-                                <DeleteOutlined />
+                                <FaTrashCan />
                             </Button>
                         )}
                     </div>
@@ -141,6 +162,11 @@ const Certificates = ({ certificates, isEditing, setCertificates }) => {
                     <PlusOutlined /> Add New Certification
                 </Button>
             )}
+            <DeleteModal
+                showDeleteModal={showDeleteModal}
+                handleConfirmDelete={handleConfirmDelete}
+                setShowDeleteModal={setShowDeleteModal}
+            />
         </div>
     );
 };

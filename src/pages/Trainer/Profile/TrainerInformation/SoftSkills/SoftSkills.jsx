@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { Select, Button } from "antd";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
+import { DeleteModal } from "../Modals/Modals";
+import { FaTrashCan } from "react-icons/fa6";
 
 const SoftSkills = ({ softSkills, isEditing, softSkillOptions, setSoftSkills }) => {
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [skillToDelete, setSkillToDelete] = useState(null);
+
     const handleRemoveSoftSkill = (index) => {
-        const updatedSkills = [...softSkills];
-        updatedSkills.splice(index, 1);
-        setSoftSkills(updatedSkills);
+        setSkillToDelete(index);
+        setShowDeleteModal(true);
     };
+
+    const handleConfirmDelete = () => {
+        const updatedSkills = [...softSkills];
+        updatedSkills.splice(skillToDelete, 1);
+        setSoftSkills(updatedSkills);
+        setShowDeleteModal(false);
+    };
+
     const handleAddSoftSkill = () => {
         setSoftSkills([...softSkills, { skill: "" }]);
     };
@@ -18,7 +30,7 @@ const SoftSkills = ({ softSkills, isEditing, softSkillOptions, setSoftSkills }) 
             </h2>
             {softSkills.map((skill, index) => (
                 <div key={index} className="flex items-center mt-[10px] gap-5 w-full">
-                    <span className="w-4 h-4 bg-black rounded-full"></span>
+                    <span className={`w-4 ${isEditing ? "w-[19px]" : ""} h-4 bg-black rounded-full`}></span>
                     {isEditing ? (
                         <Select
                             value={skill.skill || undefined}
@@ -30,11 +42,19 @@ const SoftSkills = ({ softSkills, isEditing, softSkillOptions, setSoftSkills }) 
                             }}
                             className="w-full text-center mt-[10px]"
                         >
-                            {softSkillOptions.map((option, idx) => (
-                                <Select.Option key={idx} value={option}>
-                                    {option}
-                                </Select.Option>
-                            ))}
+                            {softSkillOptions.map((option, idx) => {
+                                const isDisabled = softSkills.some(s => s.skill === option);
+                                return (
+                                    <Select.Option
+                                        key={idx}
+                                        value={option}
+                                        disabled={isDisabled}
+                                        title={isDisabled ? 'This soft skill is already selected' : ''}
+                                    >
+                                        {option}
+                                    </Select.Option>
+                                );
+                            })}
                         </Select>
                     ) : (
                         <p className="text-gray-700">{skill.skill}</p>
@@ -45,7 +65,7 @@ const SoftSkills = ({ softSkills, isEditing, softSkillOptions, setSoftSkills }) 
                             className="text-red-500 font-medium"
                             onClick={() => handleRemoveSoftSkill(index)}
                         >
-                            <DeleteOutlined />
+                            <FaTrashCan />
                         </Button>
                     )}
                 </div>
@@ -59,6 +79,11 @@ const SoftSkills = ({ softSkills, isEditing, softSkillOptions, setSoftSkills }) 
                     <PlusOutlined /> Add New Soft Skill
                 </Button>
             )}
+            <DeleteModal
+                showDeleteModal={showDeleteModal}
+                handleConfirmDelete={handleConfirmDelete}
+                setShowDeleteModal={setShowDeleteModal}
+            />
         </div>
     );
 };
