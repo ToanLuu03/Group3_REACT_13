@@ -260,6 +260,7 @@ const GeneralData = () => {
         let technicalData = [];
         let startDate = null;
         let endDate = null;
+        const allTechnologies = new Set();
 
         const monthNames = [
           "JAN",
@@ -295,8 +296,9 @@ const GeneralData = () => {
               Object.values(yearData.moth).forEach((monthData) => {
                 Object.values(monthData.day).forEach((dayData) => {
                   if (isTechnicalChecked) {
-                    Object.entries(dayData.totalClassPerTech).forEach(
+                    Object.entries(dayData.totalClassPerTech || {}).forEach(
                       ([tech, value]) => {
+                        allTechnologies.add(tech);
                         entry.totalClassPerTech[tech] =
                           (entry.totalClassPerTech[tech] || 0) + value;
                       }
@@ -304,8 +306,9 @@ const GeneralData = () => {
                   }
 
                   if (isStudentChecked) {
-                    Object.entries(dayData.totalTraineePerTech).forEach(
+                    Object.entries(dayData.totalTraineePerTech || {}).forEach(
                       ([tech, value]) => {
+                        allTechnologies.add(tech);
                         entry.totalTraineePerTech[tech] =
                           (entry.totalTraineePerTech[tech] || 0) + value;
                       }
@@ -320,19 +323,18 @@ const GeneralData = () => {
         } else if (yearToDate || oneYear) {
           const currentYear = new Date().getFullYear().toString();
           const monthlyData =
-            data.data.technicalManager.year[currentYear]?.moth;
-          if (monthlyData) {
+            data.data.technicalManager.year[currentYear]?.moth || {};
+          if (Object.keys(monthlyData).length > 0) {
             const firstMonth = Object.keys(monthlyData)[0];
             const firstDay = Object.keys(monthlyData[firstMonth].day)[0];
-            startDate = `${String(firstDay).padStart(2, "0")} ${
-              monthNames[firstMonth - 1]
-            } ${currentYear.slice(-2)}`;
+            startDate = `${String(firstDay).padStart(2, "0")} ${monthNames[firstMonth - 1]
+              } ${currentYear.slice(-2)}`;
 
             const lastMonth = Object.keys(monthlyData).pop();
             const lastDay = Object.keys(monthlyData[lastMonth].day).pop();
-            endDate = `${String(lastDay).padStart(2, "0")} ${
-              monthNames[lastMonth - 1]
-            } ${currentYear.slice(-2)}`;
+            endDate = `${String(lastDay).padStart(2, "0")} ${monthNames[lastMonth - 1]
+              } ${currentYear.slice(-2)}`;
+
             technicalData = Object.entries(monthlyData).map(
               ([month, monthData]) => {
                 let entry = {
@@ -343,8 +345,9 @@ const GeneralData = () => {
 
                 Object.values(monthData.day).forEach((dayData) => {
                   if (isTechnicalChecked) {
-                    Object.entries(dayData.totalClassPerTech).forEach(
+                    Object.entries(dayData.totalClassPerTech || {}).forEach(
                       ([tech, value]) => {
+                        allTechnologies.add(tech);
                         entry.totalClassPerTech[tech] =
                           (entry.totalClassPerTech[tech] || 0) + value;
                       }
@@ -352,8 +355,9 @@ const GeneralData = () => {
                   }
 
                   if (isStudentChecked) {
-                    Object.entries(dayData.totalTraineePerTech).forEach(
+                    Object.entries(dayData.totalTraineePerTech || {}).forEach(
                       ([tech, value]) => {
+                        allTechnologies.add(tech);
                         entry.totalTraineePerTech[tech] =
                           (entry.totalTraineePerTech[tech] || 0) + value;
                       }
@@ -366,6 +370,19 @@ const GeneralData = () => {
             );
           }
         }
+
+        technicalData.forEach((entry) => {
+          allTechnologies.forEach((tech) => {
+            if (isTechnicalChecked) {
+              entry.totalClassPerTech[tech] =
+                entry.totalClassPerTech[tech] || 0;
+            }
+            if (isStudentChecked) {
+              entry.totalTraineePerTech[tech] =
+                entry.totalTraineePerTech[tech] || 0;
+            }
+          });
+        });
 
         setTechnicalManager((prev) => ({
           ...prev,
@@ -382,6 +399,7 @@ const GeneralData = () => {
       setLoadingTechnicalLine(false);
     }
   };
+
 
   const formatChartData = (
     data,
@@ -526,21 +544,21 @@ const GeneralData = () => {
 
       return monthlyData
         ? monthlyData.months.map((month) => ({
-            labelDate: month.month,
-            Active: month.days.reduce((sum, day) => sum + day.status.ACTIVE, 0),
-            DropOut: month.days.reduce(
-              (sum, day) => sum + day.status.DROP_OUT,
-              0
-            ),
-            Enrolled: month.days.reduce(
-              (sum, day) => sum + day.status.ENROLLED,
-              0
-            ),
-            Rejected: month.days.reduce(
-              (sum, day) => sum + day.status.REJECTED,
-              0
-            ),
-          }))
+          labelDate: month.month,
+          Active: month.days.reduce((sum, day) => sum + day.status.ACTIVE, 0),
+          DropOut: month.days.reduce(
+            (sum, day) => sum + day.status.DROP_OUT,
+            0
+          ),
+          Enrolled: month.days.reduce(
+            (sum, day) => sum + day.status.ENROLLED,
+            0
+          ),
+          Rejected: month.days.reduce(
+            (sum, day) => sum + day.status.REJECTED,
+            0
+          ),
+        }))
         : [];
     }
 
@@ -655,7 +673,7 @@ const GeneralData = () => {
           >
             <div>
               <p>
-              <CountUp
+                <CountUp
                   start={isLoading ? 0 : null}
                   end={isLoading ? 0 : item.value}
                   duration={1}

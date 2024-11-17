@@ -12,7 +12,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { Button, Modal, Popover, Spin } from "antd";
 import dayjs from "dayjs";
 import "./SchedulePage.css";
-import LeftCalendar from "../../../components/Admin/Schedule/LeftCalendar/LeftCalendar";
+import LeftCalendar from "./LeftCalendar/LeftCalendar";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getFreeTimeRequest,
@@ -54,7 +54,7 @@ const SchedulePage = () => {
   const errorFreeTime = useSelector(
     (state) => state.schedule.error.getFreeTime
   );
-  const [role, setRole] = useState(''); // Default role can be 'admin', 'user', etc.
+  const [role, setRole] = useState(''); 
   const [visiblePopover, setVisiblePopover] = useState({});
   const calendarRef = useRef(null);
   const [currentDate, setCurrentDate] = useState(dayjs());
@@ -253,7 +253,6 @@ const SchedulePage = () => {
             .set("hour", end.hour())
             .set("minute", end.minute());
 
-          // Check if the start hour is greater than or equal to end hour
           if (
             eventStart.hour() < eventEnd.hour() ||
             (eventStart.hour() === eventEnd.hour() &&
@@ -352,16 +351,15 @@ const SchedulePage = () => {
 
   return (
     <div>
-      {" "}
       <div className="flex flex-col lg:flex-row justify-between h-full overflow-hidden">
-        <div className="w-full lg:w-auto lg:flex-1 max-w-full lg:max-w-[250px] lg:mr-2 mb-[24px] lg:mb-0 min-w-[250px]">
+        <div className="w-full lg:w-auto lg:flex-1 max-w-full lg:max-w-[200px] lg:mr-2 mb-[24px] lg:mb-0 min-w-[200px]">
           <LeftCalendar
             currentDate={currentDate}
             setCurrentDate={setCurrentDate}
             calendarRef={calendarRef}
           />
         </div>
-        <div className="w-full lg:ml-2 lg:flex-1 h-[calc(100vh-240px)] min-w-[250px] max-xl:text-[12px] full-calendar">
+        <div className="w-full lg:ml-2 lg:flex-1 h-[calc(100vh-240px)] min-w-[250px] full-calendar">
           <FullCalendar
             ref={calendarRef}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -443,10 +441,10 @@ const SchedulePage = () => {
                   title={
                     <span
                       className={`font-bold ${type === "fresher"
-                          ? "text-orange-500"
-                          : type === "intern"
-                            ? "text-green-500"
-                            : "text-[#509ADF]"
+                        ? "text-orange-500"
+                        : type === "intern"
+                          ? "text-green-500"
+                          : "text-[#509ADF]"
                         }`}
                     >
                       {arg.event.title}
@@ -467,7 +465,7 @@ const SchedulePage = () => {
               );
             }}
             headerToolbar={{
-              left: "today",
+              left: "prev today next",
               center: "title",
               right: "dayGridMonth,timeGridWeek,timeGridDay",
             }}
@@ -476,12 +474,26 @@ const SchedulePage = () => {
                 text: "today",
                 click: handleTodayClick,
               },
+              prev: {
+                text: "<",
+                click: () => {
+                  calendarRef.current.getApi().incrementDate({ weeks: -1 });
+                  setCurrentDate((prev) => prev.subtract(1, "week"));
+                },
+              },
+              next: {
+                text: ">",
+                click: () => {
+                  calendarRef.current.getApi().incrementDate({ weeks: 1 });
+                  setCurrentDate((prev) => prev.add(1, "week"));
+                },
+              },
             }}
             allDaySlot={false}
             slotDuration="00:30:00"
             slotMinTime="00:00:00"
             slotMaxTime="24:00:00"
-            contentHeight="420px"
+            contentHeight="464px"
             scrollTime="08:00:00"
             slotEventOverlap={false}
           />

@@ -4,7 +4,7 @@ const token = localStorage.getItem('token');
 
 export const fetchClasses = async () => {
     try {
-        const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainers/trainer-report/get-schedule-non-report', {
+        const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainers/trainer-report/get-schedule-non-report', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -20,7 +20,7 @@ export const fetchClasses = async () => {
 export const fetchReport = async () => {
     const token = localStorage.getItem('token');
     try {
-        const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainers/reports-history', {
+        const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainers/reports-history', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -34,7 +34,7 @@ export const fetchReport = async () => {
 
 export const fetchClassesAndModules = async () => {
     try {
-        const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainers/reports-history', {
+        const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainers/reports-history', {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -48,7 +48,7 @@ export const fetchClassesAndModules = async () => {
 
 export const createReport = async (reportData) => {
     try {
-        const response = await axios.post('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainers/reports', reportData, {
+        const response = await axios.post('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainers/reports', reportData, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

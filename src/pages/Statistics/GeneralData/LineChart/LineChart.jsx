@@ -102,7 +102,31 @@ const TraineeLineChart = ({
               margin={{ top: 10, right: 30, left: 10, bottom: 10 }}
               connectNulls
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <defs>
+                {filteredConfig.map((_, index) => (
+                  <filter
+                    id={`shadow${index}`}
+                    key={`shadow${index}`}
+                    x="-50%"
+                    y="-50%"
+                    width="200%"
+                    height="200%"
+                  >
+                    <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+                    <feOffset dx="0" dy="5" result="offsetblur" />
+                    <feFlood
+                      floodColor={COLORS[index % COLORS.length]}
+                      floodOpacity="0.9" 
+                    />
+                    <feComposite in2="offsetblur" operator="in" />
+                    <feMerge>
+                      <feMergeNode />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                ))}
+              </defs>
+              <CartesianGrid strokeDasharray="5 5" vertical={false} />
               <XAxis
                 dataKey="labelDate"
                 padding={{ left: 20, right: 20 }}
@@ -122,12 +146,12 @@ const TraineeLineChart = ({
                 .map(({ dataKey }, index) => (
                   <Line
                     key={dataKey}
-                    type="monotone"
+                    type="natural"
                     dataKey={dataKey}
                     stroke={COLORS[index % COLORS.length]}
-                    strokeWidth={3}
-                    dot={{ r: 1.5 }}
-                    activeDot={{ r: 3 }}
+                    strokeWidth={6}
+                    dot={false}
+                    filter={`url(#shadow${index})`}
                   />
                 ))}
             </LineChart>

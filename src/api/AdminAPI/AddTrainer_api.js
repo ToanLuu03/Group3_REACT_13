@@ -3,7 +3,7 @@ import axios from 'axios';
 export const AddTrainer_api = async (trainerData, token) => {
   try {
     const response = await axios.post(
-      'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/add-trainer',
+      'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainer/add-trainer',
       trainerData,
       {
         headers: {

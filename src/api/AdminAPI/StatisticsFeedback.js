@@ -4,7 +4,7 @@ export const get_Module_data = async () => {
   const token = localStorage.getItem("token");
   try {
     const response = await axios.get(
-      `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/module-data`,
+      `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/modules/feedbacks/module-data`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -22,7 +22,7 @@ export const get_Trainer_data = async () => {
   const token = localStorage.getItem("token");
   try {
     const response = await axios.get(
-      `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net//api/v1/modules/feedbacks/trainer-data`,
+      `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/modules/feedbacks/trainer-data`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -40,7 +40,7 @@ export const Get_Evaluate_by_Module = async ({ module, trainerAccount }) => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.get(
-      'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/statistic/evaluate-by-module',
+      'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/modules/feedbacks/statistic/evaluate-by-module',
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -71,7 +71,7 @@ export const Get_Evaluate_by_Trainer = async ({ classCode, trainerAccount }) => 
   try {
     const token = localStorage.getItem("token");
     const response = await axios.get(
-      'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/statistic/module-by-trainer',
+      'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/modules/feedbacks/statistic/module-by-trainer',
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -103,7 +103,7 @@ export const get_Technical_data = async () => {
   const token = localStorage.getItem("token");
   try {
     const response = await axios.get(
-      `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/technical-names`,
+      `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/modules/feedbacks/technical-names`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -120,7 +120,7 @@ export const get_Technical_data = async () => {
 export const get_ClassAdmin_by_Trainer = async () => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/class-admin',
+    const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/modules/feedbacks/class-admin',
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -141,7 +141,7 @@ export const Get_Course_by_Module = async ({ classCode }) => {
     const token = localStorage.getItem("token");
 
     const response = await axios.get(
-      'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/statistic/by-technical-group',
+      'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/modules/feedbacks/statistic/by-technical-group',
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -172,7 +172,7 @@ export const getByModule = async ({ modules }) => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.get(
-      'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/statistic/by-module',
+      'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/modules/feedbacks/statistic/by-module',
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -197,7 +197,7 @@ export const getStatisticsByModuleName = async (moduleName) => {
     const token = localStorage.getItem("token");
     const module = encodeURIComponent(moduleName)
     const response = await axios.get(
-      `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/statistic/by-module-name?module=${module}`,
+      `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/modules/feedbacks/statistic/by-module-name?module=${module}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -216,7 +216,7 @@ export const Get_Admin_by_ClassName = async ({ classAdmin, classNames }) => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.get(
-      'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/statistic/class-admin/by-class-names',
+      'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/modules/feedbacks/statistic/class-admin/by-class-names',
       {
         headers: {
           Authorization: `Bearer ${token}`,

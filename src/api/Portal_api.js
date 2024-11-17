@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer-management/portal';
+const API_BASE_URL = 'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainer-management/portal';
 
 
 export const fetchDataGpa = () => {
@@ -10,7 +10,7 @@ export const fetchDataGpa = () => {
 };
 
 export const fetchDataFeedback = () => {
-  return axios.get('https://66d92d3e4ad2f6b8ed53a5e5.mockapi.io/api/feedbackData');
+  return axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/feedbackData');
 };
 
 

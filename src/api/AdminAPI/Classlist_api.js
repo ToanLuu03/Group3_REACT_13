@@ -6,7 +6,7 @@ export const fetchClassList = async (trainerAcc) => {
     const token = localStorage.getItem('token');
 
   try {
-      const response = await axios.get(`https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/get-info/${trainerAcc}`, {
+      const response = await axios.get(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainer/get-info/${trainerAcc}`, {
           headers: {
               Authorization: `Bearer ${token}`
           }
@@ -22,7 +22,7 @@ export const fetchModuleDetail = async (moduleId) => { // Accept moduleId as a p
     const token = localStorage.getItem('token');
 
   try {
-      const response = await axios.get(`https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/module/get-info/${moduleId}`, { // Use moduleId in the URL
+      const response = await axios.get(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainer/module/get-info/${moduleId}`, { // Use moduleId in the URL
           headers: {
               Authorization: `Bearer ${token}`
           }
@@ -39,7 +39,7 @@ export const fetchFeedBack = async (moduleId, trainerAccount ) => {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get(`https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/${moduleId}`, { 
+        const response = await axios.get(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/modules/feedbacks/${moduleId}`, { 
             params: {
                 trainerAccount
             },

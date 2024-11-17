@@ -5,7 +5,7 @@ const token = localStorage.getItem('token');
 export const fetchConfig = async () => {
 
   try {
-      const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v3/config-effort/get-all', {
+      const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v3/config-effort/get-all', {
           headers: {
               Authorization: `Bearer ${token}`
           }
@@ -29,7 +29,7 @@ export const createConfig = async (configDataArray) => {
         console.log('Final API payload:', JSON.stringify(cleanedData, null, 2));
 
         const response = await axios.post(
-            'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v3/config-effort', 
+            'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v3/config-effort', 
             cleanedData, // Send the array directly
             {
                 headers: {

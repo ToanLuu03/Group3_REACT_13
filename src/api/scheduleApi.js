@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1";
+const BASE_URL = "http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1";
 
 const getToken = () => localStorage.getItem("token");
 

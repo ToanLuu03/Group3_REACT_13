@@ -4,7 +4,7 @@ import axios from 'axios';
 export const fetchClasses = async (token) => {
     try {
         const response = await axios.get(
-            'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/get-all',
+            'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainer/get-all',
             {
                 headers: {
                     Authorization: `Bearer ${token}`

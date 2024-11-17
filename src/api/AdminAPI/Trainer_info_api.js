@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const fetchTrainerInfo = async (account, token) => {
     try {
-        const response = await axios.get(`https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/get-info/${account}`, {
+        const response = await axios.get(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainer/get-info/${account}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -22,7 +22,7 @@ export const fetchTrainerInfo = async (account, token) => {
 export const updateTrainerInfo = async (account, updatedData, token) => {
     try {
         const response = await axios.put(
-            `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer/update-trainer/${account}`,
+            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainer/update-trainer/${account}`,
             updatedData,
             {
                 headers: {
@@ -42,7 +42,7 @@ export const updateTrainerInfo = async (account, updatedData, token) => {
 export const fetchMasterData = async (token) => {
     try {
         const response = await axios.get(
-            `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v2/trainer/master-data`,
+            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v2/trainer/master-data`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -59,7 +59,7 @@ export const fetchMasterData = async (token) => {
 
 export const fetchTrainerInfoV2 = async (account, token) => {
     try {
-        const response = await axios.get(`https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v2/trainer/get-info-v2/${account}`, {
+        const response = await axios.get(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v2/trainer/get-info-v2/${account}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -74,7 +74,7 @@ export const fetchTrainerInfoV2 = async (account, token) => {
 export const updateTrainerInfoV2 = async (account, updatedData, token) => {
     try {
         const response = await axios.put(
-            `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v2/trainer/update-trainer/${account}`,
+            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v2/trainer/update-trainer/${account}`,
             updatedData,
             {
                 headers: {
@@ -97,7 +97,7 @@ export const uploadAvatar = async (file, token) => {
 
     try {
         const response = await axios.post(
-            `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/images`,
+            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/images`,
             formData,
             {
                 headers: {

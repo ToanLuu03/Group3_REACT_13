@@ -3,7 +3,7 @@ import axios from 'axios';
 export const fetchJobs = async () => {
     const token = localStorage.getItem("token");
     try {
-        const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/jobs',
+        const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/jobs',
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -26,7 +26,7 @@ export const fetchJobs = async () => {
 export const deleteJob = async (id) => {
     try {
         const token = localStorage.getItem("token");
-        const response = await axios.delete(`https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/jobs/${id}`,
+        const response = await axios.delete(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/jobs/${id}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -44,7 +44,7 @@ export const deleteJob = async (id) => {
 export const fetchRoles = async () => {
     try {
         const token = localStorage.getItem("token");
-        const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/jobs',
+        const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/jobs',
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -72,7 +72,7 @@ export const addRole = async (role, note, levels, deleted) => {
     try {
         const token = localStorage.getItem("token");
         const response = await axios.post(
-            'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/jobs',
+            'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/jobs',
             {
                 role,
                 note,
@@ -97,7 +97,7 @@ export const fetchJobById = async (id) => {
     try {
         const token = localStorage.getItem("token");
 
-        const response = await axios.get(`https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/jobs/${id}`,
+        const response = await axios.get(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/jobs/${id}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -114,7 +114,7 @@ export const updateJob = async (id, updatedData) => {
         const token = localStorage.getItem("token");
 
         const response = await axios.put(
-            `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/jobs/${id}`,  // Đúng endpoint
+            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/jobs/${id}`,  // Đúng endpoint
             updatedData,  // Truyền trực tiếp dữ liệu cần cập nhật
             {
                 headers: {

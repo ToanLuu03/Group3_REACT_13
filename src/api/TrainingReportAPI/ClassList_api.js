@@ -5,7 +5,7 @@ export const fetchClassList = async () => {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get('https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v3/classes/class-list', {
+        const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v3/classes/class-list', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -23,7 +23,7 @@ export const fetchClassDetail = async (classId) => {
     try {
         const token = localStorage.getItem('token');
 
-        const response = await axios.get(`https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v3/classes/class-detail/${classId}`, { // Use moduleId in the URL
+        const response = await axios.get(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v3/classes/class-detail/${classId}`, { // Use moduleId in the URL
             headers: {
                 Authorization: `Bearer ${token}`
             }

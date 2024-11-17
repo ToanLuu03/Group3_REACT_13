@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const login = async (username, password) => {
     try {
-        const response = await axios.post('https://fams-test.fa.edu.vn/api/login', {
+        const response = await axios.post('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/login', {
             username,
             password
         });

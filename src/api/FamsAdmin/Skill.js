@@ -4,7 +4,7 @@ import axios from 'axios';// hoặc
 export const fetchSkillAPI = async () => {
     const token = localStorage.getItem("token");
     try {
-        const response = await axios.get(`https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/skills`, {
+        const response = await axios.get(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/skills`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -47,7 +47,7 @@ export const fetchSkilllAdd = async (skillData) => {
         };
 
         const response = await axios.post(
-            `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/skills`,
+            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/skills`,
             dataWithLevel,
             {
                 headers: {
@@ -72,7 +72,7 @@ export const fetchSkillById = async (id) => {
     const token = localStorage.getItem("token");
     try {
         const response = await axios.get(
-            `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/skills/${id}`,
+            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/skills/${id}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -109,7 +109,7 @@ export const fetchSkillUpdateById = async (id, updateData) => {
         console.log('Sending update data:', formattedData);
 
         const response = await axios.put(
-            `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/skills/${id}`,
+            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/skills/${id}`,
             formattedData,
             {
                 headers: {
@@ -143,7 +143,7 @@ export const fetchSkillDeleteById = async (id) => {
 
     try {
         const response = await axios.delete(
-            `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/skills/${id}`,
+            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/skills/${id}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`,
