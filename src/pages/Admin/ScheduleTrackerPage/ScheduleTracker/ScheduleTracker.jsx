@@ -148,7 +148,6 @@ function ScheduleTracker() {
             selectedClass: [],
             selectedTrainer: null,
             selectedModule: [],
-
             selectedDelivery: [],
             selectedStatus: [],
             selectedTraining: [],
@@ -162,7 +161,7 @@ function ScheduleTracker() {
             actualEndDate: null,
         });
         setSearchTerm("");
-        setFilteredScheduleData(scheduleData);
+        setFilteredScheduleData([]);
     };
 
     const handleDateChange = (key, value) => {
@@ -204,17 +203,50 @@ function ScheduleTracker() {
             },
         } : {};
 
+        if (key === "selectedTrainer") {
+            resetFilters.selectedClass = [];
+            resetFilters.selectedModule = [];
+        }
+
         setFilters((prevFilters) => ({
             ...prevFilters,
             ...resetFilters,
             [key]: updatedValue,
         }));
 
+        // New logic to filter class and module options based on selected trainer
+        if (key === "selectedTrainer") {
+            const filteredClasses = getClassesByTrainer(value); // Function to get classes by trainer
+            const filteredModules = getModulesByTrainer(value); // Function to get modules by trainer
+            setFilterOptions((prevOptions) => ({
+                ...prevOptions,
+                classOptions: filteredClasses,
+                moduleOptions: filteredModules,
+            }));
+        }
+
         filterScheduleData({
             ...filters,
             ...resetFilters,
             [key]: updatedValue,
         });
+    };
+
+    // New helper functions to get classes and modules based on selected trainer
+    const getClassesByTrainer = (trainerId) => {
+        // Logic to filter classes based on trainerId and remove duplicates
+        return [...new Map(scheduleData.filter(item => item.trainerId === trainerId).map(item => [item.className, {
+            label: item.className,
+            value: item.className,
+        }])).values()];
+    };
+
+    const getModulesByTrainer = (trainerId) => {
+        // Logic to filter modules based on trainerId and remove duplicates
+        return [...new Map(scheduleData.filter(item => item.trainerId === trainerId && item.moduleName).map(item => [item.moduleName, {
+            label: item.moduleName,
+            value: item.moduleName,
+        }])).values()];
     };
 
     const filterScheduleData = (currentFilters) => {
@@ -398,19 +430,7 @@ function ScheduleTracker() {
                         />
                     </div>
 
-                    {filters.selectedMethod === "ClassName" && (
-                        <div className="col-span-1">
-                            <div className="flex gap-1 pb-1">
-                                <FaStarOfLife className="text-red-600 w-[7px]  pt-2" />
-                                <label className="text-lg font-medium">Class Admin</label>
-                            </div>
-                            <SelectBox
-                                options={filterOptions.trainerOptions}
-                                className=" w-[80%]"
-                                onChange={(values) => handleFilterChange("selectedTrainer", values)}
-                            />
-                        </div>
-                    )}
+                 
 
                     {filters.selectedMethod === "ClassAdmin" && (
                         <div className="col-span-1">
@@ -427,7 +447,7 @@ function ScheduleTracker() {
                     )}
 
 
-                    {filters.selectedMethod === "Trainer" && (
+                    {(filters.selectedMethod === "Trainer"   )&& (
                         <div className="col-span-1">
                             <div className="flex gap-1 pb-1">
                                 <FaStarOfLife className="text-red-600 w-[7px]  pt-2" />
@@ -452,7 +472,7 @@ function ScheduleTracker() {
                 </div>
 
                 {/* Class and Module on the same row */}
-                {filters.selectedTrainer && (
+                {(filters.selectedTrainer || filters.selectedMethod === "ClassName") && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 pb-2">
                         <div className="col-span-1 ">
                             <div className="flex gap-1 pb-1">
@@ -466,7 +486,7 @@ function ScheduleTracker() {
                             />
                         </div>
 
-                        {filters.selectedClass.length > 0 && (
+                        {filters.selectedClass.length > 0 && filterOptions.moduleOptions.length > 0 && (
                             <div className="col-span-1">
                                 <div className="flex gap-1 pb-1">
                                     <FaStarOfLife className="text-red-600 w-[7px]  pt-2" />
@@ -476,6 +496,7 @@ function ScheduleTracker() {
                                     options={filterOptions.moduleOptions}
                                     className="w-[80%]"
                                     onChange={(values) => handleFilterChange("selectedModule", values)}
+                                    disabled={filterOptions.moduleOptions.length === 0}
                                 />
                             </div>
                         )}

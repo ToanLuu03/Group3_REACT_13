@@ -5,7 +5,7 @@ export const fetchClasses = async () => {
     try {
         const token = localStorage.getItem('token');
 
-        const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainers/trainer-report/get-schedule-non-report', {
+        const response = await axios.get('https://fams.ap-southeast-1.elasticbeanstalk.com/api/v1/trainers/trainer-report/get-schedule-non-report', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -22,7 +22,7 @@ export const fetchReport = async () => {
     try {
         const token = localStorage.getItem('token');
 
-        const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainers/reports-history', {
+        const response = await axios.get('https://fams.ap-southeast-1.elasticbeanstalk.com/api/v1/trainers/reports-history', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -37,7 +37,7 @@ export const fetchReport = async () => {
 export const createReport = async (reportData) => {
     try {
         const token = localStorage.getItem('token');
-        const response = await axios.post('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainers/reports', reportData, {
+        const response = await axios.post('https://fams.ap-southeast-1.elasticbeanstalk.com/api/v1/trainers/reports', reportData, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

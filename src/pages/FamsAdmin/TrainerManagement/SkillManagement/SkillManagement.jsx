@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchSkillAPI, fetchSkillById, fetchSkilllAdd, fetchSkillDeleteById } from '../../../../api/FamsAdmin/Skill';
-import { Table, Space, Button, Dropdown, Select, Input, notification } from 'antd';
+import { Table, Space, Button, Dropdown, Select, Input, notification, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined, MoreOutlined } from '@ant-design/icons';
 import ModalAdd from './CRUD/ModalAdd';
 import ModalEdit from './CRUD/ModalEdit';
@@ -121,32 +121,44 @@ function SkillManagement() {
   };
 
   const handleDelete = async (id) => {
-    try {
-      const result = await fetchSkillDeleteById(id);
-      if (result.success) {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this skill?',
+      content: 'This action cannot be undone.',
+      okText: 'Yes',
+      cancelText: 'No',
+      onOk: async () => {
+        try {
+          const result = await fetchSkillDeleteById(id);
+          if (result.success) {
 
-        notification.success({
-          message: 'Skill deactivated successfully',
-          placement: 'topRight',
-          duration: 3,
-        });  // Refresh the skills list after deletion
-        fetchSkills();
-      } else {
-        notification.error({
-          message: 'Failed to deactivate skill',
-          placement: 'topRight',
-          duration: 3,
-        });
-      }
-    } catch (error) {
-      // console.error('Error deleting skill:', error);
-      // message.error('Failed to deactivate skill: ' + (error.message || 'Unknown error'));
-      notification.error({
-        message: `Failed to deactivate skill: ${error.message}`,
-        placement: 'topRight',
-        duration: 3,
-      });
-    }
+            notification.success({
+              message: 'Skill deactivated successfully',
+              placement: 'topRight',
+              duration: 3,
+            });  // Refresh the skills list after deletion
+            fetchSkills();
+          } else {
+            notification.error({
+              message: 'Failed to deactivate skill',
+              placement: 'topRight',
+              duration: 3,
+            });
+          }
+        } catch (error) {
+          // console.error('Error deleting skill:', error);
+          // message.error('Failed to deactivate skill: ' + (error.message || 'Unknown error'));
+          notification.error({
+            message: `Failed to deactivate skill: ${error.message}`,
+            placement: 'topRight',
+            duration: 3,
+          });
+        }
+      },
+      onCancel() {
+        // Do nothing on cancel
+      },
+    });
+
   };
 
   const handleAddSkill = async (values) => {

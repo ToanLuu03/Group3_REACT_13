@@ -7,7 +7,7 @@ const TrainerPortal = () => {
 
   const categories = [
     { name: "GPA", link: "/gpa" },
-    { name: "Feedback", link: "/feedback" },
+ 
   ];
 
   return (
@@ -34,7 +34,7 @@ const TrainerPortal = () => {
 
       <div className="mt-8">
         {activeCategory === 0 && <TrainerGPA />}
-        {activeCategory === 1 && <TrainerFeedback />}
+      
       </div>
     </>
   );

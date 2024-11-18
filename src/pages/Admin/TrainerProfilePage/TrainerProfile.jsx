@@ -265,7 +265,7 @@ function TrainerProfile() {
             try {
                 const response = await uploadAvatar(file, token);
                 if (response.success) {
-                    setGeneralInfo({ ...generalInfo, avatar: `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/images/${response.data.name}` });
+                    setGeneralInfo({ ...generalInfo, avatar: response.data});
                     setTimeout(() => {
                         notification.success({
                             message: "Avatar Uploaded",

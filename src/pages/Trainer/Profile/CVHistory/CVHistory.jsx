@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import { Select } from "antd";
 
-const CVHistory = () => {
+const CVHistory = ({ trainerData }) => {
   const dateOptions = [
     { value: "all", label: "All Dates" },
     { value: "today", label: "Today" },
@@ -23,49 +22,29 @@ const CVHistory = () => {
     { value: "docx", label: "Docx" },
   ];
 
-  const token = localStorage.getItem("token");
-  const username = localStorage.getItem("username");
-  const [data, setData] = useState([]);
+  const data = trainerData?.cv || [];
+  console.log("Trainer Data in CVHistory:", trainerData);
+  console.log("Extracted CV Data:", data);
+
   const [selectedDate, setSelectedDate] = useState("all");
   const [selectedFileType, setSelectedFileType] = useState("all");
   const [selectedAction, setSelectedAction] = useState("all");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v2/trainer/get-info-v2/${username}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (response.data.success) {
-          setData(response.data.data.trainerInfo.cv);
-          console.log("Data:", response.data.data.trainerInfo);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, [username, token]);
-
   const handleFilter = () => {
     return data.filter((item) => {
       const matchesDate =
-        selectedDate === "all" || item.datetime.includes(selectedDate);
+        selectedDate === "all" ||
+        (item.datetime && item.datetime.includes(selectedDate));
       const matchesFileType =
         selectedFileType === "all" ||
-        item.cv.toLowerCase().includes(selectedFileType);
+        (item.cv && item.cv.toLowerCase().includes(selectedFileType));
       const matchesAction =
         selectedAction === "all" ||
-        item.action.toLowerCase() === selectedAction;
+        (item.action && item.action.toLowerCase() === selectedAction);
       return matchesDate && matchesFileType && matchesAction;
     });
   };
+  
 
   return (
     <div className="flex flex-col justify-between min-h-[calc(100vh-20px)] p-4">

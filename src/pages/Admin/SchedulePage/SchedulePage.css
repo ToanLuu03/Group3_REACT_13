@@ -26,6 +26,9 @@
   padding: 5.6px 8px;
 }
 
+.fc-direction-ltr .fc-toolbar > * > :not(:first-child) {
+  margin-left: 0;
+}
 .full-calendar .fc-prev-button {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
@@ -40,7 +43,7 @@
 
 @media (max-width: 1208px) {
   .full-calendar .fc .fc-toolbar-title {
-    font-size: 18px;
+    font-size: 17px;
   }
 }
 

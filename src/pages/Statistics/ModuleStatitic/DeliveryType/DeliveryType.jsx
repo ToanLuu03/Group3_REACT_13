@@ -2,20 +2,22 @@ import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const DeliveryType = ({ data, colors }) => (
-  <div >
-    <h3 className="text-center text-lg font-semibold ">Delivery Type Distribution</h3>
+  <div>
+    <h3 className="text-center text-lg font-semibold ">
+      Delivery Type Distribution
+    </h3>
     <ResponsiveContainer
       width="100%"
       height="100%"
-      minHeight={200} // Set minimum height for better responsiveness
-      maxHeight={400} // Limit max height on larger screens
+      minHeight={200}
+      maxHeight={400}
     >
       <PieChart>
         <Pie
           data={data}
           cx="50%"
           cy="50%"
-          outerRadius={window.innerWidth < 768 ? "70%" : "80%"} // Scaled radius for mobile and larger screens
+          outerRadius={window.innerWidth < 768 ? "70%" : "80%"}
           fill="#8884d8"
           dataKey="value"
           label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
@@ -61,7 +63,7 @@ const DeliveryType = ({ data, colors }) => (
             }
             return null;
           }}
-          cursor={{ fill: 'transparent' }}
+          cursor={{ fill: "transparent" }}
         />
       </PieChart>
     </ResponsiveContainer>

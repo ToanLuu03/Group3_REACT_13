@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Define your base URL and token
-const BASE_URL = 'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainer/confirm-module';
+const BASE_URL = 'https://fams.ap-southeast-1.elasticbeanstalk.com/v1/trainer/confirm-module';
 
 // Function to get trainer confirmation data
 export const fetchDataConfirm = async (endpoint) => {

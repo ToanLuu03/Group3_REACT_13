@@ -7,8 +7,8 @@ const ModuleInfo = ({ moduleData, onBackClick }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const token = useSelector((state) => state.users.users.userName.token);
-console.log(moduleData.id)
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     if (moduleData && moduleData.id) {
       const getModuleData = async () => {
@@ -25,7 +25,7 @@ console.log(moduleData.id)
       getModuleData();
     }
   }, [moduleData, token]);
-
+  
 
   if (error) {
     return <p className="text-base sm:text-lg">Error: {error}</p>;

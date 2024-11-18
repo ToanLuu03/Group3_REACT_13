@@ -20,6 +20,8 @@ function TrainerList() {
   const [siteDropdownVisible, setSiteDropdownVisible] = useState(false);
   const [roleAdmin, setRoleAdmin] = useState("");
   const [loading, setLoading] = useState(true); // State để hiển thị loading
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -113,6 +115,21 @@ function TrainerList() {
     localStorage.setItem("trainerAccount", account);
     navigate(`/${roleAdmin}/trainer-management`);
   };
+  const handleDelete = (trainerId) => {
+    const updatedTrainers = trainers.filter((trainer) => trainer.id !== trainerId);
+    setTrainers(updatedTrainers);
+    setFilteredTrainers(updatedTrainers);
+  };
+  const handleDeleteSelected = () => {
+    const updatedTrainers = trainers.filter(
+      (trainer) => !selectedRowKeys.includes(trainer.id)
+    );
+    setTrainers(updatedTrainers);
+    setFilteredTrainers(updatedTrainers);
+    setSelectedRowKeys([]); // Reset danh sách được chọn
+  };
+
+
 
   const columns = [
     {
@@ -198,6 +215,34 @@ function TrainerList() {
     },
     { title: "Email ", dataIndex: "email", key: "email", align: "center" },
     { title: "Type", dataIndex: "type", key: "type", align: "center" },
+    {
+      title: "Action",
+      key: "action",
+      align: "center",
+      fixed: "right",
+      render: (_, record) => (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Checkbox
+            checked={selectedRowKeys.includes(record.id)}
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedRowKeys([...selectedRowKeys, record.id]);
+              } else {
+                setSelectedRowKeys(selectedRowKeys.filter((id) => id !== record.id));
+              }
+            }}
+          />
+          <span
+            className="text-red-600 cursor-pointer ml-2"
+            onClick={() => handleDelete(record.id)}
+            style={{ fontSize: "26px", fontWeight: "bold", padding:"10px" }}
+          >
+            ×
+          </span>
+        </div>
+      ),
+    },
+
   ];
   const statusMenu = (
     <Menu>
@@ -309,13 +354,13 @@ function TrainerList() {
         columns={columns}
         dataSource={filteredTrainers}
         rowKey="id"
-        // pagination={{ pageSize: 6 }}
-        loading={loading} // Loading indicator
+        loading={loading}
         bordered
         scroll={{
           x: "calc(700px + 100%)",
         }}
       />
+
     </div>
   );
 }

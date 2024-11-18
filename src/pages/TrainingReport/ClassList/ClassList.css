@@ -1,0 +1,8 @@
+/* Style for tables with a custom class */
+.custom-header-table .ant-table-thead>tr>th {
+    background-color: #76b3f9; /* Blue background for header cells */
+    color: black;
+    font-weight: bold;
+    text-align: center;
+    font-style: italic; /* Hiển thị chữ nghiêng */
+}

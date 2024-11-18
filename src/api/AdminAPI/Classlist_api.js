@@ -37,7 +37,7 @@ export const fetchFeedBack = async (moduleId, trainerAccount ) => {
     const token = localStorage.getItem('token');
 
     try {
-        const response = await instance.get(`v1/modules/feedbacks/${moduleId}`, { 
+        const response = await instance.get(`v1/modules/feedbacks/one-module/${moduleId}`, { 
             params: {
                 trainerAccount
             },

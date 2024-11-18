@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Table, Pagination, Row, Col } from "antd";
-import axios from "axios";
 import SelectOptions from "../../../../../components/portal/SelectOptions";
 import SelectDateRange from "../../../../../components/portal/SelectDateRange";
 import BarChart from "../../../../../components/portal/BarChart";
-
+import { fetchDataGPA } from "../../../../../services/gpa";
 
 const TrainerGPA = () => {
   const [selectedTopics, setSelectedTopics] = useState([]);
@@ -12,37 +11,46 @@ const TrainerGPA = () => {
   const [selectedDateRange, setSelectedDateRange] = useState(null);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
   const [pageSize, setPageSize] = useState(4);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const TopicOptions = [
-    { value: "Opening Ceremony", label: "Opening Ceremony" },
-    { value: "IT Basic", label: "IT Basic" },
-    { value: "First website application", label: "First website application" },
-  ];
-
-  const ClassesOptions = [
-    { value: "HL24_FR_FJB_03", label: "HL24_FR_FJB_03" },
-  ];
-
+  const [topicOptions, setTopicOptions] = useState([]);
+  const [classesOptions, setClassesOptions] = useState([]);
+  const token = localStorage.getItem("token");
   useEffect(() => {
-    axios
-      .get(
-        "https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer-management/portal/PhuongDP_test"
-      )
-      .then((response) => {
-        setData(response.data.data);
-        setLoading(false);
-      })
-      .catch((err) => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetchDataGPA(token);
+        if (response && response.data) {
+          const fetchedData = response.data;
+          console.log(fetchedData);
+          setData(fetchedData);
+
+          const uniqueTopics = [
+            ...new Set(fetchedData.map((item) => item.moduleName)),
+          ].map((topic) => ({ value: topic, label: topic }));
+          setTopicOptions(uniqueTopics);
+
+          const uniqueClasses = [
+            ...new Set(fetchedData.map((item) => item.className)),
+          ].map((cls) => ({ value: cls, label: cls }));
+          setClassesOptions(uniqueClasses);
+        } else {
+          throw new Error("Failed to fetch data.");
+        }
+      } catch (err) {
         setError(err.message);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   const [chartData, setChartData] = useState({
-    labels: ["Opening Ceremony", "IT Basic", "First website application"],
+    labels: [],
     datasets: [],
   });
 
@@ -58,7 +66,7 @@ const TrainerGPA = () => {
       !data
     ) {
       setChartData({
-        labels: ["Opening Ceremony", "IT Basic", "First website application"],
+        labels: selectedTopics.map((topic) => topic.label),
         datasets: [],
       });
       return;
@@ -72,50 +80,45 @@ const TrainerGPA = () => {
     );
 
     const colors = {
-      "HL24_FR_FJB_03": "rgba(102, 102, 255, 0.6)",
+      HL24_FR_FJB_03: "rgba(102, 102, 255, 0.6)",
     };
 
-    const datasets = selectedClasses.map((cls) => ({
-      label: cls,
-      data: selectedTopics.map(
-        (topic) =>
-          selectedClassData.find(
-            (item) =>
-              item.moduleName.includes(topic) && item.className === cls
-          )?.gpa || 0
-      ),
-      backgroundColor: colors[cls] || "rgba(108, 119, 147, 0.6)",
-    }));
+    const labels = selectedTopics.map((topic) => topic.label || topic);
+    const datasets = selectedClasses.map((cls) => {
+      const classData = selectedClassData.filter(
+        (item) => item.className === cls
+      );
+      return {
+        label: cls,
+        data: labels.map((topic) => {
+          const topicData = classData.find((item) => item.moduleName === topic);
+          return topicData ? topicData.gpa : 0; // Return 0 if GPA data is missing
+        }),
+        backgroundColor: colors[cls] || "rgba(108, 119, 147, 0.6)",
+      };
+    });
 
     setChartData({
-      labels: selectedTopics.map(
-        (topic) => topic.charAt(0).toUpperCase() + topic.slice(1).replace("-", " ")
-      ),
+      labels: labels,
       datasets: datasets,
     });
   };
 
-  const handleTopicChange = (value) => {
-    setSelectedTopics(value);
-  };
-
+  const handleTopicChange = (value) => setSelectedTopics(value);
   const handleClassChange = (value) => {
     if (value.includes("select-all")) {
-      if (selectedClasses.length === ClassesOptions.length) {
+      if (selectedClasses.length === classesOptions.length) {
         setSelectedClasses([]);
       } else {
-        setSelectedClasses(ClassesOptions.map((opt) => opt.value));
+        setSelectedClasses(classesOptions.map((opt) => opt.value));
       }
     } else {
       setSelectedClasses(value);
     }
   };
 
-  const handleDateRangeChange = (value) => {
-    setSelectedDateRange(value);
-  };
+  const handleDateRangeChange = (value) => setSelectedDateRange(value);
 
-  // Ant Design Table columns
   const columns = [
     {
       title: "Class",
@@ -135,10 +138,10 @@ const TrainerGPA = () => {
       key: "endDate",
       align: "center",
       render: (date) => {
-        return new Date(date).toLocaleDateString('en-GB', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
+        return new Date(date).toLocaleDateString("en-GB", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
         });
       },
     },
@@ -150,7 +153,6 @@ const TrainerGPA = () => {
     },
   ];
 
-  // Pagination handler
   const onChangePage = (page, pageSize) => {
     setCurrentPage(page);
     setPageSize(pageSize);
@@ -208,7 +210,7 @@ const TrainerGPA = () => {
           <h2 className="text-lg font-semibold mb-2">Select topics</h2>
           <SelectOptions
             mode={"multiple"}
-            options={TopicOptions}
+            options={topicOptions}
             onChange={handleTopicChange}
           />
         </Col>
@@ -217,7 +219,10 @@ const TrainerGPA = () => {
           <h2 className="text-lg font-semibold mb-2">Select class</h2>
           <SelectOptions
             mode={"multiple"}
-            options={[{ value: "select-all", label: "Select All" }, ...ClassesOptions]}
+            options={[
+              { value: "select-all", label: "Select All" },
+              ...classesOptions,
+            ]}
             onChange={handleClassChange}
             value={selectedClasses}
           />
@@ -233,7 +238,9 @@ const TrainerGPA = () => {
         <h2 className="text-3xl font-semibold text-gray-400 text-center mt-6 mb-4">
           GPA Bar Chart
         </h2>
-        {selectedTopics.length === 0 || selectedClasses.length === 0 || !selectedDateRange ? (
+        {selectedTopics.length === 0 ||
+        selectedClasses.length === 0 ||
+        !selectedDateRange ? (
           <p className="text-center text-gray-500 text-2xl">
             Please choose Topics and Classes
           </p>

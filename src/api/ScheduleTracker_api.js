@@ -68,12 +68,14 @@ const extractData = (data, type = 'trainer') => {
 };
 
 // API endpoints
-const API_BASE = 'https://fams-app.ap-southeast-2.elasticbeanstalk.com/api';
+const API_BASE = 'https://fams.ap-southeast-1.elasticbeanstalk.com/api';
 const ENDPOINTS = {
   TRAINER: `${API_BASE}/v1/admin/schedule-tracker?option=TRAINER`,
   CLASS: `${API_BASE}/v1/admin/schedule-tracker?option=CLASS`,
   CLASS_ADMIN: `${API_BASE}/v1/admin/schedule-tracker?option=CLASS_ADMIN`,
   LOGS: (classId, moduleId) => `${API_BASE}/v3/logs?classId=${classId}&moduleId=${moduleId}`,
+  LOG_Class: `${API_BASE}/v3/logs/classes`,
+  LOG_Module: (classId) => `${API_BASE}/v3/logs/modules/${classId}`,
   SEARCH_LOGS: (classId, moduleId, startDate, endDate) =>
     `${API_BASE}/v3/logs/search?classId=${classId}&moduleId=${moduleId}&startDate=${startDate}&endDate=${endDate}`
 };
@@ -92,6 +94,20 @@ export const fetchDataClass = async () => {
 export const fetchDataClassAdmin = async () => {
   const data = await makeApiRequest(ENDPOINTS.CLASS_ADMIN, localStorage.getItem('token'));
   return data ? extractData(data, 'class_admin') : [];
+};
+
+export const fetchDataLogClass = async () => {
+  const data = await makeApiRequest(ENDPOINTS.LOG_Class, localStorage.getItem('token'));
+  return data?.data || [];
+};
+
+export const fetchDataLogModule = async (classId) => {
+  if (!classId) {
+    console.warn('ClassId is required for fetching modules');
+    return [];
+  }
+  const data = await makeApiRequest(ENDPOINTS.LOG_Module(classId), localStorage.getItem('token'));
+  return data?.data || [];
 };
 
 export const fetchDataLog = async (classId, moduleId) => {

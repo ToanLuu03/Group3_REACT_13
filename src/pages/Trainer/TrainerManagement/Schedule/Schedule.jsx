@@ -46,14 +46,15 @@ const Schedule = () => {
     }
   };
 
-  const fetchEvents = async (trainerAccount, token) => {
+  const fetchEvents = async () => {
     try {
+      setLoading(true);
       const [scheduleResponse, freeTimeResponse] = await Promise.all([
-        fetchTrainerSchedule(trainerAccount, token),
-        fetchTrainerFreeTime(trainerAccount, token),
+        fetchTrainerSchedule(username, token),
+        fetchTrainerFreeTime(username, token),
       ]);
 
-      const scheduleData = scheduleResponse.data.data.flatMap((item) => {
+      const scheduleData = scheduleResponse.data.flatMap((item) => {
         const eventDays = [];
         const startDate = dayjs(item.startDate);
         const endDate = dayjs(item.endDate);
@@ -99,7 +100,7 @@ const Schedule = () => {
         return eventDays;
       });
 
-      const freeTimeData = freeTimeResponse.data.data.map((item) => {
+      const freeTimeData = freeTimeResponse.data.map((item) => {
         const startDate = dayjs(item.startTime);
         const endDate = dayjs(item.endTime);
         return {
@@ -120,18 +121,9 @@ const Schedule = () => {
     }
   };
 
-  const fetchTrainerDataAndEvents = async () => {
-    setLoading(true);
-    const trainer = await fetchTrainerInfo();
-    if (trainer) {
-      await fetchEvents(trainer.account, token);
-    } else {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchTrainerDataAndEvents();
+    fetchEvents();
   }, [currentDateRange]);
 
   const handleDateClick = (info) => {
@@ -166,7 +158,7 @@ const Schedule = () => {
       if (calendarRef.current) {
         calendarRef.current.getApi().gotoDate(value.format("YYYY-MM-DD"));
       }
-      fetchTrainerDataAndEvents();
+      fetchEvents();
     }
   };
   
@@ -222,6 +214,7 @@ const Schedule = () => {
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="w-full lg:w-1/4 border border-gray-300 rounded-lg p-4 shadow-md h-96 overflow-y-auto">
             <Calendar 
+              allowClear={false}
               fullscreen={false}
               onSelect={onDateSelect}
               value={calendarDate}
@@ -327,7 +320,7 @@ const Schedule = () => {
           isVisible={isFreeTimeModalVisible}
           onCancel={handleCancel}
           initialData={modalInitialData}
-          onSave={fetchTrainerDataAndEvents}
+          onSave={fetchEvents}
           selectedTrainer={selectedTrainer}
         />
       </div>

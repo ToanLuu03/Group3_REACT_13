@@ -88,11 +88,10 @@ export const updateTrainerInfoV2 = async (account, updatedData, token) => {
 
 export const uploadAvatar = async (file, token) => {
     const formData = new FormData();
-    formData.append("image", file);
-
+    formData.append("file", file);
     try {
         const response = await instance.post(
-            `v1/images`,
+            `v1/file/upload-avatar`,
             formData,
             {
                 headers: {

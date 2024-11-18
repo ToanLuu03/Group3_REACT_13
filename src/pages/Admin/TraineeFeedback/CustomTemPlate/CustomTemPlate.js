@@ -174,11 +174,11 @@ const CustomTemplate = ({ clonedTemplate, setActiveKey }) => {
             </div>
 
             {/* Template Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-10 gap-y-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-x-10 gap-y-10 ">
                 {filteredTemplates.slice(startIndex, endIndex).map((template) => (
-                    <div key={template.id} className="relative bg-white border border-gray-500 rounded-lg shadow-lg p-3">
+                    <div key={template.id} className="relative bg-white border border-gray-500 rounded-lg shadow-lg p-3 hover:translate-y-[-4px] hover:shadow-xl transition-all duration-200">
                         <div className="mb-5">
-                            <img src={template.image} alt={template.title} className="rounded-md w-full" />
+                            <img src={template.image} alt={template.title} className="rounded-md w-full border border-gray-500" />
                         </div>
                         <div className="flex justify-between items-center mb-2">
                             <h3 className="text-lg font-semibold text-gray-800 truncate">
@@ -216,7 +216,7 @@ const CustomTemplate = ({ clonedTemplate, setActiveKey }) => {
                 style={{ marginLeft: 'auto', marginRight: 30, height: '700px', display: 'flex', gap: '2rem', padding: '1.5rem', maxHeight: '900px', overflowY: 'auto' }}
             >
                 <div style={{ display: 'flex', gap: '2rem', height: '100%' }}>
-                    <div className="relative bg-white border border-gray-500 rounded-lg shadow-lg p-3 transition-transform transform hover:translate-y-[-4px] hover:shadow-xl"
+                    <div className="relative bg-white border border-gray-500 rounded-lg shadow-lg p-3 transition-transform transform hover:translate-y-[-4px] hover:shadow-xl "
                         style={{ flex: 1, height: '100%' }}>
                         <img
                             src={selectedTemplate?.image}
@@ -245,7 +245,7 @@ const CustomTemplate = ({ clonedTemplate, setActiveKey }) => {
                                 onClick={() => setShowSendDateOption(!showSendDateOption)} // Toggle the state on click
                                 checked={showSendDateOption}
                             >
-                                Set Send Date
+                                Send Date
                             </Radio>
 
                             {showSendDateOption && (
@@ -271,8 +271,8 @@ const CustomTemplate = ({ clonedTemplate, setActiveKey }) => {
                 visible={isDeleteModalVisible}
                 onCancel={() => setIsDeleteModalVisible(false)}
                 onOk={handleDeleteTemplate}
-                okText="Yes, Delete"
-                cancelText="Cancel"
+                okText="Yes"
+                cancelText="No"
                 okButtonProps={{
                     danger: true, // This will make the 'Yes, Delete' button red
                 }}

@@ -20,7 +20,6 @@ import ScheduleTrackerTrainer from "../../../pages/Trainer/TrainerManagement/Sch
 // Other
 import React, { useEffect, useState } from "react";
 import Title from "../Title/Title";
-import { useSelector } from "react-redux";
 import ReportPage from "../../../pages/Admin/ReportPage/ReportPage";
 
 
@@ -28,17 +27,10 @@ const Category = ({ selectedTrainer }) => {
   const [activeCategory, setActiveCategory] = useState(0);
   const [showModuleInfo, setShowModuleInfo] = useState(false);
   const [selectedModuleData, setSelectedModuleData] = useState(null);
-  const [trainerAccount, setTrainerAccount] = useState("");
   // Get the user's role from the Redux store
-  const username = useSelector((state) => state.users.users.userName.username);
-  const role = localStorage.getItem('role');
-  // Define the categories based on the role
-  useEffect(() => {
-    const account = localStorage.getItem("trainerAccount");
-    const username = localStorage.getItem("username");
+  const username = localStorage.getItem("username");
 
-    setTrainerAccount(account || username);
-  }, []);
+  const role = localStorage.getItem('role');
   
   const categories = showModuleInfo
     ? [
@@ -79,7 +71,7 @@ const Category = ({ selectedTrainer }) => {
     <div className="w-full border-gray-200">
       <Title
         selectedModuleData={selectedModuleData}
-        title={`${categories[activeCategory].name} - ${selectedTrainer?.name || trainerAccount
+        title={`${categories[activeCategory].name} - ${selectedTrainer?.name || username
           }`}
         showImportButton={showImportButton}
       />
@@ -104,7 +96,7 @@ const Category = ({ selectedTrainer }) => {
 
       {/* Responsive content */}
       <div className="mt-3 px-4 md:px-6 lg:px-8">
-        {role === "CLASS_ADMIN" || "DELIVERY_MANAGER"? (
+        {role === "CLASS_ADMIN" || role === "DELIVERY_MANAGER"? (
           <>
             {!showModuleInfo && activeCategory === 0 && (
               <TrainerProfile selectedTrainer={selectedTrainer} />

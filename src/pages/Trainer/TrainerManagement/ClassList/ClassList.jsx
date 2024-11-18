@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import arrowUP from "../../../../assets/image/arrow_up.png";
 import arrowDown from "../../../../assets/image/arrow_down.png";
-import { fetchClassListApi } from "../../../../services/classlist/trainer/index";
 import { Spin } from "antd";
-import TrainerAPI from "../../../../services/trainer";
 
 const getStatusBadgeClass = (status) => {
   switch (status) {

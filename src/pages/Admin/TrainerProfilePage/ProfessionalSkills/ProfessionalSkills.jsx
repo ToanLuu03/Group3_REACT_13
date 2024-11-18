@@ -31,7 +31,7 @@ const ProfessionalSkills = ({ professionalSkills, isEditing, skillOptions, level
     };
     return (
         <div className="p-4">
-            <h2 className="font-medium uppercase text-lg text-center rounded-full border py-2 bg-gray-300">
+            <h2 className="font-medium uppercase text-lg text-center rounded-full border py-2 mb-[10px] bg-gray-300">
                 Professional Skills
             </h2>
             {professionalSkills.map((skill, index) => (

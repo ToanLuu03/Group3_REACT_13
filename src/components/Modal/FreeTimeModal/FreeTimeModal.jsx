@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Button, Modal, Switch, DatePicker, Checkbox, InputNumber } from "antd";
 import dayjs from 'dayjs';
-import axios from 'axios';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import '../EditModal/editmodal.css';
 import { useSelector } from "react-redux";
+import { saveTrainerFreeTime } from "../../../services/schedule";
+
 
 dayjs.extend(customParseFormat);
 const { RangePicker } = DatePicker;
+const token = localStorage.getItem("token");
+const username = localStorage.getItem("username");
 
 const FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTrainer }) => {
   const [roomName, setRoomName] = useState(initialData?.location || "");
@@ -38,7 +41,7 @@ const FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTrain
   const handleSaveEdit = async () => {
     setLoading(true); // Disable button after initial click
     const updatedData = {
-      trainerAccount: selectedTrainer.account,
+      trainerAccount: selectedTrainer.account || username,
       start_time: startTime.toISOString(),
       end_time: endTime.toISOString(),
       recur_time: isRepeat ? repeatInterval : 0,
@@ -51,31 +54,26 @@ const FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTrain
     };
     
     try {
-      const response = await axios.post(
-        'https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/trainer-management/schedule/freetime',
-        updatedData
-      );
-      
-      if (response.status === 200 || response.status === 201) {
-        console.log('Posted Data: ', updatedData)
-        console.log('Free time posted successfully:', response.data);
-        onSave(); // Trigger data refresh in the parent component
-        onCancel(); // Close the modal after saving
-        setLoading(false);
-      } else {
-        alert(`Failed to save. Server responded with status: ${response.status}`);
-      }
+      const response = await saveTrainerFreeTime(updatedData, token); // Use the API function
+      onSave(); // Trigger data refresh in the parent component
+      onCancel(); // Close the modal after saving
     } catch (error) {
       if (error.response) {
-        alert(`Server responded with status: ${error.response.status}`);
+        if (error.response.status === 400) {
+          alert('Cannot register a date from the past'); // Specific message for status 400
+        } else {
+          alert(`Server responded with status: ${error.response.status}`);
+        }
       } else if (error.request) {
         alert('No response from server. Please try again later.');
       } else {
         alert(`Error: ${error.message}`);
       }
+    } finally {
       setLoading(false); // Re-enable button if error occurs
     }
-  };
+  }    
+
 
   const handleRangeChange = (values) => {
     const [start, end] = values;
@@ -121,6 +119,7 @@ const FreeTimeModal = ({ isVisible, onCancel, initialData, onSave, selectedTrain
             className="edit-modal-rangepicker"
             disabledDate={disablePastDates}
             disabledTime={disablePastTime}
+            allowClear={false}
           />
         </Col>
       </Row>

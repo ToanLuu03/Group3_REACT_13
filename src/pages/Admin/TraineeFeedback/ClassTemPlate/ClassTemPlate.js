@@ -106,7 +106,7 @@ function ClassTemplate({ setActiveKey, setClonedTemplate }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-x-10 gap-y-10">
                 {filteredTemplates.slice(startIndex, endIndex).map((template) => (
-                    <div key={template.id} className="relative bg-white border border-gray-500 rounded-lg shadow-lg p-3">
+                    <div key={template.id} className="relative bg-white border border-gray-500 rounded-lg shadow-lg p-3 hover:translate-y-[-4px] hover:shadow-xl transition-all duration-200">
                         <div className="mb-5">
                             <img src={template.image} alt={template.title} className="rounded-md w-full border border-gray-500" />
                         </div>
@@ -186,7 +186,7 @@ function ClassTemplate({ setActiveKey, setClonedTemplate }) {
                                 onClick={() => setShowSendDateOption(!showSendDateOption)} // Toggle the state on click
                                 checked={showSendDateOption}
                             >
-                                Set Send Date
+                                 Send Date
                             </Radio>
 
                             {showSendDateOption && (

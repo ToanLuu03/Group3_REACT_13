@@ -1,17 +1,19 @@
 // src/api.js
-export const fetchFeedbackData = async (moduleId, trainerAccount) => {
+import { instance } from '../instance';
+
+export const fetchFeedbackData = async (moduleId, trainerAccount, token) => {
   try {
-    const response = await fetch(
-      `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/modules/feedbacks/${moduleId}?trainerAccount=${trainerAccount}`
-    );
+    const response = await instance.get(`/v1/modules/feedbacks/${moduleId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        trainerAccount,
+      },
+    });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch feedback data');
-    }
-
-    const data = await response.json();
-    return data.data;
+    return response.data.data; // Adjust based on your API's response structure
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error(error.response?.data?.message || 'Failed to fetch feedback data');
   }
 };

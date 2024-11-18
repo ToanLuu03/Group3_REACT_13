@@ -2,81 +2,38 @@ import React, { useState, useEffect, useMemo } from "react";
 import { DatePicker, Input, Table, Spin } from "antd";
 import { SelectBox } from "../../../../components/Admin/Selectbox/SelectBox";
 import { FaStarOfLife } from "react-icons/fa6";
-import { fetchDataLog, fetchDataClass, searchLogs } from "../../../../api/ScheduleTracker_api";
+import { fetchDataLog, searchLogs, fetchDataLogClass, fetchDataLogModule } from "../../../../api/ScheduleTracker_api";
 import moment from 'moment';
 
 const { RangePicker } = DatePicker;
 
+function isDateInRange(date, startDate, endDate) {
+    if (!date || !startDate || !endDate) return true; // Nếu không có ngày, trả về true
+    const momentDate = moment(date);
+    return momentDate.isSameOrAfter(moment(startDate, "YYYY-MM-DD")) &&
+           momentDate.isSameOrBefore(moment(endDate, "YYYY-MM-DD"));
+}
+
 function Log() {
-    // State variables
-    const [selectedClass, setSelectedClass] = useState(null);
-    const [selectedModule, setSelectedModule] = useState(null);
+
     const [dateRange, setDateRange] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
-    const [selectedDate, setSelectedDate] = useState(null);
     const [logData, setLogData] = useState([]);
     const [selectedClassId, setSelectedClassId] = useState(null);
     const [selectedModuleId, setSelectedModuleId] = useState(null);
     const [classOptions, setClassOptions] = useState([]);
-    const [moduleOptions, setModuleOptions] = useState([]);
-    const [fullData, setFullData] = useState([]);
     const [loading, setLoading] = useState(false);
-
-    // Fetch classes and prepare data when component mounts
-    useEffect(() => {
-        const getClassesAndModules = async () => {
-            try {
-                const data = await fetchDataClass();
-
-                // Get unique classes
-                const uniqueClasses = Array.from(new Set(data.map(item => item.classId)))
-                    .map(classId => {
-                        const classItem = data.find(item => item.classId === classId);
-                        return {
-                            value: classId,
-                            label: classItem.className
-                        };
-                    });
-                setClassOptions(uniqueClasses);
-
-                // Store full data for later use in module selection
-                setFullData(data);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                setClassOptions([]);
-            }
-        };
-        getClassesAndModules();
-    }, []);
-
-    // Update modules when class is selected
-    useEffect(() => {
-        if (selectedClassId && fullData) {
-            // Filter modules for selected class
-            const classModules = fullData
-                .filter(item => item.classId === selectedClassId)
-                .reduce((unique, item) => {
-                    if (!unique.some(module => module.value === item.moduleId)) {
-                        unique.push({
-                            value: item.moduleId,
-                            label: item.moduleName
-                        });
-                    }
-                    return unique;
-                }, []);
-            setModuleOptions(classModules);
-        } else {
-            setModuleOptions([]);
-        }
-    }, [selectedClassId, fullData]);
+    const [modules, setModules] = useState([]);
+    const [data, setData] = useState([]);
 
     const columns = [
         {
-            title: () => <div className="text-center font-bold">Topic</div>,
+            title: () => <div className=" font-bold">Topic</div>,
             dataIndex: 'moduleName',
             key: 'content',
             fixed: 'left',
-            className: 'w-[200px] sm:w-[300px] text-center',
+            className: 'w-[150px] sm:w-[300px]',
+            Align: 'left'
         },
         {
             title: () => <div className="text-center font-bold">Contents</div>,
@@ -151,92 +108,44 @@ function Log() {
         },
     ];
 
-    // Fetch data khi component mount
-    useEffect(() => {
-        const fetchLogs = async () => {
-            try {
-                if (selectedClassId && selectedModuleId) {
-                    const data = await fetchDataLog(selectedClassId, selectedModuleId);
-                    console.log("data Log", data)
-                    if (data && data.length > 0) {
-                        const formattedData = data.map((item) => ({
-                            key: item.id.toString(),
-                            className: item.className,
-                            moduleName: item.moduleName,
-                            trainerId: item.trainerId,
-                            changedContent: item.changedContent,
-                            oldValue: item.oldValue,
-                            newValue: item.newValue,
-                            changedDate: item.changedDate
-                        }));
-                        setLogData(formattedData);
-                    } else {
-                        setLogData([]);
-                    }
-                }
-            } catch (error) {
-                console.error("Error fetching logs:", error);
-                setLogData([]);
-            }
-        };
+    const handleDateRangeChange = (dates) => {
+        setDateRange(dates);
+    };
 
-        fetchLogs();
-    }, [selectedClassId, selectedModuleId]);
-
-    // Update the class selection handler
-    const handleClassChange = (value, option) => {
-        setSelectedClass(option.label);
+    const handleClassChange = async (value) => {
         setSelectedClassId(value);
-        setSelectedModule(null);
         setSelectedModuleId(null);
         setLogData([]);
-        setSelectedDate(null);
-        setDateRange(null); // Reset date range
-        setSearchTerm(""); // Reset search term
-    };
+        setDateRange(null);
+        setModules([]);
+        setSearchTerm("");
 
-    // Update the module selection handler
-    const handleModuleChange = (value, option) => {
-        setSelectedModule(option.label);
-        setSelectedModuleId(value);
-        setDateRange(null); // Reset date range
-        setSearchTerm(""); // Reset search term
-    };
-
-    // Update the date range handler
-    const handleDateRangeChange = async (dates) => {
-        setDateRange(dates);
-        if (dates && dates[0] && dates[1]) {
-            setLoading(true);
+        if (value) {
             try {
-                const startDate = dates[0].format('YYYY-MM-DD');
-                const endDate = dates[1].format('YYYY-MM-DD');
-                const data = await searchLogs(
-                    selectedClassId,
-                    selectedModuleId,
-                    startDate,
-                    endDate
-                );
-                if (data && data.length > 0) {
-                    const formattedData = data.map((item) => ({
-                        key: item.id.toString(),
-                        className: item.className,
-                        moduleName: item.moduleName,
-                        trainerId: item.trainerId,
-                        changedContent: item.changedContent,
-                        oldValue: item.oldValue,
-                        newValue: item.newValue,
-                        changedDate: item.changedDate
-                    }));
-                    setLogData(formattedData);
-                } else {
-                    setLogData([]);
-                }
+                const modulesData = await fetchDataLogModule(value); // Fetch modules based on selected class
+                console.log('Fetched Modules:', modulesData); // Log fetched modules
+                setModules(modulesData.map(mod => ({ label: mod.moduleName, value: mod.moduleId }))); // Map to options
+
             } catch (error) {
-                console.error('Error fetching logs:', error);
-                setLogData([]);
-            } finally {
-                setLoading(false);
+                console.error('Failed to fetch modules:', error);
+            }
+        }
+    };
+
+    // Update the selected module handler
+    const handleModuleChange = async (value) => {
+        setSelectedModuleId(value); // Update selectedModuleId
+        setSearchTerm(""); // Reset search term when module changes
+
+        if (value) {
+            // Call fetchDataLog API based on selectedClassId and selectedModuleId
+            try {
+                const logData = await fetchDataLog(selectedClassId, value); // Fetch log data
+                console.log('Fetched Log Data:', logData); // Log fetched data
+                // Process and set log data as needed
+                setLogData(logData); // Assuming logData is in the correct format
+            } catch (error) {
+                console.error('Failed to fetch log data:', error);
             }
         }
     };
@@ -251,50 +160,150 @@ function Log() {
             log.newValue?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             log.trainerId?.toLowerCase().includes(searchTerm.toLowerCase())
         );
-    }, [logData, searchTerm]);
+    }, [logData, searchTerm, selectedClassId, selectedModuleId, dateRange]);
+
+    useEffect(() => {
+        const loadClassOptions = async () => {
+            setLoading(true);
+            try {
+                const classes = await fetchDataLogClass(); // Fetch class data
+                setClassOptions(classes.map(cls => ({ label: cls.className, value: cls.classId }))); // Map to options
+            } catch (error) {
+                console.error('Failed to fetch class options:', error);
+                alert('Có lỗi xảy ra khi tải dữ liệu lớp. Vui lòng thử lại sau.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadClassOptions();
+    }, []);
+
+    useEffect(() => {
+        const loadModules = async () => {
+            if (selectedClassId) { // Check if a class is selected
+                try {
+                    const modulesData = await fetchDataLogModule(selectedClassId); // Fetch modules based on selected class
+                    console.log('Fetched Modules:', modulesData); // Log fetched modules
+                    setModules(modulesData.map(mod => ({ label: mod.moduleName, value: mod.moduleId }))); // Map to options
+
+                } catch (error) {
+                    console.error('Failed to fetch modules:', error);
+                }
+            }
+        };
+
+        loadModules();
+    }, [selectedClassId]); // Dependency on selectedClassId
+
+    useEffect(() => {
+        const fetchLogData = async () => {
+            if (selectedClassId && selectedModuleId) {
+                try {
+                    const logData = await fetchDataLog(selectedClassId, selectedModuleId); // Lấy dữ liệu log
+                    setData(logData); // Cập nhật state data
+                } catch (error) {
+                    console.error('Failed to fetch log data:', error);
+                }
+            }
+        };
+
+        fetchLogData();
+    }, [selectedClassId, selectedModuleId]); // Theo dõi selectedClassId và selectedModuleId
+
+    const fetchData = async () => {
+        if (dateRange && dateRange[0] && dateRange[1]) {
+            setLoading(true);
+            setLogData([]);
+
+            try {
+                const startDate = dateRange[0].startOf('day').format('YYYY-MM-DD');
+                const endDate = dateRange[1].endOf('day').format('YYYY-MM-DD');
+
+                // Ensure data is defined and is an array
+                if (Array.isArray(data) && data.length > 0) {
+                    const filteredData = data.filter(item => {
+                        const changedDate = moment(item.changedDate).format('YYYY-MM-DD');
+                        // Sử dụng hàm isDateInRange để kiểm tra
+                        return isDateInRange(changedDate, startDate, endDate);
+                    });
+
+                    if (filteredData.length > 0) {
+                        const formattedData = filteredData.map((item) => ({
+                            key: item.id.toString(),
+                            className: item.className,
+                            moduleName: item.moduleName,
+                            trainerId: item.trainerId,
+                            changedContent: item.changedContent,
+                            oldValue: item.oldValue,
+                            newValue: item.newValue,
+                            changedDate: moment(item.changedDate).format('YYYY-MM-DD')
+                        }));
+                        setLogData(formattedData);
+                    } else {
+                        console.log('No data found within the selected date range.'); // Thông báo nếu không có dữ liệu trong khoảng thời gian
+                    }
+                } else {
+                    console.log('No data found for the selected date range.'); // Thông báo nếu không có dữ liệu
+                }
+            } catch (error) {
+                console.error('Error details:', error);
+                setLogData([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [dateRange, selectedClassId, selectedModuleId]); // Theo dõi dateRange, selectedClassId và selectedModuleId
 
     return (
-        <div className="px-6  sm:p-5">
+        <div className="px-6 sm:p-5">
             {/* Filter Section */}
             <div className="flex flex-wrap items-start gap-4 mb-4">
                 {/* Class Dropdown */}
                 <div className="flex-shrink-0 w-full max-w-[200px]">
                     <div className="flex gap-1">
-                        <div className="flex gap-1 pb-1">
-                            <FaStarOfLife className="text-red-600 w-[7px]" />
-                            <label className="text-base sm:text-lg font-medium">Class</label>
-                        </div>
+                        <FaStarOfLife className="text-red-600 w-[7px]" />
+                        <label className="text-base sm:text-lg font-medium">Class</label>
                     </div>
                     <SelectBox
                         placeholder="Select Class"
                         className="w-full"
                         options={classOptions}
-                        onChange={handleClassChange}
                         value={selectedClassId}
+                        allowClear={true}
+                        showSearch={true}
+                        onChange={handleClassChange} // Update selectedClassId on change
+                        filterOption={(input, option) =>
+                            option?.label?.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                        }
                     />
                 </div>
 
-                {/* Module Dropdown */}
+                {/* Module Dropdown - Only show when a class is selected */}
                 {selectedClassId && (
                     <div className="flex-shrink-0 w-full max-w-[200px]">
-                        <div className="flex gap-1 pb-1">
+                        <div className="flex gap-1">
                             <FaStarOfLife className="text-red-600 w-[7px]" />
                             <label className="text-base sm:text-lg font-medium">Module</label>
                         </div>
                         <SelectBox
                             placeholder="Select Module"
                             className="w-full"
-                            options={moduleOptions}
-                            onChange={handleModuleChange}
+                            options={modules} // Use the fetched modules
                             value={selectedModuleId}
+                            onChange={handleModuleChange} // Update selectedModuleId and fetch log data
                         />
                     </div>
                 )}
 
-                {/* Date Range Picker */}
-                {selectedModule && (
+                {/* Date Range Picker - Only show when a module is selected */}
+                {selectedModuleId && (
                     <div className="flex-shrink-0 w-full max-w-[200px]">
-                        <div className="flex gap-1 pb-1">
+                        <div className="flex gap-1">
                             <FaStarOfLife className="text-red-600 w-[7px]" />
                             <label className="text-base sm:text-lg font-medium">Select Report Date</label>
                         </div>
@@ -311,7 +320,7 @@ function Log() {
 
                 {dateRange && (
                     <div className="flex-shrink-0 w-full max-w-[200px]">
-                        <div className="flex gap-1 pb-1">
+                        <div className="flex gap-1">
                             <label className="text-base sm:text-lg font-medium">Search</label>
                         </div>
                         <Input
@@ -327,15 +336,14 @@ function Log() {
             {dateRange && (
 
                 < div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2 mb-5 px-2 sm:px-8">
-                    <div className="text-sm sm:text-[14px] font-[700]">Class: <span className="date">{selectedClass || 'N/A'}</span></div>
-                    <div className="text-sm sm:text-[14px] font-[700]">Module: <span className="date">{selectedModule || 'N/A'}</span></div>
+                    <div className="text-sm sm:text-[14px] font-[700]">Class: <span className="date">{classOptions.find(cls => cls.value === selectedClassId)?.label || 'N/A'}</span></div>
+                    <div className="text-sm sm:text-[14px] font-[700]">Module: <span className="date">{modules.find(mod => mod.value === selectedModuleId)?.label || 'N/A'}</span></div>
                     <div className="text-sm sm:text-[14px] font-[700]">Start Date: <span className="date">{dateRange ? dateRange[0].format('DD/MM/YYYY') : 'N/A'}</span></div>
                     <div className="text-sm sm:text-[14px] font-[700]">End Date: <span className="date">{dateRange ? dateRange[1].format('DD/MM/YYYY') : 'N/A'}</span></div>
                 </div>
 
             )}
 
-            {/* Add loading state */}
             {
                 loading && (
                     <div className="flex justify-center my-4">
@@ -343,20 +351,24 @@ function Log() {
                     </div>
                 )
             }
-
-            {/* Display logs with existing table structure */}
             {
                 dateRange && (
                     <div className="overflow-x-auto">
-                        <Table
-                            dataSource={filteredLogs}
-                            columns={columns}
-                            pagination={{ pageSize: 4 }}
-                            size="middle"
-                            scroll={{
-                                x: true,
-                            }}
-                        />
+                        {loading ? (
+                            <div className="flex justify-center my-4">
+                                <Spin size="large" />
+                            </div>
+                        ) : (
+                            <Table
+                                dataSource={filteredLogs}
+                                columns={columns}
+                                pagination={{ pageSize: 4 }}
+                                size="middle"
+                                scroll={{
+                                    x: true,
+                                }}
+                            />
+                        )}
                     </div>
                 )
             }

@@ -13,11 +13,13 @@ const Feedback = ({ moduleData, onBackClick }) => {
   const [currentReason, setCurrentReason] = useState('');
   const feedbackRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
+  const token = localStorage.getItem("token");
+  const username = localStorage.getItem("username");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const feedbackResponse = await fetchFeedbackData(moduleData.id, 'phuongdp_test');
+        const feedbackResponse = await fetchFeedbackData(moduleData.id, username , token);
         const feedbacks = feedbackResponse.feedback;
 
         setFeedbackData(feedbacks);

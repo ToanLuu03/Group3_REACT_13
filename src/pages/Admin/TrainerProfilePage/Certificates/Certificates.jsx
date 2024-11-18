@@ -77,6 +77,10 @@ const Certificates = ({ certificates, isEditing, setCertificates, onDeleteCertif
         }
     };
 
+    const disabledDate = (current) => {
+        return current && current > moment().endOf("day");
+    };
+
     return (
         <div className="p-4 mb-8">
             <h2 className="font-medium uppercase text-lg text-center rounded-full border py-2 bg-gray-300 mb-4">
@@ -110,6 +114,7 @@ const Certificates = ({ certificates, isEditing, setCertificates, onDeleteCertif
                                         handleEditCertificate(index, "date", dateString)
                                     }
                                     className="ml-2 mt-[10px]"
+                                    disabledDate={disabledDate}
                                 />
                             ) : (
                                 <div className="ml-auto">{formatDate(cert.date)}</div>

@@ -1,8 +1,6 @@
 import { Button, notification, Spin } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  fetchMasterData,
-  fetchTrainerInfoV2,
   uploadAvatar,
   updateTrainerInfoV2,
   deleteCertificate,
@@ -21,7 +19,12 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Link, useOutletContext } from "react-router-dom";
 import { MdOutlineModeEdit } from "react-icons/md";
 
-function TrainerInformation({ isEditing, setIsEditing }) {
+function TrainerInformation({
+  isEditing,
+  setIsEditing,
+  dataInfoV2,
+  masterData,
+}) {
   const [trainerTypes, setTrainerTypes] = useState([]);
   const [contributionTypes, setContributionTypes] = useState([]);
   const [sites, setSites] = useState([]);
@@ -55,93 +58,74 @@ function TrainerInformation({ isEditing, setIsEditing }) {
   };
 
   useEffect(() => {
-    const fetchTrainerData = async () => {
-      const account = localStorage.getItem("username");
-      const token = localStorage.getItem("token");
+    if (dataInfoV2) {
       const role = localStorage.getItem("role");
       setRoleBack(role);
-      try {
-        if (role === "TRAINER") {
-          setIsTrainer(false);
-        } else {
-          setIsTrainer(true);
-        }
-        const data = await fetchTrainerInfoV2(account, token);
-        const professionalSkills = data.skills.filter(
-          (skill) => skill.type === "PROFESSIONAL"
-        );
-        const softSkills = data.skills.filter(
-          (skill) => skill.type === "SOFTSKILL"
-        );
-        setGeneralInfo(data.generalInfo);
-        setProfessionalSkills(professionalSkills);
-        setSoftSkills(softSkills);
-        setCertificates(data.certificate || []);
-        setOriginalData({
-          generalInfo: JSON.parse(JSON.stringify(data.generalInfo)),
-          professionalSkills: JSON.parse(JSON.stringify(professionalSkills)),
-          softSkills: JSON.parse(JSON.stringify(softSkills)),
-          certificates: JSON.parse(JSON.stringify(data.certificate || [])),
-        });
-      } catch (error) {
-        notification.error({
-          message: error.response.data.message,
-          description:
-            "There was an issue fetching the trainer info. Please try again later.",
-          duration: 3,
-        });
-      }
-    };
 
-    fetchTrainerData();
-  }, [isTrainer]);
+      if (role === "TRAINER") {
+        setIsTrainer(false);
+      } else {
+        setIsTrainer(true);
+      }
+
+      const professionalSkills = dataInfoV2.skills.filter(
+        (skill) => skill.type === "PROFESSIONAL"
+      );
+      const softSkills = dataInfoV2.skills.filter(
+        (skill) => skill.type === "SOFTSKILL"
+      );
+
+      setGeneralInfo(dataInfoV2.generalInfo);
+      setProfessionalSkills(professionalSkills);
+      setSoftSkills(softSkills);
+      setCertificates(dataInfoV2.certificate || []);
+      setOriginalData({
+        generalInfo: JSON.parse(JSON.stringify(dataInfoV2.generalInfo)),
+        professionalSkills: JSON.parse(JSON.stringify(professionalSkills)),
+        softSkills: JSON.parse(JSON.stringify(softSkills)),
+        certificates: JSON.parse(JSON.stringify(dataInfoV2.certificate || [])),
+      });
+    }
+  }, [dataInfoV2]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem("token");
-      try {
-        const data = await fetchMasterData(token);
+    if (masterData) {
+      const removeDuplicates = (arr) => {
+        if (!arr || !Array.isArray(arr)) return [];
 
-        const removeDuplicates = (arr) => {
-          if (!arr || !Array.isArray(arr)) return [];
+        const seen = new Set();
+        return arr
+          .map((item) => (item ? item.trim() : ""))
+          .filter((item) => {
+            const lowerCaseItem = item.toLowerCase();
+            if (seen.has(lowerCaseItem) || lowerCaseItem === "") {
+              return false;
+            }
+            seen.add(lowerCaseItem);
+            return true;
+          });
+      };
 
-          const seen = new Set();
-          return arr
-            .map((item) => (item ? item.trim() : ""))
-            .filter((item) => {
-              const lowerCaseItem = item.toLowerCase();
-              if (seen.has(lowerCaseItem) || lowerCaseItem === "") {
-                return false;
-              }
-              seen.add(lowerCaseItem);
-              return true;
-            });
-        };
-
-        setTrainerTypes(removeDuplicates(data.trainerTypes) || []);
-        setContributionTypes(removeDuplicates(data.contributionTypes) || []);
-        setSites(removeDuplicates(data.sites) || []);
-        setJobRanks(removeDuplicates(data.jobRank) || []);
-        setJobTitles(removeDuplicates(data.jobTitle) || []);
-        setProfessionalLevels(removeDuplicates(data.professionalLevel) || []);
-        setTrainerCertifications(
-          removeDuplicates(data.trainTheTrainerCert) || []
-        );
-        setSkillOptions(removeDuplicates(data.professionalSkill) || []);
-        setLevelOptions(removeDuplicates(data.professionalSkillLevel) || []);
-        setSoftSkillOptions(removeDuplicates(data.softSkill) || []);
-      } catch (error) {
-        notification.error({
-          message: "Error Fetching Data",
-          description:
-            "There was an issue fetching the trainer data. Please try again later.",
-          duration: 3,
-        });
-      }
-    };
-
-    fetchData();
-  }, []);
+      setTrainerTypes(removeDuplicates(masterData.trainerTypes) || []);
+      setContributionTypes(
+        removeDuplicates(masterData.contributionTypes) || []
+      );
+      setSites(removeDuplicates(masterData.sites) || []);
+      setJobRanks(removeDuplicates(masterData.jobRank) || []);
+      setJobTitles(removeDuplicates(masterData.jobTitle) || []);
+      setProfessionalLevels(
+        removeDuplicates(masterData.professionalLevel) || []
+      );
+      setTrainerCertifications(
+        removeDuplicates(masterData.trainTheTrainerCert) || []
+      );
+      setSkillOptions(removeDuplicates(masterData.professionalSkill) || []);
+      setLevelOptions(
+        removeDuplicates(masterData.professionalSkillLevel) || []
+      );
+      setSoftSkillOptions(removeDuplicates(masterData.softSkill) || []);
+    }
+  }, [masterData]);
 
   const handleSaveClick = () => setShowSaveModal(true);
   const handleCancelClick = () => setShowCancelModal(true);
@@ -286,10 +270,7 @@ function TrainerInformation({ isEditing, setIsEditing }) {
       try {
         const response = await uploadAvatar(file, token);
         if (response.success) {
-          setGeneralInfo({
-            ...generalInfo,
-            avatar: `https://fams-eqdedeekc2grgxa2.australiaeast-01.azurewebsites.net/api/v1/images/${response.data.name}`,
-          });
+          setGeneralInfo({ ...generalInfo, avatar: response.data});
           setTimeout(() => {
             notification.success({
               message: "Avatar Uploaded",
@@ -388,10 +369,15 @@ function TrainerInformation({ isEditing, setIsEditing }) {
 
   return (
     <div className="h-[calc(100vh - 300px)] m-5">
-      <div className={`h-full overflow-y-auto mb-10 ${isEditing ? "max-md:mb-32" : ""}`}>
+      <div
+        className={`h-full overflow-y-auto mb-10 ${
+          isEditing ? "max-md:mb-32" : ""
+        }`}
+      >
         <div
-          className={`flex max-xl:flex-col items-start p-4 ${!isEditing ? "mb-[5.7px]" : ""
-            } ${!isEditing ? "" : "max-xl:items-center max-xl:justify-center"}`}
+          className={`flex max-xl:flex-col items-start p-4 ${
+            !isEditing ? "mb-[5.7px]" : ""
+          } ${!isEditing ? "" : "max-xl:items-center max-xl:justify-center"}`}
         >
           {isEditing ? (
             <>
@@ -444,7 +430,8 @@ function TrainerInformation({ isEditing, setIsEditing }) {
                     }
                     className="outline-none border-b-2 max-xl:ml-5 max-xl:text-center"
                   />
-                  <span className="ml-2 text-gray-400 cursor-pointer text-xl place-self-end"
+                  <span
+                    className="ml-2 text-gray-400 cursor-pointer text-xl place-self-end"
                     onClick={() => inputRefs.current?.focus()}
                   >
                     <MdOutlineModeEdit />
@@ -473,7 +460,8 @@ function TrainerInformation({ isEditing, setIsEditing }) {
                     }
                     className="outline-none border-none w-full h-20 max-xl:ml-5 bg-gray-200 p-1 resize-none max-xl:text-center"
                   />
-                  <span className="ml-2 text-gray-400 cursor-pointer text-xl place-self-end"
+                  <span
+                    className="ml-2 text-gray-400 cursor-pointer text-xl place-self-end"
                     onClick={() => {
                       const textarea = textareaRefs.current;
                       if (textarea) {
@@ -544,8 +532,9 @@ function TrainerInformation({ isEditing, setIsEditing }) {
         </div>
       </div>
       <div
-        className={`fixed bottom-0 left-0 ${collapsed ? "md:left-0" : "md:left-64"
-          } right-0 bg-white p-4 flex flex-col md:flex-row justify-between border-t shadow-lg gap-2`}
+        className={`fixed bottom-0 left-0 ${
+          collapsed ? "md:left-0" : "md:left-64"
+        } right-0 bg-white p-4 flex flex-col md:flex-row justify-between border-t shadow-lg gap-2`}
       >
         <Button
           type="default"
@@ -557,7 +546,7 @@ function TrainerInformation({ isEditing, setIsEditing }) {
         </Button>
 
         <div className="flex gap-2 flex-col md:flex-row w-full md:w-auto justify-end">
-          {isEditing &&
+          {isEditing && (
             <>
               <Button
                 onClick={handleCancelClick}
@@ -573,7 +562,7 @@ function TrainerInformation({ isEditing, setIsEditing }) {
                 Save changes
               </Button>
             </>
-          }
+          )}
         </div>
       </div>
 

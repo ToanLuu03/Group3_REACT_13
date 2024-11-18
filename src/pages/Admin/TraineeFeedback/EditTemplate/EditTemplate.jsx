@@ -3,7 +3,7 @@ import { Card, Typography, Button, Form, Modal, message, Tabs } from "antd";
 import {
   PlusCircleOutlined,
   CloseCircleOutlined,
-  CloseOutlined,
+  CloseOutlined, ExclamationCircleOutlined 
 } from "@ant-design/icons";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useNavigate } from "react-router-dom";
@@ -75,39 +75,79 @@ const EditTemplate = () => {
 
   const handleSave = () => {
     Modal.confirm({
-      title: "Custom Template",
+      title: (
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span>Custom Template</span>
+          <span
+            style={{
+              cursor: "pointer",
+              fontSize: "20px", 
+              fontWeight: "bold",
+              padding: "0 8px", 
+            }}
+            onClick={() => Modal.destroyAll()} 
+          >
+            ×
+          </span>
+        </div>
+      ),
       content: "Are you sure you want to save?",
-      okText: "Yes",
+      okText: "Save",
       cancelText: "Cancel",
       onOk: () => {
         message.success("Action saved successfully");
-        navigate("/CLASS_ADMIN/trainee-management/trainee-feedback?tab=2"); // Redirect to Custom Template tab in TraineeFeedback
+        navigate("/CLASS_ADMIN/trainee-management/trainee-feedback?tab=2"); 
       },
       okButtonProps: {
-        style: { backgroundColor: "green", color: "white" },
+        style: { backgroundColor: "blue", color: "white" },
       },
       cancelButtonProps: {
-        style: { color: "black" },
+        style: { color: "red" },
       },
+      icon: <ExclamationCircleOutlined />, 
     });
   };
 
   const handleBack = () => {
+    
     Modal.confirm({
-      title: "BACK TO CLASS TEMPLATE",
+      title: (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <span>BACK TO CLASS TEMPLATE</span>
+          <span
+            style={{
+              cursor: "pointer",
+              fontSize: "20px", 
+              fontWeight: "bold",
+              padding: "0 8px", 
+            }}
+            onClick={() => Modal.destroyAll()} 
+          >
+            ×
+          </span>
+        </div>
+      ),
       content:
         "There are unsaved changes. Are you sure you want to go back to Class Template?",
       okText: "Yes",
-      cancelText: "No",
+      cancelText: "Cancel", 
       onOk: () => {
-        navigate("/CLASS_ADMIN/trainee-management/trainee-feedback?tab=2"); // Redirect to Class Template tab in TraineeFeedback
+        
+        navigate("/CLASS_ADMIN/trainee-management/trainee-feedback?tab=2");
       },
       okButtonProps: {
         style: { backgroundColor: "red", color: "white" },
       },
       cancelButtonProps: {
-        style: { color: "black" },
+        style: { color: "red" },
       },
+      icon: <ExclamationCircleOutlined />,
     });
   };
 
@@ -247,7 +287,7 @@ const EditTemplate = () => {
               className="fixed bottom-0 left-64 bg-white p-3 shadow-md flex justify-between items-center"
               style={{ width: "calc(100% - 16rem)" }}
             >
-              <Button className="text-blue-500" onClick={handleBack}>
+              <Button className=" text-black " onClick={handleBack}>
                 Back to custom template
               </Button>
               <Button

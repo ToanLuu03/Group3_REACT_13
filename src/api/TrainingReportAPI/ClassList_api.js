@@ -1,16 +1,17 @@
 import axios from 'axios';
+import { instance } from '../instance';
 
 export const fetchClassList = async () => {
 
     const token = localStorage.getItem('token');
 
     try {
-        const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v3/classes/class-list', {
+        const response = await instance.get('v3/classes/class-list', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
-        return response.data;
+        return response;
     } catch (error) {
         console.error('Error fetching :', error);
         throw new Error('Failed to fetch classlist');
@@ -23,12 +24,12 @@ export const fetchClassDetail = async (classId) => {
     try {
         const token = localStorage.getItem('token');
 
-        const response = await axios.get(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v3/classes/class-detail/${classId}`, { // Use moduleId in the URL
+        const response = await instance.get(`v3/classes/class-detail/${classId}`, { // Use moduleId in the URL
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
-        return response.data;
+        return response;
     } catch (error) {
         console.error('Error fetching :', error);
         throw new Error('Failed to fetch module details'); // Updated error message
