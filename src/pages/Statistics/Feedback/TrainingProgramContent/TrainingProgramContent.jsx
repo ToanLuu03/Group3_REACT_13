@@ -159,7 +159,7 @@ function TrainingProgramContent() {
     }
   }, [minAverage, maxAverage, moduleData]);
 
-  const handleSelectAll = (selectedValues) => {
+  const handleSelectAll = async (selectedValues) => {
     if (selectedValues.includes("all")) {
       if (selectedValues.length === moduleOptions.length + 1) {
         setModuleValue([]);
@@ -171,22 +171,22 @@ function TrainingProgramContent() {
         handleCloseGoodFeedbackTable();
       } else {
         setModuleValue(moduleOptions);
-        fetchModuleData(moduleOptions);
         setSelectDisabled(true);
         setTimeout(() => setSelectDisabled(false), 500);
+        await fetchModuleData(moduleOptions);
       }
     } else {
       setModuleValue(selectedValues);
-      if (!selectedValues.length === 0) {
-        fetchModuleData(selectedValues);
+      if (selectedValues.length > 0) {
+        await fetchModuleData(selectedValues);
+      } else {
+        setModuleData([]);
       }
     }
   };
 
   useEffect(() => {
-    if (moduleValue.length > 0) {
-      fetchModuleData(moduleValue);
-    } else {
+    if (!moduleValue.length) {
       setModuleData([]);
     }
   }, [moduleValue]);

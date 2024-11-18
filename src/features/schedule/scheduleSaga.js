@@ -26,13 +26,13 @@ import { notification } from "antd";
 function* fetchScheduleSaga(action) {
   try {
     const response = yield call(fetchSchedule, action.payload.account);
-    if (response.data.success) {
-      yield put(getScheduleSuccess(response.data.data));
+    if (response.success) {
+      yield put(getScheduleSuccess(response.data));
     } else {
-      yield put(getScheduleFailure(response.data.message));
+      yield put(getScheduleFailure(response.message));
     }
   } catch (error) {
-    yield put(getScheduleFailure(error.response?.data?.message || error.message));
+    yield put(getScheduleFailure(error.response?.message || error.message));
   }
 }
 
@@ -43,10 +43,10 @@ function* fetchScheduleDetailSaga(action) {
       call(fetchScheduleDetail, id)
     );
     const detailResponses = yield all(detailRequests);
-    const details = detailResponses.map((response) => response.data.data);
+    const details = detailResponses.map((response) => response.data);
     yield put(getScheduleDetailSuccess(details));
   } catch (error) {
-    yield put(getScheduleDetailFailure(error.response?.data?.message || error.message));
+    yield put(getScheduleDetailFailure(error.response?.message || error.message));
   }
 }
 
@@ -54,13 +54,13 @@ function* fetchScheduleDetailSaga(action) {
 function* getFreeTimeSaga(action) {
   try {
     const response = yield call(getFreeTime, action.payload.trainerAccount);
-    if (response.data.success) {
-      yield put(getFreeTimeSuccess(response.data.data));
+    if (response.success) {
+      yield put(getFreeTimeSuccess(response.data));
     } else {
-      yield put(getFreeTimeFailure(response.data.message));
+      yield put(getFreeTimeFailure(response.message));
     }
   } catch (error) {
-    yield put(getFreeTimeFailure(error.response?.data?.message || error.message));
+    yield put(getFreeTimeFailure(error.response?.message || error.message));
   }
 }
 
@@ -69,14 +69,14 @@ function* removeSlotTimeSaga(action) {
   try {
     const response = yield call(removeSlotTime, action.payload);
 
-    if (response.data.success) {
+    if (response.success) {
       yield put(removeSlotTimeSuccess(action.payload));
       notification.success({
         message: "Delete Successful",
-        description: response.data.data,
+        description: response.data,
       });
     } else {
-      throw new Error(response.data.message || "Delete operation failed");
+      throw new Error(response.message || "Delete operation failed");
     }
   } catch (error) {
     yield put(removeSlotTimeFailure(error.message));
