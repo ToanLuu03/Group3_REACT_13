@@ -74,8 +74,14 @@ const ModalEdit = ({ open, onCancel, skillId, onSuccess }) => {
 
       onCancel();
     } catch (error) {
-      console.error('Error updating skill:', error);
-      message.error('Failed to update skill');
+      // console.error('Error updating skill:', error);
+      notification.error({
+        message: 'Failed to updated skill',
+        description: error.response.data.message,
+        placement: 'topRight',
+        duration: 3,
+      });
+      // console.log(error.message)
     } finally {
       setLoading(false);
     }

@@ -1,16 +1,16 @@
 import axios from 'axios';
-
+import { instance } from '../instance';
 export const fetchJobs = async () => {
     const token = localStorage.getItem("token");
     try {
-        const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/jobs',
+        const response = await instance.get('v1/jobs',
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             }
         );
-        const result = response.data;
+        const result = response;
         if (result.success) {
             return result.data.filter(job => job.deleted === false);
         } else {
@@ -26,7 +26,7 @@ export const fetchJobs = async () => {
 export const deleteJob = async (id) => {
     try {
         const token = localStorage.getItem("token");
-        const response = await axios.delete(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/jobs/${id}`,
+        const response = await instance.delete(`v1/jobs/${id}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -34,7 +34,7 @@ export const deleteJob = async (id) => {
             }
         );
         console.log('Job deleted successfully:', response.data);
-        return response.data;
+        return response;
     } catch (error) {
         console.error('Error deleting job:', error);
         throw error;
@@ -44,15 +44,15 @@ export const deleteJob = async (id) => {
 export const fetchRoles = async () => {
     try {
         const token = localStorage.getItem("token");
-        const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/jobs',
+        const response = await instance.get('v1/jobs',
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             }
         ); // Replace with your API URL
-        if (response.data.success) {
-            const roles = response.data.data
+        if (response.success) {
+            const roles = response.data
                 .filter((job) => job.deleted === false)
                 .map((job) => job.role); // Get the roles
 
@@ -71,8 +71,8 @@ export const fetchRoles = async () => {
 export const addRole = async (role, note, levels, deleted) => {
     try {
         const token = localStorage.getItem("token");
-        const response = await axios.post(
-            'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/jobs',
+        const response = await instance.post(
+            'v1/jobs',
             {
                 role,
                 note,
@@ -86,7 +86,7 @@ export const addRole = async (role, note, levels, deleted) => {
             }
         );
 
-        return response.data;
+        return response;
     } catch (error) {
         console.error('Error adding role:', error);
         throw error;
@@ -97,25 +97,7 @@ export const fetchJobById = async (id) => {
     try {
         const token = localStorage.getItem("token");
 
-        const response = await axios.get(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/jobs/${id}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
-        return response.data.data;
-    } catch (error) {
-        throw new Error(error.response?.data?.message || 'Không thể lấy chi tiết công việc');
-    }
-};
-export const updateJob = async (id, updatedData) => {
-    try {
-        const token = localStorage.getItem("token");
-
-        const response = await axios.put(
-            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/jobs/${id}`,  // Đúng endpoint
-            updatedData,  // Truyền trực tiếp dữ liệu cần cập nhật
+        const response = await instance.get(`v1/jobs/${id}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -124,6 +106,24 @@ export const updateJob = async (id, updatedData) => {
         );
         return response.data;
     } catch (error) {
-        throw new Error(error.response?.data?.message || 'Cập nhật công việc thất bại');
+        throw error;
+    }
+};
+export const updateJob = async (id, updatedData) => {
+    try {
+        const token = localStorage.getItem("token");
+
+        const response = await instance.put(
+            `v1/jobs/${id}`,
+            updatedData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response;
+    } catch (error) {
+        throw error
     }
 };

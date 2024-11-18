@@ -68,7 +68,7 @@ const extractData = (data, type = 'trainer') => {
 };
 
 // API endpoints
-const API_BASE = 'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api';
+const API_BASE = 'https://fams-app.ap-southeast-2.elasticbeanstalk.com/api';
 const ENDPOINTS = {
   TRAINER: `${API_BASE}/v1/admin/schedule-tracker?option=TRAINER`,
   CLASS: `${API_BASE}/v1/admin/schedule-tracker?option=CLASS`,

@@ -21,7 +21,7 @@ const TabTraining = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedTopics, setSelectedTopics] = useState([]);
     const [showReason, setShowReason] = useState(false);
-    const [selectedContentNames, setSelectedContentNames] = useState([]); // New state for content names
+    const [selectedContentNames, setSelectedContentNames] = useState([]); 
 
 
 

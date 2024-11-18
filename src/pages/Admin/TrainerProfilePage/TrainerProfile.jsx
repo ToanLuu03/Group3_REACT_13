@@ -5,6 +5,7 @@ import {
     fetchTrainerInfoV2,
     uploadAvatar,
     updateTrainerInfoV2,
+    deleteCertificate,
 } from "../../../api/AdminAPI/Trainer_info_api";
 import Phone_icon from "../../../assets/image/phone_icon.png";
 import Email_icon from "../../../assets/image/email_icon.png";
@@ -39,8 +40,8 @@ function TrainerProfile() {
     const [originalData, setOriginalData] = useState(null);
     const [showSaveModal, setShowSaveModal] = useState(false);
     const [showCancelModal, setShowCancelModal] = useState(false);
-    const [role, setRole] = useState(''); // Default role can be 'admin', 'user', etc.
-
+    const [role, setRole] = useState('');
+    const [certificatesToDelete, setCertificatesToDelete] = useState([]);
     const inputRefs = useRef([]);
     const textareaRefs = useRef([]);
 
@@ -170,6 +171,21 @@ function TrainerProfile() {
         const token = localStorage.getItem("token");
         const account = localStorage.getItem("trainerAccount");
 
+        if (certificatesToDelete.length > 0) {
+            for (const id of certificatesToDelete) {
+                try {
+                    await deleteCertificate(id, token); 
+                    setCertificates((prev) => prev.filter((cert) => cert.id !== id)); 
+                } catch (error) {
+                    notification.error({
+                        message: "Error Deleting Certificate",
+                        description: `Failed to delete certificate with ID: ${id}`,
+                        duration: 3,
+                    });
+                }
+            }
+        }
+        
         const updatedData = {
             fullName: generalInfo.name,
             description: generalInfo.description,
@@ -217,6 +233,7 @@ function TrainerProfile() {
             });
             setIsEditing(false);
             setShowSaveModal(false);
+            setCertificatesToDelete([]);
         } catch (error) {
             notification.error({
                 message: "Error Updating Trainer Info",
@@ -345,7 +362,7 @@ function TrainerProfile() {
                                         onChange={(e) =>
                                             setGeneralInfo({ ...generalInfo, name: e.target.value })
                                         }
-                                        className="outline-none border-b-2 max-xl:text-center"
+                                        className="outline-none border-b-2 max-xl:ml-5 max-xl:text-center"
                                     />
                                     <span className="ml-2 text-gray-400 cursor-pointer text-xl place-self-end"
                                         onClick={() => inputRefs.current?.focus()}
@@ -362,7 +379,7 @@ function TrainerProfile() {
                         </p>
                         <div className="flex-1 max-xl:w-full max-xl:flex max-xl:justify-center">
                             {isEditing ? (
-                                <div className="flex">
+                                <div className="flex w-[96%] flex-1">
                                     <textarea
                                         value={generalInfo.description}
                                         ref={(el) => (textareaRefs.current = el)}
@@ -372,7 +389,7 @@ function TrainerProfile() {
                                                 description: e.target.value,
                                             })
                                         }
-                                        className="outline-none border-none w-full h-20 bg-gray-200 p-1 resize-none max-xl:text-center"
+                                        className="outline-none border-none w-full h-20 max-xl:ml-5 bg-gray-200 p-1 resize-none max-xl:text-center"
                                     />
                                     <span className="ml-2 text-gray-400 cursor-pointer text-xl place-self-end"
                                         onClick={() => {
@@ -439,6 +456,7 @@ function TrainerProfile() {
                             certificates={certificates}
                             isEditing={isEditing}
                             setCertificates={setCertificates}
+                            onDeleteCertificates={setCertificatesToDelete}
                         />
                     </div>
                 </div>

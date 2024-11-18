@@ -1,4 +1,3 @@
-import axios from "axios";
 import { instance } from '../instance'
 export const fetchClassDistribution = async (account, startDate, endDate) => {
   const token = localStorage.getItem("token");

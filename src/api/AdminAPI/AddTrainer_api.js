@@ -1,9 +1,9 @@
-import axios from 'axios';
+import { instance } from '../instance'
 
 export const AddTrainer_api = async (trainerData, token) => {
   try {
-    const response = await axios.post(
-      'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainer/add-trainer',
+    const response = await instance.post(
+      'v1/trainer/add-trainer',
       trainerData,
       {
         headers: {
@@ -11,7 +11,7 @@ export const AddTrainer_api = async (trainerData, token) => {
         },
       }
     );
-    return response.data;
+    return response;
   } catch (error) {
     console.error('Failed to add trainer:', error);
     throw error;

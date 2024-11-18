@@ -664,7 +664,7 @@ const GeneralData = () => {
   const disableTimeRangeButtons = !isTechnicalChecked && !isStudentChecked;
 
   return (
-    <div className="h-[calc(100vh-179px)] p-4 overflow-auto [&::-webkit-scrollbar]:w-2  [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-gray-100">
+    <div className="h-[calc(100vh-179px)] overflow-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-gray-100">
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
         {dataTotal.map((item, index) => (
           <div

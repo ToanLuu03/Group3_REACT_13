@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchSkillAPI, fetchSkillById, fetchSkilllAdd, fetchSkillDeleteById } from '../../../../api/FamsAdmin/Skill';
-import { Table, Space, Button, Dropdown, Select, Input, message, notification } from 'antd';
+import { Table, Space, Button, Dropdown, Select, Input, notification } from 'antd';
 import { EditOutlined, DeleteOutlined, MoreOutlined } from '@ant-design/icons';
 import ModalAdd from './CRUD/ModalAdd';
 import ModalEdit from './CRUD/ModalEdit';

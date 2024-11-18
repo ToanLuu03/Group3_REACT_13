@@ -21,7 +21,7 @@ const ModalEdit = ({ visible, onClose, jobData, onEditSuccess }) => {
     } catch (error) {
       notification.error({
         message: 'Update Failed',
-        description: error.message || 'An error occurred',
+        description: error.response.data.message || 'An error occurred',
         duration: 3,
       });
     } finally {

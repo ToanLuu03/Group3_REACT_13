@@ -14,7 +14,6 @@ export const fetchTrainerInfo = async (account, token) => {
             throw new Error('Trainer info is missing from the API response');
         }
     } catch (error) {
-        console.error('Error fetching trainer info:', error.message);
         throw new Error('Failed to fetch trainer info');
     }
 };
@@ -34,7 +33,6 @@ export const updateTrainerInfo = async (account, updatedData, token) => {
 
         return response;
     } catch (error) {
-        console.error('Error updating trainer info:', error.message);
         throw new Error('Failed to update trainer info');
     }
 };

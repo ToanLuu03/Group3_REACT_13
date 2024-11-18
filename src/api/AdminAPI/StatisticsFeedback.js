@@ -13,7 +13,6 @@ export const get_Module_data = async () => {
     );
     return response;
   } catch (error) {
-    console.error("Error fetching :", error);
     throw new Error("Failed to fetch feedback Data");
   }
 };
@@ -31,7 +30,6 @@ export const get_Trainer_data = async () => {
     );
     return response;
   } catch (error) {
-    console.error("Error fetching :", error);
     throw new Error("Failed to fetch feedback Data");
   }
 };
@@ -63,7 +61,6 @@ export const Get_Evaluate_by_Module = async ({ module, trainerAccount }) => {
     );
     return response;
   } catch (error) {
-    // console.error("Error fetching evaluation by module:", error.response || error.message);
     throw error;
   }
 };
@@ -94,7 +91,6 @@ export const Get_Evaluate_by_Trainer = async ({ classCode, trainerAccount }) => 
     );
     return response;
   } catch (error) {
-    console.error("Error fetching evaluation by module:", error.response || error.message);
     return { success: false, message: error.message };
   }
 };
@@ -129,7 +125,6 @@ export const get_ClassAdmin_by_Trainer = async () => {
     ); // Replace with actual endpoint
     return response;
   } catch (error) {
-    console.error("Error fetching class admin by trainer data:", error);
     throw error;
   }
 };
@@ -163,7 +158,6 @@ export const Get_Course_by_Module = async ({ classCode }) => {
     );
     return response;
   } catch (error) {
-    // console.error("Error fetching evaluation by module:", error.response || error.message);
     throw error;
   }
 };
@@ -238,7 +232,6 @@ export const Get_Admin_by_ClassName = async ({ classAdmin, classNames }) => {
     );
     return response;
   } catch (error) {
-    console.error("Error fetching evaluation by module:", error.response || error.message);
     throw error;
   }
 };

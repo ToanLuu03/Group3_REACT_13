@@ -1,9 +1,9 @@
 import axios from 'axios';
-
+import { instance } from '../instance';
 export const fetchTrainers = async () => {
   try {
-    const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/prices');
-    return response.data;
+    const response = await instance.get('prices');
+    return response;
   } catch (error) {
     console.error('Error fetching data:', error);
     throw error;

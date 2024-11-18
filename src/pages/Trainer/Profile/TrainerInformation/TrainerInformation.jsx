@@ -5,6 +5,7 @@ import {
   fetchTrainerInfoV2,
   uploadAvatar,
   updateTrainerInfoV2,
+  deleteCertificate,
 } from "../../../../api/AdminAPI/Trainer_info_api";
 import Phone_icon from "../../../../assets/image/phone_icon.png";
 import Email_icon from "../../../../assets/image/email_icon.png";
@@ -43,6 +44,7 @@ function TrainerInformation({ isEditing, setIsEditing }) {
   const { collapsed } = useOutletContext();
   const inputRefs = useRef([]);
   const textareaRefs = useRef([]);
+  const [certificatesToDelete, setCertificatesToDelete] = useState([]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -190,6 +192,21 @@ function TrainerInformation({ isEditing, setIsEditing }) {
     const token = localStorage.getItem("token");
     const account = localStorage.getItem("username");
 
+    if (certificatesToDelete.length > 0) {
+      for (const id of certificatesToDelete) {
+        try {
+          await deleteCertificate(id, token);
+          setCertificates((prev) => prev.filter((cert) => cert.id !== id));
+        } catch (error) {
+          notification.error({
+            message: "Error Deleting Certificate",
+            description: `Failed to delete certificate with ID: ${id}`,
+            duration: 3,
+          });
+        }
+      }
+    }
+
     const updatedData = {
       fullName: generalInfo.name,
       description: generalInfo.description,
@@ -237,6 +254,7 @@ function TrainerInformation({ isEditing, setIsEditing }) {
       });
       setIsEditing(false);
       setShowSaveModal(false);
+      setCertificatesToDelete([]);
     } catch (error) {
       notification.error({
         message: error.response.data.message,
@@ -370,7 +388,7 @@ function TrainerInformation({ isEditing, setIsEditing }) {
 
   return (
     <div className="h-[calc(100vh - 300px)] m-5">
-     <div className={`h-full overflow-y-auto mb-10 ${isEditing ? "max-md:mb-32" : ""}`}>
+      <div className={`h-full overflow-y-auto mb-10 ${isEditing ? "max-md:mb-32" : ""}`}>
         <div
           className={`flex max-xl:flex-col items-start p-4 ${!isEditing ? "mb-[5.7px]" : ""
             } ${!isEditing ? "" : "max-xl:items-center max-xl:justify-center"}`}
@@ -424,7 +442,7 @@ function TrainerInformation({ isEditing, setIsEditing }) {
                     onChange={(e) =>
                       setGeneralInfo({ ...generalInfo, name: e.target.value })
                     }
-                    className="outline-none border-b-2 max-xl:text-center"
+                    className="outline-none border-b-2 max-xl:ml-5 max-xl:text-center"
                   />
                   <span className="ml-2 text-gray-400 cursor-pointer text-xl place-self-end"
                     onClick={() => inputRefs.current?.focus()}
@@ -443,7 +461,7 @@ function TrainerInformation({ isEditing, setIsEditing }) {
             </p>
             <div className="flex-1 max-xl:w-full max-xl:flex max-xl:justify-center">
               {isEditing ? (
-                <div className="flex">
+                <div className="flex w-[96%] flex-1">
                   <textarea
                     value={generalInfo.description}
                     ref={(el) => (textareaRefs.current = el)}
@@ -453,7 +471,7 @@ function TrainerInformation({ isEditing, setIsEditing }) {
                         description: e.target.value,
                       })
                     }
-                    className="outline-none border-none w-full h-20 bg-gray-200 p-1 resize-none max-xl:text-center"
+                    className="outline-none border-none w-full h-20 max-xl:ml-5 bg-gray-200 p-1 resize-none max-xl:text-center"
                   />
                   <span className="ml-2 text-gray-400 cursor-pointer text-xl place-self-end"
                     onClick={() => {
@@ -520,6 +538,7 @@ function TrainerInformation({ isEditing, setIsEditing }) {
               certificates={certificates}
               isEditing={isEditing}
               setCertificates={setCertificates}
+              onDeleteCertificates={setCertificatesToDelete}
             />
           </div>
         </div>

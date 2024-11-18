@@ -13,7 +13,7 @@ const formatDate = (dateString) => {
     return date.toLocaleDateString("en-US");
 };
 
-const Certificates = ({ certificates, isEditing, setCertificates }) => {
+const Certificates = ({ certificates, isEditing, setCertificates, onDeleteCertificates }) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [certificateToDelete, setCertificateToDelete] = useState(null);
 
@@ -24,6 +24,12 @@ const Certificates = ({ certificates, isEditing, setCertificates }) => {
 
     const handleConfirmDelete = () => {
         const updatedCertificates = [...certificates];
+        const certToDelete = updatedCertificates[certificateToDelete];
+
+        if (certToDelete.id) {
+            onDeleteCertificates((prev) => [...prev, certToDelete.id]);
+        }
+
         updatedCertificates.splice(certificateToDelete, 1);
         setCertificates(updatedCertificates);
         setShowDeleteModal(false);

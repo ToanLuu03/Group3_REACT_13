@@ -1,20 +1,20 @@
 import axios from 'axios';
-
+import { instance } from '../instance';
 const token = localStorage.getItem('token');
 
 export const fetchConfig = async () => {
 
-  try {
-      const response = await axios.get('http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v3/config-effort/get-all', {
-          headers: {
-              Authorization: `Bearer ${token}`
-          }
-      });
-      return response.data;
-  } catch (error) {
-      console.error('Error fetching :', error);
-      throw new Error('Failed to fetch classlist');
-  }
+    try {
+        const response = await instance.get('v3/config-effort/get-all', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        return response;
+    } catch (error) {
+        console.error('Error fetching :', error);
+        throw new Error('Failed to fetch classlist');
+    }
 };
 export const createConfig = async (configDataArray) => {
     try {
@@ -26,10 +26,10 @@ export const createConfig = async (configDataArray) => {
             "description": String(item.description)
         }));
 
-        console.log('Final API payload:', JSON.stringify(cleanedData, null, 2));
+        // console.log('Final API payload:', JSON.stringify(cleanedData, null, 2));
 
-        const response = await axios.post(
-            'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v3/config-effort', 
+        const response = await instance.post(
+            'v3/config-effort',
             cleanedData, // Send the array directly
             {
                 headers: {
@@ -38,10 +38,10 @@ export const createConfig = async (configDataArray) => {
                 }
             }
         );
-        return response.data;
-        
+        return response;
+
     } catch (error) {
-        console.error('API Error Response:', error.response?.data);
+        // console.error('API Error Response:', error.response);
         throw error;
     }
 };

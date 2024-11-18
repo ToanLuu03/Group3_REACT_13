@@ -341,13 +341,13 @@ const SchedulePage = () => {
     );
   }
 
-  if (errorSchedule || errorScheduleDetail || errorFreeTime) {
-    return (
-      <div className="flex justify-center items-center h-full text-red-500">
-        <p>Error loading schedule data. Please try again later.</p>
-      </div>
-    );
-  }
+  // if (errorSchedule || errorScheduleDetail || errorFreeTime) {
+  //   return (
+  //     <div className="flex justify-center items-center h-full text-red-500">
+  //       <p>Error loading schedule data. Please try again later.</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainer-management/portal';
+const API_BASE_URL = 'https://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/trainer-management/portal';
 
 
 export const fetchDataGpa = () => {

@@ -1,25 +1,25 @@
 import axios from 'axios';// hoặc
 // const API_BASE = process.env.REACT_APP_API_URL; // Nếu dùng Create React App
-
+import { instance } from '../instance'
 export const fetchSkillAPI = async () => {
     const token = localStorage.getItem("token");
     try {
-        const response = await axios.get(`http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/skills`, {
+        const response = await instance.get(`v1/skills`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
 
-        console.log('Raw API response:', response);
+        // console.log('Raw API response:', response);
 
-        if (response.data && response.data.success) {
-            console.log('Processed API data:', response.data);
-            const filteredData = response.data.data.filter(skill => skill.isDeleted === false);
-            return { ...response.data, data: filteredData };
+        if (response && response.success) {
+            // console.log('Processed API data:', response.data);
+            const filteredData = response.data.filter(skill => skill.isDeleted === false);
+            return { ...response, data: filteredData };
         }
         return [];
     } catch (error) {
-        console.error('Error in fetchSkillAPI:', error);
+        // console.error('Error in fetchSkillAPI:', error);
         throw error;
     }
 };
@@ -46,8 +46,8 @@ export const fetchSkilllAdd = async (skillData) => {
             levels: [1]
         };
 
-        const response = await axios.post(
-            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/skills`,
+        const response = await instance.post(
+            `v1/skills`,
             dataWithLevel,
             {
                 headers: {
@@ -57,9 +57,9 @@ export const fetchSkilllAdd = async (skillData) => {
             }
         );
 
-        if (response.data && response.data.success) {
-            console.log('Skill added successfully:', response.data);
-            return response.data;
+        if (response && response.success) {
+            // console.log('Skill added successfully:', response.data);
+            return response;
         }
         throw new Error('Failed to add skill');
     } catch (error) {
@@ -71,8 +71,8 @@ export const fetchSkilllAdd = async (skillData) => {
 export const fetchSkillById = async (id) => {
     const token = localStorage.getItem("token");
     try {
-        const response = await axios.get(
-            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/skills/${id}`,
+        const response = await instance.get(
+            `v1/skills/${id}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -81,9 +81,9 @@ export const fetchSkillById = async (id) => {
             }
         );
 
-        if (response.data && response.data.success) {
-            console.log('Skill fetched successfully:', response.data);
-            return response.data;
+        if (response && response.success) {
+            // console.log('Skill fetched successfully:', response.data);
+            return response;
         }
         throw new Error('Failed to fetch skill');
     } catch (error) {
@@ -106,10 +106,10 @@ export const fetchSkillUpdateById = async (id, updateData) => {
             levels: updateData.levels || [1]
         };
 
-        console.log('Sending update data:', formattedData);
+        // console.log('Sending update data:', formattedData);
 
-        const response = await axios.put(
-            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/skills/${id}`,
+        const response = await instance.put(
+            `v1/skills/${id}`,
             formattedData,
             {
                 headers: {
@@ -119,18 +119,18 @@ export const fetchSkillUpdateById = async (id, updateData) => {
             }
         );
 
-        if (response.data && response.data.success) {
-            console.log('Skill updated successfully:', response.data);
-            return response.data;
+        if (response && response.success) {
+            // console.log('Skill updated successfully:', response.data);
+            return response;
         }
 
-        throw new Error(response.data?.message || 'Failed to update skill');
+        throw new Error(response?.message || 'Failed to update skill');
     } catch (error) {
-        console.error('Error in fetchSkillUpdateById:', {
-            id,
-            error: error.response?.data || error.message
-        });
-        throw error.response?.data || error;
+        // console.error('Error in fetchSkillUpdateById:', {
+        //     id,
+        //     error: error.response?.data || error.message
+        // });
+        throw error;
     }
 };
 
@@ -142,8 +142,8 @@ export const fetchSkillDeleteById = async (id) => {
     }
 
     try {
-        const response = await axios.delete(
-            `http://fams-app.ap-southeast-2.elasticbeanstalk.com/api/v1/skills/${id}`,
+        const response = await instance.delete(
+            `v1/skills/${id}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -152,17 +152,17 @@ export const fetchSkillDeleteById = async (id) => {
             }
         );
 
-        if (response.data && response.data.success) {
-            console.log('Skill deleted successfully:', response.data);
-            return response.data;
+        if (response && response.success) {
+            // console.log('Skill deleted successfully:', response.data);
+            return response;
         }
 
-        throw new Error(response.data?.message || 'Failed to delete skill');
+        throw new Error(response?.message || 'Failed to delete skill');
     } catch (error) {
         console.error('Error in fetchSkillDeleteById:', {
             id,
             error: error.response?.data || error.message
         });
-        throw error.response?.data || error;
+        throw error.response || error;
     }
 };
